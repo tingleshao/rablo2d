@@ -6,6 +6,9 @@
 
 require 'rubyvis'
 
+
+$pi = Math::PI
+
 def generateBinary(size, rx, ry, cx, cy, bend, tapper)
 	# this function takes all information it needs to generate a binary image. 
 	# the binary image format is a 2d array. contains 0 or 1
@@ -98,7 +101,7 @@ def binaryMatrixToBinary(binmat, size)
 	return bin
 end
 
-
+# => may later somehow combine these following two methods by number of parameters
 def displayBinary(bin, size, filename)
 	# this function outputs the html file to current directory, which contains SVG for the binary 
 	p = binaryToPointList(bin, size)
@@ -152,6 +155,80 @@ def displayBinary(bin, size, filename)
 	  .shape_size(lambda {|d| d.z})
 	  .title(lambda {|d| "%0.1f" % d.z})
 
+	vis.render()
+
+	f = File.open(filename+'.html', 'w')
+	f.puts vis.to_svg
+end
+
+def displayBinaryWithSrep(bin, size, srep, filename)
+	# this function generates a html file that contains svg. The html displays the ellipsoid with the srep.
+	# parameters: image in binary format, size of the image,  center of the ellipsoid, the output filename and the srep points list.
+	p = binaryToPointList(bin, size)
+	data = pv.range(p.size).map {|i| 
+	  OpenStruct.new({x: p[i][0], y: p[i][1], z: 1})
+	}
+	
+	sdata = pv.range(srep.size).map {|i| 
+	  OpenStruct.new({x: srep[i][0][0], y: srep[i][0][1], z: 90})
+	}
+	
+	w = 400	
+	h = 400
+
+	x = pv.Scale.linear(0, size).range(0, w)
+	y = pv.Scale.linear(0, size).range(0, h)
+
+	c = pv.Scale.log(1, 100).range("orange", "brown")
+
+	# The root panel.
+	vis = pv.Panel.new()
+	    .width(w)
+	    .height(h)
+	    .bottom(20)
+	    .left(20)
+	    .right(10)
+	    .top(5);
+
+	# Y-axis and ticks. 
+	vis.add(pv.Rule)
+	    .data(y.ticks())
+	    .bottom(y)
+	    .strokeStyle(lambda {|d| d!=0 ? "#eee" : "#000"})
+	  .anchor("left").add(pv.Label)
+	  .visible(lambda {|d|  d > 0 and d < 128})
+	  .text(y.tick_format)
+
+	# X-axis and ticks. 
+	vis.add(pv.Rule)
+	    .data(x.ticks())
+	    .left(x)
+	    .stroke_style(lambda {|d| d!=0 ? "#eee" : "#000"})
+	  .anchor("bottom").add(pv.Label)
+	  .visible(lambda {|d|  d > 0 and d < 128})
+	  .text(x.tick_format);
+
+	#/* The dot plot! */
+	vis.add(pv.Panel)
+	    .data(data)
+	  .add(pv.Dot)
+	  .left(lambda {|d| x.scale(d.x)})
+	  .bottom(lambda {|d| y.scale(d.y)})
+	  .stroke_style(lambda {|d| c.scale(d.z)})
+	  .fill_style(lambda {|d| c.scale(d.z).alpha(0.2)})
+	  .shape_size(lambda {|d| d.z})
+	  .title(lambda {|d| "%0.1f" % d.z})
+
+	# s-rep plot
+	vis.add(pv.Panel)
+	    .data(sdata)
+	  .add(pv.Dot)
+	  .left(lambda {|d| x.scale(d.x)})
+	  .bottom(lambda {|d| y.scale(d.y)})
+	  .stroke_style(lambda {|d| c.scale(1)})
+	  .fill_style(lambda {|d| c.scale(d.z).alpha(1)})
+	  .shape_size(lambda {|d| 10})
+	  .title(lambda {|d| "%0.1f" % d.z})
 	vis.render()
 
 	f = File.open(filename+'.html', 'w')
@@ -220,12 +297,63 @@ def dilateBinary(bin, size, opSize)
 	return dilBin
 end
 
-def generateStandardSrep(binary)
+def generateStandardSrep(binary, nAtoms, size, rx, ry, cx, cy)
 	# this function takes a binary ellipsoid image, it should be a standard one
 	# it returns a standard s-rep for it
-	# srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
+	# srep is a list of 
+		# sampled medial locus points: p
+		# spoke directions: u
+		# lengths: r
+	# suggest number of atoms in 128 * 128 image 20 * 15 ellip: 9
+	# how to calculate the standard s-rep? 
+		# i need to look at wenqi's c++ code
+	# for now, just make an approximate s-rep and use it for display program
+	srep = []
+	# set the two end point r_mid to be 1/2 ry
+	r_mid = 1.0/3 * ry 
+	# set the central point pos 
+	p = []
+	9.times do 
+		p << 0
+	end
+	p[4] = [cx, cy]
+	cx0 = cx - rx + r_mid
+	p[0] = [cx0, cy]
+	medialLength = 2 * (rx - r_mid)
+	stepSize = medialLength.to_f / 9
+	puts "step size: " + stepSize.to_s
+	8.times do |i|
+		p[i+1] = [cx0 + stepSize * (i+1), cy]
+	end		
+	# array for spoke ends diretions 
+	u = []
+	9.times do 
+		u << 0
+	end
+	leftEndUpperAngle = 2 * $pi / 3
+	leftEndLowerAngle = -2 * $pi / 3 
+	u[0] = [leftEndUpperAngle, leftEndLowerAngle, $pi]
+	angleStepSize = $pi / 24
+	8.times do |i|
+		u[i+1] = [leftEndUpperAngle - angleStepSize, leftEndLowerAngle + angleStepSize , $pi]
+	end
+	# array for spoke length
+		# for now, i have not derive the spoke length formula, so we assume the spoke length are all the same.
+	r = []
+	9.times do 
+		one_r = []
+		3.times do
+			one_r << r_mid
+		end
+		r << one_r
+	end
 	
+	9.times do |i|
+		srep << [p[i], u[i], r[i]]
+	end
+	return srep
 end
+
 
 def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
 	# this function takes a srep and information that needed for calculate the deformed srep
