@@ -4,12 +4,11 @@
 # Author: Chong Shao (cshao@cs.unc.edu)
 # 
 
-require 'rubyvis'
 
 
 $pi = Math::PI
 
-def generateBinary(size, rx, ry, cx, cy, bend, tapper)
+def generateBinary(size, rx, ry, cx, cy, bend, taper)
 	# this function takes all information it needs to generate a binary image. 
 	# the binary image format is a 2d array. contains 0 or 1
 	image = ""
@@ -22,7 +21,7 @@ def generateBinary(size, rx, ry, cx, cy, bend, tapper)
 			normX = ( x - cx ).to_f / size
 			normY = ( y - cy ).to_f / size
 			ox = normX
-			oy = ( normY - ( bend * normX )**2 ) / (Math::exp(tapper * normX))
+			oy = ( normY - ( bend * normX )**2 ) / (Math::exp(taper * normX))
 			realX = ( ox * size ) + cx 
 			realY = ( oy * size ) + cy
 			# check whether realX and realY is inside or outside of the ellipsoid
@@ -67,6 +66,22 @@ def pointListToBinary(ptLst, size)
 	return bin
 end
 
+def binaryMatrixToPointList(binMat, size)
+	pointLst = []
+	for x in 0..size-1
+		for y in 0..size-1
+			if binMat[x][y] == 1
+				pointLst << [x,y]
+			end
+		end
+	end
+	return pointLst
+end
+
+def PointListToBinaryMatrx(ptLst, size)
+	
+end
+
 def binaryToBinaryMatrix(bin, size)
 	# i think doing dialation on point list will be slow. so it is necessary to make a new
 	# 	represenation which is binary matrix
@@ -103,6 +118,8 @@ end
 
 # => may later somehow combine these following two methods by number of parameters
 def displayBinary(bin, size, filename)
+	require 'rubyvis'
+
 	# this function outputs the html file to current directory, which contains SVG for the binary 
 	p = binaryToPointList(bin, size)
 	data = pv.range(p.size).map {|i| 
@@ -162,6 +179,8 @@ def displayBinary(bin, size, filename)
 end
 
 def displayBinaryWithSrep(bin, size, srep, filename)
+	require 'rubyvis'
+
 	# this function generates a html file that contains svg. The html displays the ellipsoid with the srep.
 	# parameters: image in binary format, size of the image,  center of the ellipsoid, the output filename and the srep points list.
 	p = binaryToPointList(bin, size)
@@ -246,55 +265,118 @@ def dilateBinary(bin, size, opSize)
 	binMat = binaryToBinaryMatrix(bin, size)
 	# NOTE: the array returned by local method may just be an address.
 	# 	Which makes dup() and clone() not work in this case.
-	dilBinMat = []
-	size.times do 
-		dilRow = []
-		size.times do 
-			dilRow << 0
-		end
-		dilBinMat << dilRow
-	end # ==> initialize dialBinMat
-	for x in 0..size-1
-		for y in 0..size-1
-			if binMat[x][y] == 1
-			#	puts "x: " + x.to_s + " y: " + y.to_s
-				# here is inverted :P , x is row, y is column
-				
-				# this two lines give the operation row range.
-				if x-opSize > -1
-					xLow = x - opSize
+	dilBinMat = dilateBinaryMatrix(binMat, size, opSize)
+	dilBin = binaryMatrixToBinary(dilBinMat, size)
+	return dilBin
+end
+
+def dilatePointList(ptLst, size, opSize, do_boundary)
+	# NOTE: the array returned by local method may just be an address.
+	# 	Which makes dup() and clone() not work in this case.
+	if do_boundary
+		n = 0
+		ptLstBdy = ptLst.select { |p| ((p[0]-64).to_f/20)**2 + ((p[1]-64).to_f/15)**2 >= 0.95}
+		dilPointList = []
+		ptLstBdy.each do |p|
+			x = p[0]
+			y = p[1]
+			if x- opSize > -1
+				xLow = x - opSize
+			else 
+				xLow = 0
+			end
+			if x+opSize < size
+				xHigh = x + opSize
+			else
+				xHigh = size - 1
+			end
+			for dilRow in xLow..xHigh
+				foo = Math.sqrt(opSize**2-(dilRow-x)**2)
+				yCalcLow = (y-foo).floor
+				yCalcHigh = (y+foo).ceil
+				if yCalcLow > -1
+					yLow = yCalcLow
 				else 
-					xLow = 0
+					yLow = 0
 				end
-				if x+opSize < size
-					xHigh = x + opSize
-				else
-					xHigh = size - 1
+				if yCalcHigh < size
+					yHigh = yCalcHigh
+				else 
+					yHigh = size - 1
 				end
-				for dilRow in xLow..xHigh
-					yCalcLow = (y - Math.sqrt(opSize**2-(dilRow-x)**2)).floor
-					yCalcHigh = (y + Math.sqrt(opSize**2-(dilRow-x)**2)).ceil
-					if yCalcLow > -1
-						yLow = yCalcLow
-					else 
-						yLow = 0
+				for dilCol in yLow..yHigh
+					if !( dilPointList.include?([dilRow,dilCol]) )
+						dilPointList << [dilRow,dilCol]
+						n = n+1
+						puts "add one! " +  n.to_s
 					end
-					if yCalcHigh < size
-						yHigh = yCalcHigh
-					else
-						yHigh = size - 1
-					end
-					for dilCol in yLow..yHigh
-						dilBinMat[dilRow][dilCol] = 1
-					end
-					# puts "yLow " + yLow.to_s + " yHigh: " + yHigh.to_s + " dialRow size: " + dialRow.size.to_s
 				end
 			end
 		end
+	else 
+		bin = pointListToBinary(ptLst,128)
+		dilPointList = binaryToPointList(dilateBinary(bin,128,opSize), 128)
 	end
+	ptLst.each do |p|
+		dilPointList << p
+	end
+	dilPointList = dilPointList.uniq
+	puts "done!"
 	#  convert binmat to bin, return bin
-	dilBin = binaryMatrixToBinary(dilBinMat, size)
-	return dilBin
+	return dilPointList
+end
+
+def dilateBinaryMatrix(binMat, size, opSize)
+	# NOTE: the array returned by local method may just be an address.
+	# 	Which makes dup() and clone() not work in this case.
+		dilBinMat = []
+		size.times do 
+			dilRow = []
+			size.times do 
+				dilRow << 0
+			end
+			dilBinMat << dilRow
+		end # ==> initialize dialBinMat
+		for x in 0..size-1
+			for y in 0..size-1
+				if binMat[x][y] == 1
+				#	puts "x: " + x.to_s + " y: " + y.to_s
+					# here is inverted :P , x is row, y is column
+					
+					# this two lines give the operation row range.
+					if x-opSize > -1
+						xLow = x - opSize
+					else 
+						xLow = 0
+					end
+					if x+opSize < size
+						xHigh = x + opSize
+					else
+						xHigh = size - 1
+					end
+					for dilRow in xLow..xHigh
+						yCalcLow = (y - Math.sqrt(opSize**2-(dilRow-x)**2)).floor
+						yCalcHigh = (y + Math.sqrt(opSize**2-(dilRow-x)**2)).ceil
+						if yCalcLow > -1
+							yLow = yCalcLow
+						else 
+							yLow = 0
+						end
+						if yCalcHigh < size
+							yHigh = yCalcHigh
+						else
+							yHigh = size - 1
+						end
+						for dilCol in yLow..yHigh
+							dilBinMat[dilRow][dilCol] = 1
+						end
+						# puts "yLow " + yLow.to_s + " yHigh: " + yHigh.to_s + " dialRow size: " + dialRow.size.to_s
+					end
+				end
+			end
+		end	
+	#  convert binmat to bin, return bin
+	return dilBinMat
 end
 
 def generateStandardSrep(binary, nAtoms, size, rx, ry, cx, cy)
