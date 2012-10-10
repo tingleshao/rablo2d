@@ -1,0 +1,3 @@
+class PixelFactory
+	
+end
