@@ -35,6 +35,34 @@ def generateBinary(size, rx, ry, cx, cy, bend, taper)
 	return image
 end
 
+def generateBinaryWithBoundary(size, rx, ry, cx, cy, bend, taper)
+		# this function takes all information it needs to generate a binary image. 
+	# the binary image format is a 2d array. contains 0 or 1
+	image = ""
+	for x in 0..size - 1
+		for y in 0..size - 1
+			# here the row & col value is the actrual x and y.
+			# use the actrual x and y to calculate the x and y before deformatoin
+			# and use that to check the ellipsoid formula
+			# set inside 1, out side 0
+			normX = ( x - cx ).to_f / size
+			normY = ( y - cy ).to_f / size
+			ox = normX
+			oy = ( normY - ( bend * normX )**2 ) / (Math::exp(taper * normX))
+			realX = ( ox * size ) + cx 
+			realY = ( oy * size ) + cy
+			# check whether realX and realY is inside or outside of the ellipsoid
+			if  ( ( ( realX - cx ) / rx )**2  + ( ( realY - cy ) / ry )**2).between?(0.95, 1.05)
+				image += "1"
+			else
+				image += "0"
+			end
+		end
+	end
+	return image
+end
+
+
 def binaryToPointList(bin, size)
 	# this function converts binary image to point list 
 	pointLst = []
