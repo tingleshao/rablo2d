@@ -1,31 +1,37 @@
+load 'image_toolbox.rb'
+
 
 $pi = Math::PI
 
-def generate2DDiscreteSrep(rx,ry,cx,cy,size)
-	mr = (rx**2 + ry**2).to_f / rx
+def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
+	mr = (rx**2 - ry**2).to_f / rx
+	noadm = nOfatomDiv2Minus1
 	# hand code the u's 
 	m = []
-	angle = [$pi*2/3, $pi*11/18, $pi*5/9, $pi/2, $pi*4/9, $pi*7/18, $pi/3]
-	for i in -3..3
+	angle = [$pi*2/3, $pi*11/18, $pi*5/9, $pi/2, $pi*4/9, $pi*7/18, $pi/3] *  (noadm /3)
+	#~ alert angle
+	for i in -noadm..noadm
 		a = []
 		# calculate p
-		step = mr/3
+		step = mr/(noadm)
 		p = [cx-step*i, cy]
 		# calculate u0, u1, u2
-		sx = Math.cos(angle[i+3])
-		sy = Math.sin(angle[i+3])
+		sx = Math.cos(angle[i+noadm])
+		sy = Math.sin(angle[i+noadm])
 		u0 = [sx, sy]
 		u1 = [sx, -1*sy]
-		if i == 3 then u2 = [1,0] else u2 = [-1,0] end
+		if i == noadm then u2 = [1,0] else u2 = [-1,0] end
 		u = [u0, u1, u2]
 		# calculate r0, r1, r2
 		# now don't calculate, just set they all the same.
+		puts "rx: " + rx.to_s + "mr: " + mr.to_s
 		r_same = (rx - mr ) *2
-		r0 = r1 = r_same* 1.1 *  Math.log(6.4 - i.abs)
+		r0 = r1 = r_same *  3.0/7 * Math.log(noadm * 2 +10- i.abs)
 		#~ r0 = r1 = r_same
-		if i == -3 then r2  = r_same  elsif i == 3 then r2 = r_same else r2 = 0 end
+		if i == -noadm then r2  = r_same  elsif i == noadm then r2 = r_same else r2 = 0 end
 		r = [r0, r1, r2]
 		a = [p, u, r]
+		puts "r: " + r.to_s
 		m << a
 	end
 	return m
@@ -77,3 +83,43 @@ def rotateOneAtom(cX, cY, xx, yy, angle)
 	end
 	return newP
 end
+
+def checkSrepIntersection(srep1, srep2, shift1, shift2)
+	# returns a list indicates that for each atom in srep1, what is the correspoinding neighbor srep color 
+	correLst = []
+	srep1.each.with_index do |atom1, j|
+		correLst << [0, nil]
+		atom1posX = atom1[0][0] + shift1
+		atom1posY = atom1[0][1] + shift1
+		srep2_0PosX = srep2[0][0][0] + shift2
+		srep2_0PosY = srep2[0][0][1] + shift2
+		minDistSoFar = getDistance(atom1posX, atom1posY, srep2_0PosX, srep2_0PosY)
+		distToSrep2_0 = atom1[2][0] + srep2[0][2][0] 
+		if minDistSoFar < distToSrep2_0
+			correLst[j] = [1,0]
+		end
+		srep2.each.with_index do |atom2, i|
+			atom2posX = atom2[0][0] + shift2
+			atom2posY = atom2[0][1] + shift2
+			# now asssume all three r's for one atom are equivalent to each other (medial case)
+			r1PlusR2 = atom1[2][0] + atom2[2][0] 
+			dist =  getDistance(atom1posX, atom1posY, atom2posX, atom2posY) 
+			if dist < r1PlusR2 
+				if dist < minDistSoFar
+					correLst[j] = [1, i]
+					minDistSoFar = dist
+				end
+			end
+		end
+	end
+	return correLst
+end
+
+
+
+def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
+	# this function takes a srep and information that needed for calculate the deformed srep
+	# it returns a deformed s-rep for it
+	# srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
+	
+end 

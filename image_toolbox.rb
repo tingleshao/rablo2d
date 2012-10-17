@@ -464,10 +464,8 @@ def generateStandardSrep(binary, nAtoms, size, rx, ry, cx, cy)
 	return srep
 end
 
-
-def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
-	# this function takes a srep and information that needed for calculate the deformed srep
-	# it returns a deformed s-rep for it
-	# srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
-end 
 	
+def getDistance(x1,y1,x2,y2)
+	dis = Math.sqrt((x1-x2)**2+(y1-y2)**2)
+	return dis
+end

@@ -11,16 +11,23 @@ end
 
 class Field
 
-  attr_reader @srep, @shift
+  attr_reader :sreps, :shifts, :totalCorreLst
   
-  def initialize(app, points, srep, shift)
+  def initialize(app, points, sreps, shifts)
     @app = app
     @field = []
     @width, @height= 800, 600
     @offset = [(@app.width - @width.to_i) / 2, (@app.height - @height.to_i) / 2]
     @fullpoints = points
-    @srep = [ srep ] 
-    @shift = [ shift ]
+    @sreps = sreps 
+    @shifts = shifts
+    @colorLst = ["#66CCFF"]
+    (@sreps.length-1).times do |i|
+		color = ("66CCFF".to_i(16) + (i + 1) * 100).to_s(16)
+		color = "#" + color.to_s
+		@colorLst << color
+	end
+	@totalCorreLst = []
   end
   
   def setPoints(points)
@@ -28,13 +35,21 @@ class Field
   end
   
   def setSrep(srep, index) 
-	  @srep[index] = srep
+	  @sreps[index] = srep
   end
   
   def addSrep(srep)
-	  @srep << srep
+	  @sreps << srep
   end
   
+  def setShift(shift, index)
+	  @shifts[index] = shift
+  end
+
+  def addShift(shift)
+	  @shifts << shift
+  end
+   
   def render_point_big(x, y, color)
 	@app.stroke color
 	@app.strokewidth 2
@@ -56,25 +71,83 @@ class Field
        @app.oval cx,cy, r
   end
 
-
-  def render_srep(srep, shiftx, shifty, color, scale, show_sphere)
-	srep.each do |a|
-		render_point_big(a[0][0]+shiftx, a[0][1]+shifty , color)
+  def render_srep(*args)
+	  srep = args[0]
+	  shiftx  = args[1]
+	  shifty = args[2]
+	  color = args[3]
+	  scale = args[4]
+	  show_sphere = args[5]
+	  if args.length == 7
+		  totalCorreLst = args[6]
+	  end
+	  
+	srep.each.with_index do |a, i|
+		if totalCorreLst != nil
+			render_atom(a[0][0] + shiftx, a[0][1] + shifty,@colorLst[totalCorreLst[i][0]])
+		else 
+			render_atom(a[0][0] + shiftx, a[0][1] + shifty,color)
+		end
 		if show_sphere
-			render_circle(a[0][0]+shiftx-a[2][0].abs/Math.sqrt(2),  a[0][1]+shifty-a[2][0].abs/Math.sqrt(2), Math.sqrt(2)*a[2][0].abs, color)
-			#alert a[2][0]
+			render_circle(a[0][0]+shiftx-a[2][0],  a[0][1]+shifty-a[2][0], a[2][0].abs*2, color)
 		end
 	end
   end 
   
+  def render_atom(x, y, color)
+	  render_point_big(x, y, color)
+  end
+  
   def paint
 	@app.nostroke
-	 render_srep(@srep, 200 + @shift, 200 + @shift, "#66CCFF", 1.5, true )
-  end  
+	@totalCorreLst = checkRefSrepIntersection
+	@sreps.each.with_index do |srep, i|
+		if i == 0 #=> ref obj
+			render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, @totalCorreLst)
+		else
+		render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true ) end
+	end
+ end  
+ 
+ def checkRefSrepIntersection
+	 refsrep = @sreps[0] 
+	 totalCorreLst = []
+	 @sreps[0].length.times do 
+		totalCorreLst << [0, nil]
+	 end
+	 (1..@sreps.length-1).each do |i|
+		 correLst = checkSrepIntersection(refsrep, @sreps[i], @shifts[0], @shifts[i])
+		 totalCorreLst = combineCorrespondenceListResults(totalCorreLst, correLst, i)
+	 end
+	 return totalCorreLst
+ end
+ 
+ def combineCorrespondenceListResults(rcdLst, srepCorLst, srepIndex)
+	newRcdLst = []
+	rcdLst.length.times do
+		newRcdLst << [0, nil]
+	end
+	srepCorLst.each.with_index do |ele, i|
+		if ele[0] == 1
+			newRcdLst[i] = [srepIndex, ele[1]] 
+		end
+	end
+	return newRcdLst
+end
+
+def getHowManyColored()
+	count = 0
+	@totalCorreLst.each do |e|
+		if e[1] != nil
+			count = count +1
+		end
+	end
+	return count
+end
 
   def [](*args)
     x, y = args
-    raise "Cell #{x}:#{y} does not exists!" unless cell_exists?(x, y)
+    raise "Cell #{x}:#{y} does not exist!" unless cell_exists?(x, y)
     @field[y][x]
   end
   
@@ -84,53 +157,174 @@ class Field
   end
 end
 
+class DrawPad
+	attr_reader :atoms 
+	
+	def initialize(app)
+		@app = app
+		@atoms = []
+		@inCircle = false
+	end
+	
+	def paint()
+		@app.clear
+		@app.background 'testFigure.png'
+		@app.flow :margin => 3 do
+			@fileName = @app.edit_line
+			@app.button("Save"){
+				alert @atoms.to_s
+				if @fileName.text != ""
+					fn = @fileName.text
+				else 
+					fn = "srep_temp"
+				end
+					File.open(fn + '.txt','w') {|file|
+						file.write (@atoms.to_s)
+						file.close}
+			}
+			@app.button("Undo"){
+			if(@atoms.size > 0)
+				@atoms.pop
+			end
+			@inCircle = false
+			refresh
+			}
+		end
+		@app.nofill
+		atoms.each do |atom|
+			@app.oval atom[0]-atom[2]/2, atom[1]-atom[2]/2, atom[2]
+		end
+	end
+	
+	def addAtom()
+		
+	end
+	
+	def refresh()
+		paint
+		@app.click do 
+			|button, left, top|
+			if @inCircle == false
+				@atoms << [left, top, 20]
+				@inCircle = true
+				paint
+			else 
+				@atoms.last[2] = @atoms.last[2] + 1
+				paint
+			end
+		end
+		@app.keypress do |k|
+			if "#{k.inspect}".to_s == "g"
+				#~ alert "true"
+			else
+				@inCircle = false
+			end
+		end
+	end
+	
+end 
 
 Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
  def render_field
     clear do
       background rgb(50, 50, 90, 0.7)
-      flow :margin => 4 do
-        button("Dilate") { 
-		@srep.each do |a|
-			if a[2][0] < 0 then a[2][0] = a[2][0] - 2 else a[2][0] = a[2][0] + 2 end
+      flow :margin => 6 do
+	button("Srep Image"){
+		window :title => "draw srep", :width => 350, :height => 350 do
+			dp = DrawPad.new self
+			dp.refresh
 		end
-		refresh @points, @srep, @shift
-		@field.paint
+	}
+        button("Dilate") { 
+		@sreps.each do |srep|
+			srep.each do |a|
+				a[2][0] = a[2][0] * 1.05
+			end
+		end
+		refresh @points, @sreps, @shifts
 		}
 	button("Reset") {
-		@binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
-		@points= binaryToPointList(@binpoints, 128)
-		@srep = generate2DDiscreteSrep(20,15,64,64,128)
-		refresh @points, @srep, @shift
+		@dontGrowLst= []
+		initialConfig
 	}
-	button("Translate") {
-		#~ @srep.each do |a|
-			#~ if a[0][0] < 0 then a[0][0] = a[0][0] - 5 else a[0][0] = a[0][0] + 5 end
-		#~ end
-		@shift = @shift + 5
-		refresh @points, @srep, @shift
-		@field.paint
+	button("Move") {
+		@shifts[0] = @shifts[0] + 10
+		refresh @points, @sreps, @shifts
 	}
 	button("Rotate") {
-		rotateSrep(@srep, Math::PI/6)
-		refresh @points, @srep, @shift
-		@field.paint
+		rotateSrep(@sreps[0], Math::PI/6)
+		refresh @points, @sreps, @shifts
+		#~ @field.paint
 	}
-	end
+	button("Link") {
+	flag = 0
+	count = 0
+		while flag == 0
+			@sreps.each.with_index do |srep, j|
+				if j == 0
+					srep.each.with_index do |a, i|
+						if @field.totalCorreLst[i][0] == 0 
+							a[2][0] = a[2][0] * 1.05
+						end
+					end
+				else 
+					srep.each.with_index do |a, i|
+						@field.totalCorreLst.size.times do |k|
+							if @field.totalCorreLst[k][1] == i
+								@dontGrowLst << [j,i]
+								break
+							elsif !( @dontGrowLst.include? [j,i] )
+								a[2][0] = a[2][0] * 1.05
+								break
+							end
+						end
+					end
+				end
+			end
+			refresh @points, @sreps, @shifts
+			count = @field.getHowManyColored
+			if count >= 10
+				flag = 1
+			end
+		end
+		}
+      end
      stack do @status = para :stroke => black end
      @field.paint
+     para @field.totalCorreLst.to_s
+     para "\n"
+     @field.sreps.each do |srep|
+	     
+	rLst = []
+	srep.each do |atom|
+		rLst << atom[2][0].ceil
+	end
+	para rLst.to_s
+	para "\n"
+	end
      end  
 end
   
-  def refresh points, srep, shift
+  def refresh points, sreps, shifts
     self.nofill
-    @field = Field.new self, points, srep, shift
+    @field = Field.new self, points, sreps, shifts
     render_field
   end
-  @binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
-  #~ @points= binaryToPointList(@binpoints, 128)
-  @shift = 0
-  @srep = generate2DDiscreteSrep(20,15,64,64,128)
-  refresh @points, @srep, @shift
- 
+  
+  def initialConfig
+	  #~ @binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
+	  #~ @points= binaryToPointList(@binpoints, 128)
+	  # the first srep in the list is the reference object
+	  @shifts = [105, 0, 205]
+	  #~ @sreps = [generateStraight2DDiscreteSrep(50,35,64,64,256,9)]
+	  #~ @sreps <<  generateStraight2DDiscreteSrep(50,30,64,64,256,9)
+	  @sreps =[  generateStraight2DDiscreteSrep(50,30,64,64,256,9)]
+	  @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)
+	  #~ @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)
+	  rotateSrep(@sreps[0], -Math::PI/6)
+	  refresh @points, @sreps, @shifts
+  end
+  
+ @dontGrowLst = []
+  initialConfig
 end
