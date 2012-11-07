@@ -94,7 +94,7 @@ def checkSrepIntersection(srep1, srep2, shift1, shift2)
 		srep2_0PosX = srep2[0][0][0] + shift2
 		srep2_0PosY = srep2[0][0][1] + shift2
 		minDistSoFar = getDistance(atom1posX, atom1posY, srep2_0PosX, srep2_0PosY)
-		distToSrep2_0 = atom1[2][0] + srep2[0][2][0] 
+		distToSrep2_0 = atom1[2][0] /2+ srep2[0][2][0] /2
 		if minDistSoFar < distToSrep2_0
 			correLst[j] = [1,0]
 		end
@@ -102,7 +102,7 @@ def checkSrepIntersection(srep1, srep2, shift1, shift2)
 			atom2posX = atom2[0][0] + shift2
 			atom2posY = atom2[0][1] + shift2
 			# now asssume all three r's for one atom are equivalent to each other (medial case)
-			r1PlusR2 = atom1[2][0] + atom2[2][0] 
+			r1PlusR2 = atom1[2][0]/2 + atom2[2][0] /2
 			dist =  getDistance(atom1posX, atom1posY, atom2posX, atom2posY) 
 			if dist < r1PlusR2 
 				if dist < minDistSoFar
@@ -123,3 +123,27 @@ def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
 	# srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
 	
 end 
+
+
+def parseSavedSrep(filename)
+	srepf = File.open(filename, 'r')
+	srepst = srepf.gets.strip
+	sreps = []
+	matches = srepst.scan(/[0-9]+, [0-9]+, [0-9]+\.[0-9]+/)
+	matches.each do |m|
+		xyr =  m.scan(/[0-9]+/)
+		x = xyr[0].to_f
+		y = xyr[1].to_f
+		r = xyr[2].to_f + xyr[3].to_f/10
+		#~ x = x + Math.sqrt(2) * r
+		#~ y = y + Math.sqrt(2) * r
+		sreps << [[x, y],[[0,0],[0,0],[0,0]], [r,r,r]]
+	end
+	return sreps
+end
+
+def generateBentSrep()
+	# work on it later
+end
+
+
