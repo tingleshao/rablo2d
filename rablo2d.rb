@@ -321,16 +321,20 @@ end
   end
   
   def initialConfig
+	points = [[10,20],[20,15],[30,10],[40,12],[50,16]]
+	l = [[7,7,6],[7,7],[7,7],[8,8],[7,7,6]]
+	u = [[[-1,3],[-1,-4],[-3,-1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[3,2]]]
+	@sreps = [generate2DDiscreteSrep(points,l,u)]
 	  #~ @binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
 	  #~ @points= binaryToPointList(@binpoints, 128)
 	  # the first srep in the list is the reference object
 	  @shifts = [100, 100, 100]
-	  #~ @sreps = [generateStraight2DDiscreteSrep(50,35,64,64,256,9)]
-	  #~ @sreps <<  generateStraight2DDiscreteSrep(50,30,64,64,256,9)
-	#~   @sreps =[  generateStraight2DDiscreteSrep(50,30,64,64,256,9)]
-	@sreps = [parseSavedSrep('pat101_31_par.txt')]
-		@sreps << parseSavedSrep('pat101_31_man.txt')
-		@sreps << parseSavedSrep('pat101_31_mas.txt')
+	 @sreps = [generateStraight2DDiscreteSrep(50,35,64,64,256,9)]
+	  # @sreps <<  generateStraight2DDiscreteSrep(50,30,64,64,256,9)
+	#   @sreps =[  generateStraight2DDiscreteSrep(50,30,64,64,256,9)]
+	#@sreps = [parseSavedSrep('pat101_31_par.txt')]
+	#	@sreps << parseSavedSrep('pat101_31_man.txt')
+	#	@sreps << parseSavedSrep('pat101_31_mas.txt')
 		
 	  #~ @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)
 	  #~ @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)

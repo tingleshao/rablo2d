@@ -11,5 +11,4 @@ class Atom
 	def to_s 
 		"i am an atom!"
 	end
-	
 end

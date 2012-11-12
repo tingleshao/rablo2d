@@ -37,6 +37,11 @@ def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
 	return m
 end
 
+def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
+	
+end
+
+
 def generate2DDiscreteSrepC(atoms, spoke_length, spoke_direction, curves)
 	# this method returns the s-rep object by taking the discrete atoms position, spokes and dense discrete curve points as parameters
 	
