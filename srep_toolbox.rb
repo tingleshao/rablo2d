@@ -37,6 +37,18 @@ def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
 	return m
 end
 
+def generate2DDiscreteSrepC(atoms, spoke_length, spoke_direction, curves)
+	# this method returns the s-rep object by taking the discrete atoms position, spokes and dense discrete curve points as parameters
+	
+end
+
+def generate2DDiscreteSrepBySampledPointsC(atoms, spoke_length, spoke_direction)
+	# this method would firstly call the spline interpolation method to intepolate the curve
+	
+end
+
+
+
 def rotateSrep(srep, angle)
 	# rotate the srep, with the rotation cencter being the srep's center
 	if srep.size % 2 ==1 then centerP = srep[srep.size / 2][0] else centerP = [(srep[srep.size/2 -1][0][0] + srep[srep.size/2][0][0]), (srep[srep.size/2 -1][0][1] + srep[srep.size/2][0][1])] end

@@ -5,6 +5,8 @@ srep1= generateStraight2DDiscreteSrep(20,15,64,64,128,3);
 #~ $corrLes = checkSrepIntersection(srep1, srep2, 0,0);
 return srep1
 end
-srep = ddl 
-#~ puts $corrLes
-puts srep.to_s
+
+def ddl2
+	srep1 = generateStraight2DDiscreteSrepC();
+	return srep1
+end
