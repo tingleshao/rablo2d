@@ -1,44 +1,82 @@
 load 'image_toolbox.rb'
-
+load 'srep.rb'
+load 'atom.rb'
 
 $pi = Math::PI
 
 def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
-	mr = (rx**2 - ry**2).to_f / rx
-	noadm = nOfatomDiv2Minus1
-	# hand code the u's 
-	m = []
-	angle = [$pi*2/3, $pi*11/18, $pi*5/9, $pi/2, $pi*4/9, $pi*7/18, $pi/3] *  (noadm /3)
-	#~ alert angle
-	for i in -noadm..noadm
-		a = []
-		# calculate p
-		step = mr/(noadm)
-		p = [cx-step*i, cy]
-		# calculate u0, u1, u2
-		sx = Math.cos(angle[i+noadm])
-		sy = Math.sin(angle[i+noadm])
-		u0 = [sx, sy]
-		u1 = [sx, -1*sy]
-		if i == noadm then u2 = [1,0] else u2 = [-1,0] end
-		u = [u0, u1, u2]
-		# calculate r0, r1, r2
-		# now don't calculate, just set they all the same.
-		puts "rx: " + rx.to_s + "mr: " + mr.to_s
-		r_same = (rx - mr ) *2
-		r0 = r1 = r_same *  3.0/7 * Math.log(noadm * 2 +10- i.abs)
-		#~ r0 = r1 = r_same
-		if i == -noadm then r2  = r_same  elsif i == noadm then r2 = r_same else r2 = 0 end
-		r = [r0, r1, r2]
-		a = [p, u, r]
-		puts "r: " + r.to_s
-		m << a
-	end
-	return m
+  mr = (rx**2 - ry**2).to_f / rx
+  noadm = nOfatomDiv2Minus1
+  # hand code the u's 
+  m = []
+  angle = [$pi*2/3, $pi*11/18, $pi*5/9, $pi/2, $pi*4/9, $pi*7/18, $pi/3] *  (noadm /3)
+  #~ alert angle
+  for i in -noadm..noadm
+    a = []
+    # calculate p
+    step = mr/(noadm)
+    p = [cx-step*i, cy]
+    # calculate u0, u1, u2
+    sx = Math.cos(angle[i+noadm])
+    sy = Math.sin(angle[i+noadm])
+    u0 = [sx, sy]
+    u1 = [sx, -1*sy]
+    if i == noadm then u2 = [1,0] else u2 = [-1,0] end
+    u = [u0, u1, u2]
+    # calculate r0, r1, r2
+    # now don't calculate, just set they all the same.
+    puts "rx: " + rx.to_s + "mr: " + mr.to_s
+    r_same = (rx - mr ) *2
+    r0 = r1 = r_same *  3.0/7 * Math.log(noadm * 2 +10- i.abs)
+    #~ r0 = r1 = r_same
+    if i == -noadm then r2  = r_same  elsif i == noadm then r2 = r_same else r2 = 0 end
+    r = [r0, r1, r2]
+    a = [p, u, r]
+    puts "r: " + r.to_s
+    m << a
+  end
+  return m
 end
 
 def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
-	
+  # the atoms is passed as a list of x-y's 
+  # should generate atom objects for that
+  srep = SRep.new()	
+  atoms.each_with_index do |atom, i|
+    if spoke_length[i].length == 3
+	type = 'end'
+    else
+	type = 'inner'
+    end
+    # normalize the u vector
+    usi = spoke_direction[i]
+    usi.each_with_index do |ui, index|
+      usi[index] = [Float(ui[0]),Float(ui[1])]
+    end
+    usi.each_with_index do |ui, index|
+      x = ui[0]
+      y = ui[1]
+      ui.each_with_index do |foo, index2|
+        ui[index2] = foo / Math.sqrt(x**2+y**2)
+        puts "foo: " + foo.to_s
+        puts "ui: " + ui[index2].to_s
+      end
+    end 
+    puts usi
+    # make sure the spoke length vector is in type Float
+    li = spoke_length[i]
+    li.each_with_index do |l, index|
+      li[index] = Float(l)
+    end
+    # make sure the positions x-y is in type Float
+    atom.each_with_index do |foo, index|
+	atom[index] = Float(foo)
+    end
+    atomO = Atom.new(li, usi, type, atom[0], atom[1], '#000000')
+    srep.atoms.push(atomO)
+  end
+  srep.color = '#000000'
+  return srep
 end
 
 
