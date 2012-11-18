@@ -62,7 +62,7 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
    #     puts "ui: " + ui[index2].to_s
       end
     end 
-    puts usi
+ #   puts usi
     # make sure the spoke length vector is in type Float
     li = spoke_length[i]
     li.each_with_index do |l, index|
@@ -195,6 +195,17 @@ def parseSavedSrep(filename)
 		sreps << [[x, y],[[0,0],[0,0],[0,0]], [r,r,r]]
 	end
 	return sreps
+end
+
+def interpolateSpokes(x,y,stepsize)
+# this function takes the discrete base points and interpolate the spokes
+# the first step is to interpolate gamma...
+#   - interpolate gamma can be done using cubic spline 
+# need to use system call a python routine..
+  # give x, y, stepsize, retrun a interpolated dense points and write it into a file.
+  # read that file. 
+  # then we have the gamma values. That is for one srep.
+
 end
 
 def generateBentSrep()
