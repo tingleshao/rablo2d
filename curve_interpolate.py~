@@ -9,7 +9,6 @@ def writePts(x,y,f):
 	for xp in x:
 		f.write(str(xp))
 		f.write(" ")
-	f.write('\n')
 	for yp in y:
 		f.write(str(yp))
 		f.write(" ")
