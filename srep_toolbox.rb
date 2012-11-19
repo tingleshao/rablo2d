@@ -197,16 +197,28 @@ def parseSavedSrep(filename)
 	return sreps
 end
 
-def interpolateSpokes(x,y,stepsize)
-# this function takes the discrete base points and interpolate the spokes
-# the first step is to interpolate gamma...
+def interpolateSekeletalCurveGamma(x,y,stepsize)
+# this function takes the discrete base points and interpolate the gamma (skeletal curves)
 #   - interpolate gamma can be done using cubic spline 
-# need to use system call a python routine..
+#   - this function uses system call on a python routine
   # give x, y, stepsize, retrun a interpolated dense points and write it into a file.
   # read that file. 
   # then we have the gamma values. That is for one srep.
-
+  # call the python script to generate intepolated gammas
+  xs = '"[' + x.join(" ") + ']"'
+  ys = '"[' + y.join(" ") + ']"'
+  step_size_s = stepsize.to_s
+  system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s)
+  # the 'interpolated_points' file contains interpolated points
+  gamma_file = File.new("interpolated_points", "r")
+  ixs = gamma_file.gets
+  iys = gamma_file.gets
+  puts "ixs: " + ixs 
+  puts "iys: " + iys  
+  return ixs, iys
 end
+
+def 
 
 def generateBentSrep()
 	# work on it later

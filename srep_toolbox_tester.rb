@@ -22,4 +22,18 @@ def ddl3
   puts srep
 end
 
-ddl3()
+def ddl4
+  points = [[10,20],[20,15],[30,10],[40,12],[50,16]]
+  x = points.collect{|p| p[0]}
+
+  y = points.collect{|p| p[1]}
+#  puts "y: " + y.to_s
+  interpolateSkeletalCurveGamma(x,y,1)
+end
+
+def ddl5
+
+end
+
+
+ddl4

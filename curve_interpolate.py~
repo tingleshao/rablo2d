@@ -9,6 +9,7 @@ def writePts(x,y,f):
 	for xp in x:
 		f.write(str(xp))
 		f.write(" ")
+	f.write('\n')
 	for yp in y:
 		f.write(str(yp))
 		f.write(" ")
@@ -19,6 +20,8 @@ def writePts(x,y,f):
 # the passed x and y data should be quoted 
 xs = sys.argv[1]
 ys = sys.argv[2]
+print xs
+print ys
 step_size = int(sys.argv[3])
 xx = xs.strip('[]').split(' ')
 yy = ys.strip('[]').split(' ')
@@ -30,8 +33,6 @@ for xp in xx:
 for yp in yy:
 	y.append(int(yp))
 
-print x
-print y
 
 
 #points = [[50,100],[100,75],[150,50],[200,60],[250,80]]

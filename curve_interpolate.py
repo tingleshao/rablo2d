@@ -31,8 +31,6 @@ for xp in xx:
 for yp in yy:
 	y.append(int(yp))
 
-print x
-print y
 
 
 #points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
