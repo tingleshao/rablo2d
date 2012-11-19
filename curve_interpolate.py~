@@ -33,23 +33,26 @@ for xp in xx:
 for yp in yy:
 	y.append(int(yp))
 
-
+print x
+print y
 
 #points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
 #for p in points:
 #	x.append(p[0])
 #	y.append(p[1])
+# the parameterization t should range between 
+t = np.arange(0.0,1.2,0.2)
+tck,u = interpolate.splprep([x,y],s=0)
+unew = np.arange(0.0,1.01,0.01)
+out = interpolate.splev(unew,tck)
+print out
 
-s = interpolate.InterpolatedUnivariateSpline(x,y)
-xnew = np.arange(x[0],x[-1],step_size)
-ynew = s(xnew)
-
-f = open('interpolated_points','w')
-writePts(xnew, ynew,f)
+#f = open('interpolated_points','w')
+#writePts(unew, ynew,f)
 
 
-#plt.figure()
-#plt.plot(x,y,'x',xnew,ynew)
-
-#plt.axis('equal')
-#plt.show()
+plt.figure()
+plt.plot(x,y,'x',out[0],out[1])
+plt.axis('equal')
+#
+plt.show()

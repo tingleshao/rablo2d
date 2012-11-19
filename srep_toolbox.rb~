@@ -197,17 +197,17 @@ def parseSavedSrep(filename)
 	return sreps
 end
 
-def interpolateSekeletalCurveGamma(x,y,stepsize)
+def interpolateSkeletalCurveGamma(t,xt,yt,step_size)
 # this function takes the discrete base points and interpolate the gamma (skeletal curves)
 #   - interpolate gamma can be done using cubic spline 
-# need to use system call a python routine..
+#   - this function uses system call on a python routine
   # give x, y, stepsize, retrun a interpolated dense points and write it into a file.
   # read that file. 
   # then we have the gamma values. That is for one srep.
   # call the python script to generate intepolated gammas
   xs = '"[' + x.join(" ") + ']"'
   ys = '"[' + y.join(" ") + ']"'
-  step_size_s = stepsize.to_s
+  step_size_s = step_size.to_s
   system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s)
   # the 'interpolated_points' file contains interpolated points
   gamma_file = File.new("interpolated_points", "r")
@@ -218,10 +218,47 @@ def interpolateSekeletalCurveGamma(x,y,stepsize)
   return ixs, iys
 end
 
-def 
+def interpolateRadius(xt,rt,step_size)
+# this function interpolates r values
+# parameters: x values         xt
+#             r values         rt 
+#             step size        step_size
+  xs = '"[' + xt.join(" ") + ']"'
+  rs = '"[' + rt.join(" ") + ']"'
+  step_size_s = step_size.to_s
+  system("python radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s)
+  # the 'interpolated_radius' file contains interpolated points
+  r_file = File.new("interpolated_rs", "r")
+  ixs = r_file.gets
+  irs = r_file.gets
+  puts "ixs: " + ixs 
+  puts "irs: " + irs  
+  return irs
+end
+
+def interpolateKappa(rt, kt, step_size)
+# since rk < 1, we need get r to interpolate kappa
+# rt is an array that contains radius 
+# this function produces the k array that has the same length as the r array
+  rk = [rt,kt].transpose.map{|x| x.reduce(:*)}
+  rkm1 = rk.collect{|x| x-1}
+  logrkm1 = rkm1.collect{|x| Math.log(x)}
+  logrkm1s = '"[' + logrkm1.join(" ") + ']"'
+  step_size_s = step_size.to_s
+  system("python logrk_interpolate.py " + logrkm1s + ' ' + step_size_s)
+  # the 'interpolated_logrkm1s' file contains interpolated points
+  logrkm1_file = File.new("interpolated_logrkm1s", "r")
+  ilogrkm1s = logrkm1_file.gets
+  puts "ilogrkm1s: " + ilogrkm1s
+  return ilogrmk1s
+end
+
+def interpolateSpokeAtPosition(t,ut,kt,at,pos)
+# 
+end
 
 def generateBentSrep()
-	# work on it later
+# work on it later
 end
 
 

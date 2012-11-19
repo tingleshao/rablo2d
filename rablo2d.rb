@@ -337,14 +337,16 @@ end
   
 def initialConfig
   points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
-  l = [[35,35,35],[35,35],[35,35],[40,40],[35,35,35]]
+  l = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
   @sreps = [generate2DDiscreteSrep(points,l,u)]
- # alert(@sreps.atoms[0])
-	  #~ @binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
-	  #~ @points= binaryToPointList(@binpoints, 128)
-	  # the first srep in the list is the reference object
+
   @shifts = [100, 100, 100]
+
+
+
+  # -----------keep out -----------
+  # ----old initialization codes...
 	# @sreps = [generateStraight2DDiscreteSrep(50,35,64,64,256,9)]
 	  # @sreps <<  generateStraight2DDiscreteSrep(50,30,64,64,256,9)
 	#   @sreps =[  generateStraight2DDiscreteSrep(50,30,64,64,256,9)]
@@ -355,6 +357,13 @@ def initialConfig
 	  #~ @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)
 	  #~ @sreps << generateStraight2DDiscreteSrep(50,35,64,64,256,9)
 	  #~ rotateSrep(@sreps[0], -Math::PI/6)
+	 # alert(@sreps.atoms[0])
+	  #~ @binpoints = generateBinary(128,20,15,64,64,0.0,0.0)
+	  #~ @points= binaryToPointList(@binpoints, 128)
+	  # the first srep in the list is the reference object
+  # ----------keep out-------------
+
+
   refresh @points, @sreps, @shifts
  end
   
