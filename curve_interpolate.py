@@ -22,16 +22,17 @@ xs = sys.argv[1]
 ys = sys.argv[2]
 print xs
 print ys
-step_size = int(sys.argv[3])
+step_size = float(sys.argv[3])
+index = sys.argv[4]
 xx = xs.strip('[]').split(' ')
 yy = ys.strip('[]').split(' ')
 x = []
 y = []
 # convert string to array
 for xp in xx:
-	x.append(int(xp))
+	x.append(float(xp))
 for yp in yy:
-	y.append(int(yp))
+	y.append(float(yp))
 
 print x
 print y
@@ -43,12 +44,13 @@ print y
 # the parameterization t should range between 0 to 1
 t = np.arange(0.0,1.2,0.2)
 tck,u = interpolate.splprep([x,y],s=0)
-unew = np.arange(0.0,1.01,0.01)
+unew = np.arange(0.0,1.01,step_size)
 out = interpolate.splev(unew,tck)
 print out
 
-#f = open('interpolated_points','w')
-#writePts(unew, ynew,f)
+print "index: " + str(index)
+f = open('interpolated_points_'+index,'w')
+writePts(out[0],out[1] ,f)
 
 
 plt.figure()

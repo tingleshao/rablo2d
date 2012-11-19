@@ -114,29 +114,29 @@ def moveAtomPositionByClick(srep, atomIndex, translationVector)
 end
 
 def rotateOneAtom(cX, cY, xx, yy, angle)
-	if (cX.to_f != xx.to_f)
-		# theta is the angle in radius
-		# phi is the x, y old angle reltative to horizontal
-		x = xx.to_f
-		y = yy.to_f
-		centerX = cX.to_f
-		centerY = cY.to_f
-		relativeX = x - centerX
-		relativeY = y - centerY
-		r = Math.sqrt(relativeX**2 + relativeY**2)
-		cosphi = relativeX / r
-		sinphi = relativeY / r
-		cosThetaPlusPhi = Math.cos(angle) * cosphi - Math.sin(angle) * sinphi
-		d1 = r * cosThetaPlusPhi 
-		newX = centerX + d1
-		sinThetaPlusPhi = Math.sin(angle) * cosphi + Math.cos(angle) * sinphi 
-		d3 = r * sinThetaPlusPhi
-		newY = y + d3
-		newP = [newX, newY]
-	else 
-		newP = [xx, yy]
-	end
-	return newP
+  if (cX.to_f != xx.to_f)
+    # theta is the angle in radius
+    # phi is the x, y old angle reltative to horizontal
+    x = xx.to_f
+    y = yy.to_f
+    centerX = cX.to_f
+    centerY = cY.to_f
+    relativeX = x - centerX
+    relativeY = y - centerY
+    r = Math.sqrt(relativeX**2 + relativeY**2)
+    cosphi = relativeX / r
+    sinphi = relativeY / r
+    cosThetaPlusPhi = Math.cos(angle) * cosphi - Math.sin(angle) * sinphi
+    d1 = r * cosThetaPlusPhi 
+    newX = centerX + d1
+    sinThetaPlusPhi = Math.sin(angle) * cosphi + Math.cos(angle) * sinphi 
+    d3 = r * sinThetaPlusPhi
+    newY = y + d3
+    newP = [newX, newY]
+  else 
+    newP = [xx, yy]
+  end
+  return newP
 end
 
 def checkSrepIntersection(srep1, srep2, shift1, shift2)
@@ -197,7 +197,7 @@ def parseSavedSrep(filename)
 	return sreps
 end
 
-def interpolateSkeletalCurveGamma(t,xt,yt,step_size)
+def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
 # this function takes the discrete base points and interpolate the gamma (skeletal curves)
 #   - interpolate gamma can be done using cubic spline 
 #   - this function uses system call on a python routine
@@ -205,8 +205,8 @@ def interpolateSkeletalCurveGamma(t,xt,yt,step_size)
   # read that file. 
   # then we have the gamma values. That is for one srep.
   # call the python script to generate intepolated gammas
-  xs = '"[' + x.join(" ") + ']"'
-  ys = '"[' + y.join(" ") + ']"'
+  xs = '"[' + xt.join(" ") + ']"'
+  ys = '"[' + yt.join(" ") + ']"'
   step_size_s = step_size.to_s
   system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s)
   # the 'interpolated_points' file contains interpolated points

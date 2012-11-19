@@ -197,7 +197,7 @@ def parseSavedSrep(filename)
 	return sreps
 end
 
-def interpolateSkeletalCurveGamma(t,xt,yt,step_size)
+def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
 # this function takes the discrete base points and interpolate the gamma (skeletal curves)
 #   - interpolate gamma can be done using cubic spline 
 #   - this function uses system call on a python routine
@@ -205,10 +205,10 @@ def interpolateSkeletalCurveGamma(t,xt,yt,step_size)
   # read that file. 
   # then we have the gamma values. That is for one srep.
   # call the python script to generate intepolated gammas
-  xs = '"[' + x.join(" ") + ']"'
-  ys = '"[' + y.join(" ") + ']"'
+  xs = '"[' + xt.join(" ") + ']"'
+  ys = '"[' + yt.join(" ") + ']"'
   step_size_s = step_size.to_s
-  system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s)
+  system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s+ ' ' + index.to_s)
   # the 'interpolated_points' file contains interpolated points
   gamma_file = File.new("interpolated_points", "r")
   ixs = gamma_file.gets

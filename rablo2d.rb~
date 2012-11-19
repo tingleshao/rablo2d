@@ -91,8 +91,9 @@ class Field
     shifty = args[2]
     scale = args[4]
     show_sphere = args[5]
+    show_curve = args[6]
     if args.length == 7
-      totalCorreLst = args[6]
+      totalCorreLst = args[7]
     end
 	  
     srep.atoms.each_with_index do |atom|
@@ -106,8 +107,35 @@ class Field
       end
       render_spokes(atom.x+shiftx, atom.y+shifty, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
     end
+    
+    if show_curve
+      # display the interpolated curve points (gamma) 
+      render_curve(srep.index, srep, shiftx, shifty)
+    end
+
   end 
   
+  def render_curve(index, srep, shiftx, shifty)
+    file_name = "interpolated_points_" + index.to_s
+    if File::exists?(file_name)
+      gamma_file = File.open(file_name, "r")
+    else
+      alert('file does not exist, interpolate it now')
+      xt = srep.atoms.collect{|atom| atom.x}
+      yt = srep.atoms.collect{|atom| atom.y}
+      step_size = 0.01
+      interpolateSkeletalCurveGamma(xt,yt,step_size,srep.index)
+      gamma_file = File.open(file_name, "r")
+    end 
+    xsa = gamma_file.gets.split(" ")
+    ysa = gamma_file.gets.split(" ") 
+    xs = xsa.collect{|x| x.to_f}
+    ys = ysa.collect{|y| y.to_f}
+    xs.each_with_index do |x,i|
+      render_atom(x,ys[i],"#000000")
+    end
+  end
+
   def render_atom(x, y, color)
     render_point_big(x, y, color)
   end
@@ -118,9 +146,9 @@ class Field
 
     @sreps.each.with_index do |srep, i|
       if i == 0 #=> reference obj
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, @totalCorreLst)
+	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, true, @totalCorreLst)
       else
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true ) 
+	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, true) 
       end
     end
   end  
@@ -339,10 +367,12 @@ def initialConfig
   points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
   l = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
-  @sreps = [generate2DDiscreteSrep(points,l,u)]
-
+  srep0 = generate2DDiscreteSrep(points,l,u)
+  srep0.index = 0;
+  @sreps = [srep0]
+  
   @shifts = [100, 100, 100]
-
+  
 
 
   # -----------keep out -----------
@@ -362,6 +392,7 @@ def initialConfig
 	  #~ @points= binaryToPointList(@binpoints, 128)
 	  # the first srep in the list is the reference object
   # ----------keep out-------------
+
 
   refresh @points, @sreps, @shifts
  end

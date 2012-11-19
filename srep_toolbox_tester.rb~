@@ -9,8 +9,8 @@ return srep1
 end
 
 def ddl2
-	srep1 = generateStraight2DDiscreteSrepC();
-	return srep1
+  srep1 = generateStraight2DDiscreteSrepC();
+  return srep1
 end
 
 def ddl3
@@ -23,12 +23,12 @@ def ddl3
 end
 
 def ddl4
-  points = [[10,20],[20,15],[30,10],[40,12],[40,16]]
+  points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
   x = points.collect{|p| p[0]}
 
   y = points.collect{|p| p[1]}
 #  puts "y: " + y.to_s
-  interpolateSkeletalCurveGamma(x,y,1)
+  interpolateSkeletalCurveGamma(x,y,0.01)
 end
 
 def ddl5
