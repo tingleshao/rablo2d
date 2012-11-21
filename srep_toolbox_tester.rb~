@@ -29,11 +29,50 @@ def ddl4
   y = points.collect{|p| p[1]}
 #  puts "y: " + y.to_s
   interpolateSkeletalCurveGamma(x,y,0.01)
-end
+end	
 
 def ddl5
+  # test compute kappa at base points 
+  f = File.new('interpolated_points_0', 'r')
+  xs = f.gets.strip.split(' ')
+  ys = f.gets.strip.split(' ')  
+  xt = []
+  xs.each do |x|
+    xt << x.to_f
+  end
+  yt = []
+  ys.each do |y|
+    yt << y.to_f
+  end
+  h = 0.01
+  while l = f.gets
+    puts "l: " + l
+  end
+  
+  f.close
+  ff = File.new('interpolated_rs_0', 'r')
 
+  rs = ff.gets.strip.split(' ')
+  puts "rs: " + rs.to_s
+  rt = []
+  rs.each do |r|
+    rt << r.to_f
+  end
+
+  indices = []
+  points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
+  indices << 0
+  points.each_with_index do |p, i|
+    if i != 0 && i != points.length-1
+      v = xt.collect{|x| (x-p[0]).abs }.each_with_index.min
+      indices << v[1]
+    end
+  end
+  indices << xt.length-1
+
+  kappa,kt = computeBaseKappa(xt,yt, indices, h, rt)
+  return kappa,kt,rt
 end
 
-
-ddl4
+#k,kt =  ddl5
+#puts kt

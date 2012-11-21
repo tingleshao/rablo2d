@@ -30,9 +30,9 @@ x = []
 y = []
 # convert string to array
 for xp in xx:
-	x.append(int(xp))
+	x.append(float(xp))
 for yp in yy:
-	y.append(int(yp))
+	y.append(float(yp))
 
 print x
 print y

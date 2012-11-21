@@ -1,4 +1,4 @@
-load 'image_toolbox.rb'
+#load 'image_toolbox.rb'
 load 'srep.rb'
 load 'atom.rb'
 
@@ -209,16 +209,11 @@ def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
   ys = '"[' + yt.join(" ") + ']"'
   step_size_s = step_size.to_s
   system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s+ ' ' + index.to_s)
-  # the 'interpolated_points' file contains interpolated points
-  gamma_file = File.new("interpolated_points", "r")
-  ixs = gamma_file.gets
-  iys = gamma_file.gets
-  puts "ixs: " + ixs 
-  puts "iys: " + iys  
+  # the 'interpolated_points_[index]' file contains interpolated points
   return ixs, iys
 end
 
-def interpolateRadius(xt,rt,step_size)
+def interpolateRadius(xt,rt,step_size,index)
 # this function interpolates r values
 # parameters: x values         xt
 #             r values         rt 
@@ -226,9 +221,9 @@ def interpolateRadius(xt,rt,step_size)
   xs = '"[' + xt.join(" ") + ']"'
   rs = '"[' + rt.join(" ") + ']"'
   step_size_s = step_size.to_s
-  system("python radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s)
-  # the 'interpolated_radius' file contains interpolated points
-  r_file = File.new("interpolated_rs", "r")
+  system("python radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s + ' ' + index )
+  # the 'interpolated_radius_[index]' file contains interpolated points
+  r_file = File.new("interpolated_rs_"+index, "r")
   ixs = r_file.gets
   irs = r_file.gets
   puts "ixs: " + ixs 
@@ -236,21 +231,87 @@ def interpolateRadius(xt,rt,step_size)
   return irs
 end
 
-def interpolateKappa(rt, kt, step_size)
+def interpolateKappa(rt, kt, step_size, index)
 # since rk < 1, we need get r to interpolate kappa
 # rt is an array that contains radius 
 # this function produces the k array that has the same length as the r array
   rk = [rt,kt].transpose.map{|x| x.reduce(:*)}
-  rkm1 = rk.collect{|x| x-1}
+  puts "inside 1: " + rk.to_s
+  rkm1 = rk.collect{|x| 1-x}
   logrkm1 = rkm1.collect{|x| Math.log(x)}
   logrkm1s = '"[' + logrkm1.join(" ") + ']"'
   step_size_s = step_size.to_s
-  system("python logrk_interpolate.py " + logrkm1s + ' ' + step_size_s)
-  # the 'interpolated_logrkm1s' file contains interpolated points
-  logrkm1_file = File.new("interpolated_logrkm1s", "r")
+  system("python logrk_interpolate.py " + logrkm1s + ' ' + step_size_s + ' ' + index.to_s)
+  # the 'interpolated_logrkm1s' file contains interpolated log(1-rk)
+  logrkm1_file = File.new("interpolated_logrkm1s_" + index.to_s , "r")
   ilogrkm1s = logrkm1_file.gets
   puts "ilogrkm1s: " + ilogrkm1s
   return ilogrmk1s
+end
+
+def computeBaseKappa(xt,yt, indices, h, rt)
+  # this function computes kappas at base points using the curvature formula
+  # also checks whether rk at these base points are smaller than 1
+  # k = (x'y''-y'x'') / (x'^2+y'^2)^(3/2)
+  # compute numerical derivatives 
+  # for end points the way to compute derivatives are different
+  # the index should not contain the first and the last index
+  dx = []
+  dy = []
+  ddx = []
+  ddy = []
+  dx0 = (xt[1] - xt[0]) / h
+  dx1 = (xt[2] - xt[1]) / h
+  dxe = (xt[-1] - xt[-2]) / h
+  dxem1 = (xt[-2] - xt[-3]) / h
+  ddx0 = (dx1 - dx0) / h
+  ddxe = (dxe - dxem1) / h
+  dy0 = (yt[1] - yt[0]) / h
+  dy1 = (yt[2] - yt[1]) / h
+  dye = (yt[-1] - yt[-2]) / h
+  dyem1 = (yt[-2] - yt[-3]) / h
+  ddy0 = (dy1 - dy0) / h
+  ddye = (dye - dyem1) / h
+  dx << dx0
+  dy << dy0
+  ddx << ddx0
+  ddy << ddy0
+ 
+  rs = []
+  rs << rt[0]
+ 
+  indices.each do |i|
+    if i != 0 && i != (xt.length - 1)	
+      dxi = ( xt[i+1] - xt[i-1] ) / (2 * h)
+      dyi = ( yt[i+1] - yt[i-1] ) / (2 * h)
+      ddxi = (xt[i+1] - (2 * xt[i]) + xt[i-1]) / (h**2.0)
+      ddyi = (yt[i+1] - (2 * yt[i]) + yt[i-1]) / (h**2.0) 
+      dx << dxi 
+      dy << dyi 
+      ddx << ddxi
+      ddy << ddyi
+ 
+      rs << rt[i]
+    end
+  end
+
+  rs << rt[-1]
+  dx << dxe
+  dy << dye
+  ddx << ddxe
+  ddy << ddye
+  kappa = []
+  kr = []
+  
+  dx.each_with_index do |dxi, i|
+    ki = (dx[i] * ddy[i] - dy[i] * ddx[i]) / ((dx[i]**2)+(dy[i]**2))**(3.0/2.0) 
+    kappa << ki
+    #compute k * r 
+    kri = ki * rs[i]
+    kr << kri
+  end
+ 
+  return kappa, kr 
 end
 
 def interpolateSpokeAtPosition(t,ut,kt,at,pos)

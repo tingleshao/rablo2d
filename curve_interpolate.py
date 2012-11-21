@@ -20,8 +20,6 @@ def writePts(x,y,f):
 # the passed x and y data should be quoted 
 xs = sys.argv[1]
 ys = sys.argv[2]
-print xs
-print ys
 step_size = float(sys.argv[3])
 index = sys.argv[4]
 xx = xs.strip('[]').split(' ')

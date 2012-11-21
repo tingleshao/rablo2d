@@ -132,7 +132,7 @@ class Field
     xs = xsa.collect{|x| x.to_f}
     ys = ysa.collect{|y| y.to_f}
     xs.each_with_index do |x,i|
-      render_atom(x,ys[i],"#000000")
+      render_atom(x+shiftx,ys[i]+shifty,"#000000")
     end
   end
 
@@ -238,11 +238,7 @@ class DrawPad
        @app.oval atom[0]-atom[2]/2, atom[1]-atom[2]/2, atom[2]
      end
    end
-	
-   def addAtom()
-		
-   end
-	
+
    def refresh()
      paint
      @app.click do |button, left, top|
@@ -265,6 +261,95 @@ class DrawPad
 	
 end 
 
+class InterpolateControl
+	
+  attr_accessor :app, :index, :msg
+  def initialize(app)
+    @app = app
+   refresh
+  end
+	
+  def paint()
+    @app.clear
+    @app.flow :margin => 3 do
+      @app.button("Check") {
+      	if checkIndexEmpty()
+          @msg.text = "empty index!"
+        else
+          file_name = "interpolated_radius_" + @index.text
+          @msg.text = "file existing: "+  File::exists?(file_name).to_s
+        end
+      }
+      @app.button("Interpolate") {
+      # interpolate radius
+          index = @index.text
+          srep =  $sreps[index.to_i]
+          xt = srep.atoms.collect{|atom| atom.x.to_s}
+          rt = srep.atoms.collect{|atom| atom.spoke_length[0].to_s} 
+          step_size = 0.01
+          rs = interpolateRadius(xt,rt,step_size,index)
+          rr = rs.strip.split(' ').collect{|r| r.to_f} 
+      # interpolate kappa
+          # read interpolated file
+          step_size = 0.01
+          # rt and kt are the r's and k's on the base points 
+          # need to calculate kappa at base positions using the curvature formula
+
+          f = File.new('interpolated_points_'+ index, 'r')   
+          xs = f.gets.strip.split(' ')
+          ys = f.gets.strip.split(' ')  
+          xt = []
+          xs.each do |x|
+            xt << x.to_f
+          end
+          yt = []
+          ys.each do |y|
+            yt << y.to_f
+          end
+          h = step_size
+          f.close
+          ff = File.new('interpolated_rs_0', 'r')
+          ff.gets
+          rs = ff.gets.strip.split(' ')
+          puts "rr: " + rr.to_s
+
+          indices = []
+          points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
+          indices << 0
+          points.each_with_index do |p, i|
+            if i != 0 && i != points.length-1
+              v = xt.collect{|x| (x-p[0]).abs }.each_with_index.min
+              indices << v[1]
+            end
+          end
+          indices << xt.length-1
+
+          kappa,kt = computeBaseKappa(xt,yt, indices, h, rr)
+          rt = srep.atoms.collect{|atom| atom.spoke_length[0]} 
+          puts "inside 2: rt: " + rt.to_s   
+          puts "inside 3: kt: " + kappa.to_s 
+          interpolateKappa(rt, kt, step_size, index)
+      }
+   end
+   @app.stack :margin => 3 do 
+       @app.para "enter the index of the srep"
+       @index = @app.edit_line :width => 50
+       @msg = @app.para "hi"
+     end
+     @app.nofill
+   end
+
+   def refresh
+     
+
+     paint
+   end
+	
+   def checkIndexEmpty()
+     return @index.text.strip() == ""
+   end
+end
+
 Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
   def render_field
     clear do
@@ -283,7 +368,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	      atom.dilate(1.05)
 	    end
 	  end
-          refresh @points, @sreps, @shifts 
+          refresh @points, $sreps, @shifts 
         }
 
 	button("Reset") {
@@ -293,12 +378,12 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
 	button("Move") {
 	  @shifts[0] = @shifts[0] + 10
-	  refresh @points, @sreps, @shifts
+	  refresh @points, $sreps, @shifts
 	}
 
 	button("Rotate") {
 	  rotateSrep(@sreps[0], Math::PI/6)
-	  refresh @points, @sreps, @shifts
+	  refresh @points, $sreps, @shifts
 	}
 
 	button("Link") {
@@ -326,7 +411,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 		end
 	      end
 	    end
-	    refresh @points, @sreps, @shifts
+	    refresh @points, $sreps, @shifts
 	    count = @field.getHowManyColored
 	    if count >= 7
 	      flag = 1
@@ -334,13 +419,20 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
 	}
 
-	button("Save"){
+	button("Save") {
 	  fileName = 'pat101_31_par_link.txt'
 	  File.open(fileName,'w') {|file|
 	    file.write (@field.totalCorreLst.to_s)
 	    file.close}
 	}
+ 
+        button("Check r-k File") {
+          window :title => "draw srep", :width => 402, :height => 375 do
+	    dp = InterpolateControl.new(self)
+          end
+        }
 
+ 
      end
      stack do @status = para :stroke => black end
      @field.paint
@@ -369,7 +461,7 @@ def initialConfig
   u = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
   srep0 = generate2DDiscreteSrep(points,l,u)
   srep0.index = 0;
-  @sreps = [srep0]
+  $sreps = [srep0]
   
   @shifts = [100, 100, 100]
   
@@ -394,9 +486,9 @@ def initialConfig
   # ----------keep out-------------
 
 
-  refresh @points, @sreps, @shifts
- end
+  refresh @points, $sreps, @shifts
+end
   
- @dontGrowLst = []
- initialConfig
+@dontGrowLst = []
+initialConfig
 end
