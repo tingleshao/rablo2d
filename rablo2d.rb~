@@ -444,11 +444,12 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
         }
 
- 	button("interpolate at index 1") {
+ 	button("interpolate from index 1") {
           dt = 0.01
           # ---
           # calculate parameters......
           # this time we read the file
+          # read all points, rs, logrkm1s
           file = File.open('interpolated_points_0', 'r')
           xt = file.gets.split(' ').collect{|x| x.to_f}
 	  yt = file.gets.split(' ').collect{|y| y.to_f}
@@ -460,6 +461,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           indices = []
            points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
           indices << 0
+          # calculate the indices of base points 
           points.each_with_index do |p, i|
             if i != 0 && i != points.length-1
               v = xt.collect{|x| (x-p[0]).abs }.each_with_index.min
@@ -468,18 +470,22 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
           indices << xt.length-1
           ## ---  
-          vt = [xt[indices[1]+1] - xt[indices[1]], yt[indices[1]+1] - yt[indices[1]]]
+          $count = 0
+          vt = [xt[indices[1]+1+$count] - xt[indices[1]+$count], yt[indices[1]+1+$count] - yt[indices[1]+$count]]
           size_vt = vt[0]**2 + vt[1]**2
           norm_vt = vt.collect{|v| v / size_vt} 
           
-          kt = ( 1 + ( -1 * Math.exp(logrkm1[indices[1]]) ) ) / rt[indices[1]] 
+          kt = ( 1 + ( -1 * Math.exp(logrkm1[indices[1]]) ) ) / rt[indices[1]+$count] 
           dt = 0.01
-          u01 = interpolateSpokeAtPos1($u1, norm_vt, kt, dt)
+          u01 = interpolateSpokeAtPos($u1, norm_vt, kt, dt)
           puts "u01: " + u01.to_s
-          $interpBegin << [100+vt[0]*0.01,75+vt[1]*0.01]
-          puts "rt: " + rt[indices[1]].to_s
-          $interpEnd <<  [100+vt[0]*0.01+u01[0]*rt[indices[1]+1],75+vt[1]*0.01+u01[1]*rt[indices[1]+1]]
-          puts "interpEnd: "+ $interpEnd[0].to_s
+          $u1 = u01
+          $interpBegin << [xt[indices[1]+$count]+vt[0]*0.01,yt[indices[1]+$count]+vt[1]*0.01]
+          puts "rt: " + rt[indices[1]+$count].to_s
+          $interpEnd <<  [xt[indices[1]+$count]+vt[0]*0.01+u01[0]*rt[indices[1]+1+$count],yt[indices[1]+$count]+vt[1]*0.01+u01[1]*rt[indices[1]+1+$count]]
+          puts "interpEnd: "+ $interpEnd[$count].to_s
+          $count = $count + 1
+          puts "count: "+ $count.to_s
           refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
         }
      end
@@ -512,7 +518,8 @@ def initialConfig
   srep0 = generate2DDiscreteSrep(points,l,u)
   srep0.index = 0;
   $sreps = [srep0]
-  $u1 = srep0.atoms[1].spoke_direction[0]
+  $u1 = $sreps[0].atoms[1].spoke_direction[0]
+  $count = 0
   @shifts = [100, 100, 100]
   $interpBegin = []
   $interpEnd = []

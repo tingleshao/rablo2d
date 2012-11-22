@@ -317,16 +317,17 @@ def interpolateSpokeAtPosition(t,ut,kt,at,pos)
  
 end
 
-def interpolateSpokeAtPos1(ut, vt, kt, dt)
+def interpolateSpokeAtPos(ut, vt, kt, dt)
   # we know the 
   # this function interpolates the spole at 1st base points to the right..
   # using the formula:
   #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
   a = calculateAUsingUVK(ut,vt,kt)
-  utpdt0 = (1+a*dt) * ut[0] + 10000* kt * vt[0] * dt
-  utpdt1 = (1+a*dt) * ut[1] + 10000* kt * vt[1] * dt
+  utpdt0 = (1+a*dt) * ut[0] +  50*kt * vt[0] * dt
+  utpdt1 = (1+a*dt) * ut[1] +  50*kt * vt[1] * dt
   return [utpdt0, utpdt1]
 end
+
 
 def calculateAUsingUVK(ut,vt,kt)
   a = kt * ( ut[0] * vt[0] + ut[1] * vt[1] )
