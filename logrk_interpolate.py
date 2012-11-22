@@ -8,7 +8,7 @@ import sys
 
 def writelogrk(logrk,f):
 	for lrk in logrk:
-		f.write(str(logrk))
+		f.write(str(lrk))
 		f.write(" ")
 
 rks = sys.argv[1]

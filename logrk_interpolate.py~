@@ -23,7 +23,7 @@ for foo in rkk:
 
 print "rk: " +  str(rk)
 
-t = np.arange(0.0,1.2,0.2)
+t = np.arange(0.0,1.25,0.25)
 x = t
 print "x: " + str(x)
 tck,u = interpolate.splprep([x,rk],s=0)

@@ -73,6 +73,23 @@ def ddl5
   kappa,kt = computeBaseKappa(xt,yt, indices, h, rt)
   return kappa,kt,rt
 end
+ 
+def ddl6
+# test what the file exactl gets
+foo = File.open('interpolated_points_0', 'r')
+x = foo.gets
+y = foo.gets
+foo = File.open('interpolated_rs_0', 'r')
+r = foo.gets.split(' ').collect{|bar| bar.to_f}
+foo = File.open('interpolated_logrkm1s_0', 'r')
+logrkm1 = foo.gets.split(" ").collect{|bar| bar.to_f 	}
+puts 'x: ' + x
+puts 'y: ' + y
+puts 'r: ' + r.length.to_s
+puts 'logrkm1: ' + logrkm1.length.to_s
+
+end
 
 #k,kt =  ddl5
 #puts kt
+ddl6

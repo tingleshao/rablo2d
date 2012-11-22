@@ -224,9 +224,7 @@ def interpolateRadius(xt,rt,step_size,index)
   system("python radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s + ' ' + index )
   # the 'interpolated_radius_[index]' file contains interpolated points
   r_file = File.new("interpolated_rs_"+index, "r")
-  ixs = r_file.gets
   irs = r_file.gets
-  puts "ixs: " + ixs 
   puts "irs: " + irs  
   return irs
 end
@@ -236,7 +234,7 @@ def interpolateKappa(rt, kt, step_size, index)
 # rt is an array that contains radius 
 # this function produces the k array that has the same length as the r array
   rk = [rt,kt].transpose.map{|x| x.reduce(:*)}
-  puts rk
+  puts "inside 1: " + rk.to_s
   rkm1 = rk.collect{|x| 1-x}
   logrkm1 = rkm1.collect{|x| Math.log(x)}
   logrkm1s = '"[' + logrkm1.join(" ") + ']"'
@@ -315,7 +313,24 @@ def computeBaseKappa(xt,yt, indices, h, rt)
 end
 
 def interpolateSpokeAtPosition(t,ut,kt,at,pos)
-# 
+
+ 
+end
+
+def interpolateSpokeAtPos1(ut, vt, kt, dt)
+  # we know the 
+  # this function interpolates the spole at 1st base points to the right..
+  # using the formula:
+  #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
+  a = calculateAUsingUVK(ut,vt,kt)
+  utpdt0 = (1+a*dt) * ut[0] - kt * vt[0] * dt
+  utpdt1 = (1+a*dt) * ut[1] - kt * vt[1] * dt
+  return [utpdt0, uppdt1]
+end
+
+def calculateAUsingUVK(ut,vt,kt)
+  a = kt * ( ut[0] * vt[0] + ut[1] * vt[1] )
+  return a
 end
 
 def generateBentSrep()

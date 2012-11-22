@@ -22,8 +22,6 @@ step_size = float(sys.argv[3])
 index = sys.argv[4]
 xx = xs.strip('[]').split(' ')
 rr = rs.strip('[]').split(' ')
-print xx
-print rr
 x = []
 r = []
 # convert string to array

@@ -7,10 +7,6 @@ import sys
 # btw: it is good to use step_size=0.01...
 
 def writeRadius(x,r,f):
-	for xp in x:
-		f.write(str(xp))
-		f.write(" ")
-	f.write('\n')
 	for rp in r:
 		f.write(str(rp))
 		f.write(" ")
