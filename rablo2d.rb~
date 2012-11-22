@@ -116,7 +116,7 @@ class Field
     end
 
     if @interpBegin.length > 0
-      alert "render_interp_spokes"
+      puts "render_interp_spokes"
       render_interp_spokes(shiftx, shifty, '#FFFFFF')
     end
   end 
@@ -145,7 +145,7 @@ class Field
   def render_interp_spokes(shiftx, shifty, color)
     @app.stroke color
     @interpBegin.each_with_index do |p, i|
-       @app.line(p[0]+shiftx, p[1]+shifty, interpEnd[i][0]+shiftx, interpEnd[i][0]+shifty)
+       @app.line(p[0]+shiftx, p[1]+shifty, interpEnd[i][0]+shiftx, interpEnd[i][1]+shifty)
     end
   end
 
@@ -475,10 +475,11 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           kt = ( 1 + ( -1 * Math.exp(logrkm1[indices[1]]) ) ) / rt[indices[1]] 
           dt = 0.01
           u01 = interpolateSpokeAtPos1($u1, norm_vt, kt, dt)
-     
+          puts "u01: " + u01.to_s
           $interpBegin << [100+vt[0]*0.01,75+vt[1]*0.01]
-          $interpEnd <<  [100+vt[0]*0.01+u01[0]*rt[indices[1]],75+vt[1]*0.01+u01[1]*rt[indices[1]]]
-    
+          puts "rt: " + rt[indices[1]].to_s
+          $interpEnd <<  [100+vt[0]*0.01+u01[0]*rt[indices[1]+1],75+vt[1]*0.01+u01[1]*rt[indices[1]+1]]
+          puts "interpEnd: "+ $interpEnd[0].to_s
           refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
         }
      end

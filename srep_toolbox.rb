@@ -323,8 +323,8 @@ def interpolateSpokeAtPos1(ut, vt, kt, dt)
   # using the formula:
   #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
   a = calculateAUsingUVK(ut,vt,kt)
-  utpdt0 = (1+a*dt) * ut[0] - kt * vt[0] * dt
-  utpdt1 = (1+a*dt) * ut[1] - kt * vt[1] * dt
+  utpdt0 = (1+a*dt) * ut[0] +  kt * vt[0] * dt
+  utpdt1 = (1+a*dt) * ut[1] +  kt * vt[1] * dt
   return [utpdt0, utpdt1]
 end
 
