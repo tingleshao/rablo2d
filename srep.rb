@@ -1,5 +1,5 @@
 class SRep 
-  attr_accessor :index, :atoms, :skeletal_curve, :step_size, :color, :offset
+  attr_accessor :index, :atoms, :skeletal_curve, :step_size, :color, :offset, :base_index
 	
   def initialize(index, atoms, skeletal_curve, step_size, color, offset)
     @index = index

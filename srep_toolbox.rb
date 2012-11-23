@@ -38,7 +38,7 @@ def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
   return m
 end
 
-def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
+def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, index)
   # the atoms is passed as a list of x-y's 
   # should generate atom objects for that
   srep = SRep.new()	
@@ -58,11 +58,8 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
       y = ui[1]
       ui.each_with_index do |foo, index2|
         ui[index2] = foo / Math.sqrt(x**2+y**2)
-   #     puts "foo: " + foo.to_s
-   #     puts "ui: " + ui[index2].to_s
       end
     end 
- #   puts usi
     # make sure the spoke length vector is in type Float
     li = spoke_length[i]
     li.each_with_index do |l, index|
@@ -76,6 +73,86 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction)
     srep.atoms.push(atomO)
   end
   srep.color = '#000000'
+
+  # compute the interpolated curve 
+  xt = srep.atoms.collect{|atom| atom.x }
+  yt = srep.atoms.collect{|atom| atom.y }
+  curve = interpolateSkeletalCurveGamma(xt, yt, step_size, index)
+  srep.skeletal_curve = curve
+
+  # compute indices 
+  indices = []
+  indices << 0
+  atoms.each_with_index do |atom, i|
+    if i != 0 && i != atoms.length-1
+      diff = curve[0].collect{|x| (x-atom[0]).abs }
+      v = diff.index(diff.min)
+      indices << v
+    end
+  end
+  indices << curve[0].length-1
+  srep.base_index = indices   
+  puts "indices: "+  indices.to_s
+  # use the curve and upper spokes to get the value of lower spokes and end spokes 
+  # calculate v at base points
+ v= []
+  v << [ -1*(curve[0][indices[0]+1]-curve[0][indices[0]]), 1*(curve[1][indices[0]+1]-curve[1][indices[0]])]
+
+  indices.each_with_index do |ind, i |
+    if i < indices.length - 1 && i != 0
+      v << [curve[0][ind+1]-curve[0][ind], -1*(curve[1][ind+1]-curve[1][ind])]
+    end
+  end
+   
+  v << [ curve[0][indices[-1]] - curve[0][indices[-1]-1], -1* (curve[1][indices[-1]]- curve[1][indices[-1]-1]) ] 
+ puts "v: "+ v.to_s
+refine = true 
+if refine
+  # get the upper spokes directions 
+  srep.atoms.each_with_index do |atom, i| 
+    u1 = atom.spoke_direction[1]  
+    size_norm_v=  Math.sqrt(v[i][0] **2 + v[i][1] **2)
+    norm_v = [v[i][0] / size_norm_v ,  v[i][1] / size_norm_v ]
+    u1_proj_on_v = norm_v.collect{|e| e* (u1[0] * norm_v[0] + u1[1] * norm_v[1])} 
+   #--
+   size_proj = Math.sqrt(u1_proj_on_v[0] **2 + u1_proj_on_v[1] **2 )
+   norm_proj = [u1_proj_on_v[0] / size_proj, u1_proj_on_v[1] / size_proj]
+   puts "norm_v: " + norm_v.to_s
+   puts "norm_proj: " + norm_proj.to_s
+# -- 
+   puts "u1_proj_on_v: " + u1_proj_on_v.to_s
+    u1_prep_to_v = [u1[0] - u1_proj_on_v[0], u1[1] - u1_proj_on_v[1]]
+    u0 = [1 * u1_proj_on_v[0] - u1_prep_to_v[0], 1  *  u1_proj_on_v[1] - u1_prep_to_v[1]]
+    # normalize u0
+    u0_size = Math.sqrt(u0[0] ** 2 + u0[1] **2)  
+    u0[0] = u0[0] / u0_size
+    u0[1] = u0[1] / u0_size
+   #check whether perpendicular
+#--
+    diff = [u0[0]-u1[0],u0[1]-u1[1]]
+    prod = diff[0] * norm_v[0] + diff[1]*norm_v[1]
+  puts "prod: "+ prod.to_s
+#--
+    atom.spoke_direction[0] = u0
+  end
+
+  # for the end spokes, set their direction to the v 
+
+ refine2 = false
+if refine2
+  a0u2 = [-1 * v[0][0], -1 * v[0][1]]
+  a0u2_size = Math.sqrt(a0u2[0] ** 2 + a0u2[1] **2)
+  a0u2[0] = a0u2[0] / a0u2_size
+  a0u2[1] = a0u2[1] / a0u2_size
+  srep.atoms[0].spoke_direction[0] = a0u2
+end
+end
+  aendu2 = [v[-1][0], v[-1][1]]
+  aendu2_size = Math.sqrt(aendu2[0] ** 2 + aendu2[1] **2)
+  aendu2[0] = aendu2[0] / aendu2_size
+  aendu2[1] = aendu2[1] / aendu2_size
+  srep.atoms[0].spoke_direction[0] = aendu2
+
   return srep
 end
 
@@ -208,8 +285,11 @@ def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
   xs = '"[' + xt.join(" ") + ']"'
   ys = '"[' + yt.join(" ") + ']"'
   step_size_s = step_size.to_s
-  system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s+ ' ' + index.to_s)
-  # the 'interpolated_points_[index]' file contains interpolated points
+  system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s + ' ' + index.to_s)
+  # the 'interpolated_points_[in	dex]' file contains interpolated points
+  curve_file = File.new("interpolated_points_"+index.to_s, "r")
+  ixs = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
+  iys = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
   return ixs, iys
 end
 
@@ -323,8 +403,8 @@ def interpolateSpokeAtPos(ut, vt, kt, dt)
   # using the formula:
   #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
   a = calculateAUsingUVK(ut,vt,kt)
-  utpdt0 = (1+a*dt) * ut[0] +  60*kt * vt[0] * dt
-  utpdt1 = (1+a*dt) * ut[1] +  60*kt * vt[1] * dt
+  utpdt0 = (1+a*dt) * ut[0] +  kt * vt[0] * dt
+  utpdt1 = (1+a*dt) * ut[1] + kt * vt[1] * dt
   return [utpdt0, utpdt1]
 end
 

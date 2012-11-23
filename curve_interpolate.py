@@ -51,8 +51,7 @@ f = open('interpolated_points_'+index,'w')
 writePts(out[0],out[1] ,f)
 
 
-plt.figure()
-plt.plot(x,y,'x',out[0],out[1])
-plt.axis('equal')
-#
-plt.show()
+#plt.figure()
+#plt.plot(x,y,'x',out[0],out[1])
+#plt.axis('equal')
+#plt.show()

@@ -78,11 +78,15 @@ class Field
   def render_spokes(cx, cy, type, spoke_length, spoke_direction, color)
     @app.stroke color
     if type == 'end'
+    @app.stroke "#FFFFFF"
        @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
+    @app.stroke color
        @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
        @app.line(cx, cy, cx + spoke_length[2] * spoke_direction[2][0], cy - spoke_length[2] * spoke_direction[2][1])
     elsif type == 'inner'
+ @app.stroke "#FFFFFF"
        @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
+        @app.stroke color
        @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
     end
   end
@@ -133,10 +137,8 @@ class Field
       interpolateSkeletalCurveGamma(xt,yt,step_size,srep.index)
       gamma_file = File.open(file_name, "r")
     end 
-    xsa = gamma_file.gets.split(" ")
-    ysa = gamma_file.gets.split(" ") 
-    xs = xsa.collect{|x| x.to_f}
-    ys = ysa.collect{|y| y.to_f}
+    xs = gamma_file.gets.split(" ").collect{|x| x.to_f}
+    ys = gamma_file.gets.split(" ").collect{|y| y.to_f}
     xs.each_with_index do |x,i|
       render_atom(x+shiftx,ys[i]+shifty,"#000000")
     end
@@ -469,20 +471,19 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
             end
           end
           indices << xt.length-1
-          ## ---  
-          $count = 0
+          #-- 
           vt = [xt[indices[1]+1+$count] - xt[indices[1]+$count], yt[indices[1]+1+$count] - yt[indices[1]+$count]]
           size_vt = vt[0]**2 + vt[1]**2
           norm_vt = vt.collect{|v| v / size_vt} 
           
-          kt = ( 1 + ( -1 * Math.exp(logrkm1[indices[1]]) ) ) / rt[indices[1]+$count] 
+          kt = ( 1 + ( -1 * Math.exp(logrkm1[indices[1]+$count]) ) ) / rt[indices[1]+$count] 
           dt = 0.01
           u01 = interpolateSpokeAtPos($u1, norm_vt, kt, dt)
           puts "u01: " + u01.to_s
           $u1 = u01
-          $interpBegin << [xt[indices[1]+$count]+vt[0]*0.01,yt[indices[1]+$count]+vt[1]*0.01]
+          $interpBegin << [xt[indices[1]+$count]+vt[0]*0.01,yt[indices[1]+$count]-vt[1]*0.01]
           puts "rt: " + rt[indices[1]+$count].to_s
-          $interpEnd <<  [xt[indices[1]+$count]+vt[0]*0.01+u01[0]*rt[indices[1]+1+$count],yt[indices[1]+$count]+vt[1]*0.01+u01[1]*rt[indices[1]+1+$count]]
+          $interpEnd <<  [xt[indices[1]+$count]+vt[0]*0.01+u01[0]*rt[indices[1]+1+$count],yt[indices[1]+$count]-vt[1]*0.01+u01[1]*rt[indices[1]+1+$count]]
           puts "interpEnd: "+ $interpEnd[$count].to_s
           $count = $count + 1
           puts "count: "+ $count.to_s
@@ -515,10 +516,10 @@ def initialConfig
   points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
   l = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
-  srep0 = generate2DDiscreteSrep(points,l,u)
+  srep0 = generate2DDiscreteSrep(points,l,u,0.01,0)
   srep0.index = 0;
   $sreps = [srep0]
-  $u1 = $sreps[0].atoms[1].spoke_direction[0]
+  $u1 = $sreps[0].atoms[1].spoke_direction[1]
   $count = 0
   @shifts = [100, 100, 100]
   $interpBegin = []
