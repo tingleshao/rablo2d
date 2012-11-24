@@ -76,12 +76,16 @@ class Field
   end
 
   def render_spokes(cx, cy, type, spoke_length, spoke_direction, color)
+
+ # white: spoke zero
+# black: spoke 1
     @app.stroke color
     if type == 'end'
     @app.stroke "#FFFFFF"
        @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
     @app.stroke color
        @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
+    @app.stroke "#00FFFF"
        @app.line(cx, cy, cx + spoke_length[2] * spoke_direction[2][0], cy - spoke_length[2] * spoke_direction[2][1])
     elsif type == 'inner'
  @app.stroke "#FFFFFF"
@@ -134,7 +138,7 @@ class Field
       xt = srep.atoms.collect{|atom| atom.x}
       yt = srep.atoms.collect{|atom| atom.y}
       step_size = 0.01
-      interpolateSkeletalCurveGamma(xt,yt,step_size,srep.index)
+      interpolateSkeletalCurveGamma(xt,yt,step_size,srep.sreindex)
       gamma_file = File.open(file_name, "r")
     end 
     xs = gamma_file.gets.split(" ").collect{|x| x.to_f}
@@ -169,13 +173,13 @@ class Field
   end  
  
   def checkRefSrepIntersection
-    refsrep = @sreps[0] 
+    refsrep = $sreps[0] 
       totalCorreLst = []
-      @sreps[0].getLength.times do 
+      $sreps[0].getLength.times do 
 	totalCorreLst << [0, nil]
       end
-      (1..@sreps.length-1).each do |i|
-        correLst = checkSrepIntersection(refsrep, @sreps[i], @shifts[0], @shifts[i])
+      (1..$sreps.length-1).each do |i|
+        correLst = checkSrepIntersection(refsrep, $sreps[i], @shifts[0], @shifts[i])
 	totalCorreLst = combineCorrespondenceListResults(totalCorreLst, correLst, i)
       end
       return totalCorreLst
@@ -377,7 +381,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	}
 
         button("Dilate") { 
-	  @sreps.each do |srep|
+	  $sreps.each do |srep|
 	    srep.atoms.each do |atom|
 	      atom.dilate(1.05)
 	    end
@@ -513,18 +517,25 @@ def refresh points, sreps, shifts, interpBegin, interpEnd
 end
   
 def initialConfig
-  points = [[50,100],[100,75],[150,50],[200,60],[250,80]]
-  l = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
-  u = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
-  srep0 = generate2DDiscreteSrep(points,l,u,0.01,0)
-  srep0.index = 0;
+  points0 = [[50,100],[100,75],[150,50],[200,60],[250,80]]
+  l0 = [[35,35,35],[40,40],[50,50],[40,40],[35,35,35]]
+  u0 = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
+  srep0 = generate2DDiscreteSrep(points0,l0,u0,0.01,0)
   $sreps = [srep0]
   $u1 = $sreps[0].atoms[1].spoke_direction[1]
   $count = 0
-  @shifts = [100, 100, 100]
+  @shifts = [100, 100]
   $interpBegin = []
   $interpEnd = []
+  
 
+  points1 = [[150,200],[200,175],[250,150],[300,160],[350,180]]
+  l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
+  u1 = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
+  srep1 = generate2DDiscreteSrep(points1,l1,u1,0.01,1)
+   
+  $sreps << srep1
+  
   # -----------keep out -----------
   # ----old initialization codes...
 	# @sreps = [generateStraight2DDiscreteSrep(50,35,64,64,256,9)]

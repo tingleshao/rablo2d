@@ -38,10 +38,11 @@ def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
   return m
 end
 
-def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, index)
+def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep_index)
   # the atoms is passed as a list of x-y's 
   # should generate atom objects for that
-  srep = SRep.new()	
+  srep = SRep.new()
+  srep.index = srep_index	
   atoms.each_with_index do |atom, i|
     if spoke_length[i].length == 3
 	type = 'end'
@@ -77,7 +78,8 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, inde
   # compute the interpolated curve 
   xt = srep.atoms.collect{|atom| atom.x }
   yt = srep.atoms.collect{|atom| atom.y }
-  curve = interpolateSkeletalCurveGamma(xt, yt, step_size, index)
+  puts "srep: index in toolbox: " + srep_index.to_s
+  curve = interpolateSkeletalCurveGamma(xt, yt, step_size, srep_index)
   srep.skeletal_curve = curve
 
   # compute indices 
@@ -93,6 +95,7 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, inde
   indices << curve[0].length-1
   srep.base_index = indices   
   puts "indices: "+  indices.to_s
+
   # use the curve and upper spokes to get the value of lower spokes and end spokes 
   # calculate v at base points
  v= []
@@ -106,7 +109,7 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, inde
    
   v << [ curve[0][indices[-1]] - curve[0][indices[-1]-1], -1* (curve[1][indices[-1]]- curve[1][indices[-1]-1]) ] 
  puts "v: "+ v.to_s
-refine = true 
+refine = true
 if refine
   # get the upper spokes directions 
   srep.atoms.each_with_index do |atom, i| 
@@ -138,20 +141,18 @@ if refine
 
   # for the end spokes, set their direction to the v 
 
- refine2 = false
-if refine2
-  a0u2 = [-1 * v[0][0], -1 * v[0][1]]
+  a0u2 = [v[0][0], v[0][1]]
   a0u2_size = Math.sqrt(a0u2[0] ** 2 + a0u2[1] **2)
   a0u2[0] = a0u2[0] / a0u2_size
   a0u2[1] = a0u2[1] / a0u2_size
-  srep.atoms[0].spoke_direction[0] = a0u2
-end
-end
+  srep.atoms[0].spoke_direction[2] = a0u2
+
   aendu2 = [v[-1][0], v[-1][1]]
   aendu2_size = Math.sqrt(aendu2[0] ** 2 + aendu2[1] **2)
   aendu2[0] = aendu2[0] / aendu2_size
   aendu2[1] = aendu2[1] / aendu2_size
-  srep.atoms[0].spoke_direction[0] = aendu2
+  srep.atoms[-1].spoke_direction[2] = aendu2
+end
 
   return srep
 end
@@ -217,42 +218,42 @@ def rotateOneAtom(cX, cY, xx, yy, angle)
 end
 
 def checkSrepIntersection(srep1, srep2, shift1, shift2)
-	# returns a list indicates that for each atom in srep1, what is the correspoinding neighbor srep color 
-	correLst = []
-	srep1.each.with_index do |atom1, j|
-		correLst << [0, nil]
-		atom1posX = atom1[0][0] + shift1
-		atom1posY = atom1[0][1] + shift1
-		srep2_0PosX = srep2[0][0][0] + shift2
-		srep2_0PosY = srep2[0][0][1] + shift2
-		minDistSoFar = getDistance(atom1posX, atom1posY, srep2_0PosX, srep2_0PosY)
-		distToSrep2_0 = atom1[2][0] /2+ srep2[0][2][0] /2
-		if minDistSoFar < distToSrep2_0
-			correLst[j] = [1,0]
-		end
-		srep2.each.with_index do |atom2, i|
-			atom2posX = atom2[0][0] + shift2
-			atom2posY = atom2[0][1] + shift2
-			# now asssume all three r's for one atom are equivalent to each other (medial case)
-			r1PlusR2 = atom1[2][0]/2 + atom2[2][0] /2
-			dist =  getDistance(atom1posX, atom1posY, atom2posX, atom2posY) 
-			if dist < r1PlusR2 
-				if dist < minDistSoFar
-					correLst[j] = [1, i]
-					minDistSoFar = dist
-				end
-			end
-		end
+  # returns a list indicates that for each atom in srep1, what is the correspoinding neighbor srep color 
+  correLst = []
+  srep1.atoms.each_with_index do |atom1, j|
+    correLst << [0, nil]
+    atom1posX = atom1.x + shift1
+    atom1posY = atom1.y + shift1
+    srep2_0PosX = srep2.atoms[0].x + shift2
+    srep2_0PosY = srep2.atoms[0].y + shift2
+    minDistSoFar = getDistance(atom1posX, atom1posY, srep2_0PosX, srep2_0PosY)
+    distToSrep2_0 = atom1.spoke_length[0] + srep2.atoms[0].spoke_length[0]
+    if minDistSoFar < distToSrep2_0
+      correLst[j] = [1,0]
+    end
+    srep2.atoms.each_with_index do |atom2, i|
+      atom2posX = atom2.x + shift2
+      atom2posY = atom2.y + shift2
+      # asssume all three r's for one atom are equivalent to each other (partial blum?  case)
+      r1PlusR2 = atom1.spoke_length[0] + atom2.spoke_length[0]
+      dist =  getDistance(atom1posX, atom1posY, atom2posX, atom2posY) 
+      if dist < r1PlusR2 
+	if dist < minDistSoFar
+	  correLst[j] = [1, i]
+	  minDistSoFar = dist
 	end
-	return correLst
+      end
+    end
+  end
+  return correLst
 end
 
 
 
 def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
-	# this function takes a srep and information that needed for calculate the deformed srep
-	# it returns a deformed s-rep for it
-	# srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
+  # this function takes a srep and information that needed for calculate the deformed srep
+  # it returns a deformed s-rep for it
+  # srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
 	
 end 
 
@@ -285,8 +286,10 @@ def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
   xs = '"[' + xt.join(" ") + ']"'
   ys = '"[' + yt.join(" ") + ']"'
   step_size_s = step_size.to_s
+  index = index.to_s
   system("python curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s + ' ' + index.to_s)
-  # the 'interpolated_points_[in	dex]' file contains interpolated points
+  # the 'interpolated_points_[index]' file contains interpolated points
+
   curve_file = File.new("interpolated_points_"+index.to_s, "r")
   ixs = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
   iys = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
@@ -403,8 +406,8 @@ def interpolateSpokeAtPos(ut, vt, kt, dt)
   # using the formula:
   #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
   a = calculateAUsingUVK(ut,vt,kt)
-  utpdt0 = (1+a*dt) * ut[0] +  60*kt * vt[0] * dt
-  utpdt1 = (1+a*dt) * ut[1] +  60*kt * vt[1] * dt
+  utpdt0 = (1+a*dt) * ut[0] +  kt * vt[0] * dt
+  utpdt1 = (1+a*dt) * ut[1] + kt * vt[1] * dt
   return [utpdt0, utpdt1]
 end
 
