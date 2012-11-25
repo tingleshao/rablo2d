@@ -37,4 +37,18 @@ class SRep
   # this method would rotate the srep.
   end
 
+  def checkIntersection(other_srep)
+  # this method checks the intersection between self and another srep 
+  # based on this intersection, decide the curve's linking index
+    @atoms.each_with_index do |atom, i| 
+       other_srep.atoms.each_with_index do |other_atom, j|
+         
+       end
+    end
+  end
+
+  def computingMask(other_srep)
+  end
+
+
 end

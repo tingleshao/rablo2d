@@ -163,7 +163,7 @@ class Field
     @app.nostroke
     @totalCorreLst = checkRefSrepIntersection
 
-    @sreps.each.with_index do |srep, i|
+    $sreps.each.with_index do |srep, i|
       if i == 0 #=> reference obj
 	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, true, @totalCorreLst)
       else
