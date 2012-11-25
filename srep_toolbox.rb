@@ -327,7 +327,7 @@ def interpolateKappa(rt, kt, step_size, index)
   logrkm1_file = File.new("interpolated_logrkm1s_" + index.to_s , "r")
   ilogrkm1s = logrkm1_file.gets
   puts "ilogrkm1s: " + ilogrkm1s
-  return ilogrmk1s
+  return ilogrkm1s
 end
 
 def computeBaseKappa(xt,yt, indices, h, rt)
@@ -383,7 +383,8 @@ def computeBaseKappa(xt,yt, indices, h, rt)
   ddy << ddye
   kappa = []
   kr = []
-  
+  puts "***********************************"
+  puts "dx: " + dx.to_s
   dx.each_with_index do |dxi, i|
     ki = (dx[i] * ddy[i] - dy[i] * ddx[i]) / ((dx[i]**2)+(dy[i]**2))**(3.0/2.0) 
     kappa << ki
@@ -396,19 +397,29 @@ def computeBaseKappa(xt,yt, indices, h, rt)
 end
 
 def interpolateSpokeAtPosition(t,ut,kt,at,pos)
-
+  #************************************
  
 end
 
-def interpolateSpokeAtPos(ut, vt, kt, dt)
+def interpolateSpokeAtPos(u1t, v1t, k1t, d1t, u2t, v2t, k2t, d2t)
   # we know the 
   # this function interpolates the spole at 1st base points to the right..
   # using the formula:
   #   u(t+dt) = (1+a(t)*dt)u(t) - k(t)v(t)dt
-  a = calculateAUsingUVK(ut,vt,kt)
-  utpdt0 = (1+a*dt) * ut[0] +  kt * vt[0] * dt
-  utpdt1 = (1+a*dt) * ut[1] +  kt * vt[1] * dt
-  return [utpdt0, utpdt1]
+  # 
+  # d1t and d2t are all positive
+   puts "uvk: " + u1t.to_s + " " + v1t.to_s + " " + k1t.to_s
+   a1 = calculateAUsingUVK(u1t,v1t,k1t)
+  a2 = calculateAUsingUVK(u2t,v2t,k2t)
+  utp1dt0 = (1+a1*d1t) * u1t[0] -  k1t * v1t[0] * d1t
+  utp1dt1 = (1+a1*d1t) * u1t[1] -  k1t * v1t[1] * d1t
+  utp2dt0 = (1-a2*d2t) * u2t[0] +  k2t * v2t[0] * d2t
+  utp2dt1 = (1-a2*d2t) * u2t[1] +  k2t * v2t[1] * d2t
+  puts "aaaa: " + utp1dt0.to_s 
+  puts "bbbb: " + utp2dt0.to_s
+  puts "d1t: "+ d1t.to_s
+  puts "d2t: "+ d2t.to_s
+  return [(utp1dt0*d2t+utp2dt0*d1t)/(d1t+d2t), (utp1dt1*d2t+utp2dt1*d1t)/(d1t+d2t)]
 end
 
 
