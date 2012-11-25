@@ -11,7 +11,7 @@ end
 
 class Field
 
-  attr_accessor :sreps, :shifts, :totalCorreLst, :interpBegin, :interpEnd 
+  attr_accessor :sreps, :shifts, :interpBegin, :interpEnd 
   
   def initialize(app, points, sreps, shifts, interpBegin, interpEnd)
     @app = app
@@ -29,7 +29,6 @@ class Field
       color = "#" + color.to_s
       @colorLst << color
     end
-    @totalCorreLst = []
     @interpBegin = interpBegin
     @interpEnd = interpEnd
   end
@@ -102,24 +101,21 @@ class Field
     scale = args[4]
     show_sphere = args[5]
     show_curve = args[6]
-    if args.length == 7
-      totalCorreLst = args[7]
+      
+    if show_curve
+      # display the interpolated curve points (gamma) 
+      render_curve(srep.index, srep, shiftx, shifty)
     end
-	  
     srep.atoms.each_with_index do |atom|
 
-	render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
+      render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
 
       if show_sphere
 	render_circle(atom.x + shiftx - atom.spoke_length[0], atom.y + shifty - atom.spoke_length[0], atom.spoke_length[0] * 2 , srep.color)
       end
       render_spokes(atom.x+shiftx, atom.y+shifty, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
     end
-    
-    if show_curve
-      # display the interpolated curve points (gamma) 
-      render_curve(srep.index, srep, shiftx, shifty)
-    end
+  
 
     if @interpBegin.length > 0
       puts "render_interp_spokes"
@@ -159,52 +155,22 @@ class Field
   
   def paint
     @app.nostroke
-    @totalCorreLst = checkRefSrepIntersection
+    checkSrepIntersection
 
     $sreps.each.with_index do |srep, i|
-      if i == 0 #=> reference obj
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, false, @totalCorreLst)
-      else
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, false) 
-      end
+      render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, srep.show_curve)
     end
   end  
  
-  def checkRefSrepIntersection
-    refsrep = $sreps[0] 
-      totalCorreLst = []
-      $sreps[0].atoms.length.times do 
-	totalCorreLst << [0, nil]
-      end
-      (1..$sreps.length-1).each do |i|
-        refsrep.checkIntersection($sreps[i])
-#	totalCorreLst = combineCorrespondenceListResults(totalCorreLst, correLst, i)
-      end
-      return totalCorreLst
+  def checkSrepIntersection
+   (0..$sreps.length-1).each do |j|
+    (0..$sreps.length-1).each do |i|
+      if i != j
+        $sreps[j].checkIntersection($sreps[i])
+       end
+    end
+   end
   end
- 
- def combineCorrespondenceListResults(rcdLst, srepCorLst, srepIndex)
-   newRcdLst = []
-   rcdLst.length.times do |i|
-     newRcdLst << [rcdLst[i][0], rcdLst[i][1]]
-   end
-   srepCorLst.each.with_index do |ele, i|
-     if ele[0] == 1
-       newRcdLst[i] = [srepIndex, ele[1]] 
-     end
-   end
-   return newRcdLst
- end
-
- def getHowManyColored()
-   count = 0
-   @totalCorreLst.each do |e|
-     if e[1] != nil
-       count = count +1
-     end
-   end
-   return count
- end
 
  def [](*args)
     x, y = args
@@ -356,8 +322,6 @@ class InterpolateControl
    end
 
    def refresh
-     
-
      paint
    end
 	
@@ -408,11 +372,11 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	  while flag == 0
 	    @sreps.each.with_index do |srep, j|
 	      if j == 0
-		srep.each.with_index do |a, i|
-		  if @field.totalCorreLst[i][0] == 0 
-		    a[2][0] = a[2][0] * 1.05
-		  end
-	        end
+	#	srep.each.with_index do |a, i|
+	#	  if @field.totalCorreLst[i][0] == 0 
+	#	    a[2][0] = a[2][0] * 1.05
+	#	  end
+	 #       end
 	      else 
 		srep.each.with_index do |a, i|
 		  @field.totalCorreLst.size.times do |k|
@@ -495,7 +459,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
      stack do @status = para :stroke => black end
      @field.paint
-   #  para @field.totalCorreLst.to_s
      para "\n"
      @field.sreps.each do |srep|
        rLst = []
@@ -551,7 +514,6 @@ def initialConfig
 	  #~ @points= binaryToPointList(@binpoints, 128)
 	  # the first srep in the list is the reference object
   # ----------keep out-------------
-
 
   refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
 end

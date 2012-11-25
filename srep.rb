@@ -1,5 +1,5 @@
 class SRep 
-  attr_accessor :index, :atoms, :skeletal_curve, :step_size, :color, :offset, :base_index
+  attr_accessor :index, :atoms, :skeletal_curve, :show_curve, :step_size, :color, :offset, :base_index, :mask_func
 	
   def initialize(index, atoms, skeletal_curve, step_size, color, offset)
     @index = index
@@ -8,12 +8,14 @@ class SRep
     @step_size = step_size
     @color = color
     @offset = offset
+    @show_curve = true
     puts "srep fully initialized"
   end
 
   def initialize()
     @atoms = []
     @skeletal_curve = []
+    @show_curve = true
     puts "null srep initialized"
   end
 
@@ -42,13 +44,14 @@ class SRep
   # based on this intersection, decide the curve's linking index
     @atoms.each_with_index do |atom, i| 
        if atom.linking_index == -1
-         other_srep.atoms.each_with_index do |other_atom, j|
+          other_srep.atoms.each_with_index do |other_atom, j|
            if Math.sqrt( (atom.x - other_atom.x)**2 + (atom.y - other_atom.y)**2 ) < (atom.expand_spoke_length[0] + other_atom.expand_spoke_length[0]) #=> intersection
               atom.linking_index = other_srep.index
               puts "intersect! "
              puts "other color: " + other_srep.color
               atom.corresponding_color = other_srep.color
               other_atom.linking_index = @index
+              other_atom.corresponding_color = @color
            end
          end
       end
@@ -56,7 +59,9 @@ class SRep
   end
 
   def computingMask(other_srep)
-    
+    @skeletal_curve.each_with_index do |e, i|
+      
+    end
   end
 
 
