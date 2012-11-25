@@ -107,11 +107,9 @@ class Field
     end
 	  
     srep.atoms.each_with_index do |atom|
-      if totalCorreLst != nil
-	render_atom(atom.x + shiftx, atom.y + shifty, atom.correspondingColor)
-      else 
-	render_atom(atom.x + shiftx, atom.y + shifty, srep.color)
-      end
+
+	render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
+
       if show_sphere
 	render_circle(atom.x + shiftx - atom.spoke_length[0], atom.y + shifty - atom.spoke_length[0], atom.spoke_length[0] * 2 , srep.color)
       end
@@ -156,7 +154,7 @@ class Field
   end
 
   def render_atom(x, y, color)
-    render_point_big(x, y, color)
+      render_point_big(x, y, color)
   end
   
   def paint
@@ -165,9 +163,9 @@ class Field
 
     $sreps.each.with_index do |srep, i|
       if i == 0 #=> reference obj
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, true, @totalCorreLst)
+	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, false, @totalCorreLst)
       else
-	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, true) 
+	render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, false) 
       end
     end
   end  
@@ -175,12 +173,12 @@ class Field
   def checkRefSrepIntersection
     refsrep = $sreps[0] 
       totalCorreLst = []
-      $sreps[0].getLength.times do 
+      $sreps[0].atoms.length.times do 
 	totalCorreLst << [0, nil]
       end
       (1..$sreps.length-1).each do |i|
-        correLst = checkSrepIntersection(refsrep, $sreps[i], @shifts[0], @shifts[i])
-	totalCorreLst = combineCorrespondenceListResults(totalCorreLst, correLst, i)
+        refsrep.checkIntersection($sreps[i])
+#	totalCorreLst = combineCorrespondenceListResults(totalCorreLst, correLst, i)
       end
       return totalCorreLst
   end
@@ -497,7 +495,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
      stack do @status = para :stroke => black end
      @field.paint
-     para @field.totalCorreLst.to_s
+   #  para @field.totalCorreLst.to_s
      para "\n"
      @field.sreps.each do |srep|
        rLst = []
@@ -529,11 +527,11 @@ def initialConfig
   $interpEnd = []
   
 
-  points1 = [[150,200],[200,175],[250,150],[300,160],[350,180]]
+  points1 = [[150,200],[200,190],[250,200],[300,180],[350,180]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u1 = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
   srep1 = generate2DDiscreteSrep(points1,l1,u1,0.01,1)
-   
+  srep1.color = "#00FF66"
   $sreps << srep1
   
   # -----------keep out -----------

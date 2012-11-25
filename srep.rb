@@ -38,16 +38,25 @@ class SRep
   end
 
   def checkIntersection(other_srep)
-  # this method checks the intersection between self and another srep 
+  # this method checks the intersection between self and another srep, for the BASE points
   # based on this intersection, decide the curve's linking index
     @atoms.each_with_index do |atom, i| 
-       other_srep.atoms.each_with_index do |other_atom, j|
-         
-       end
+       if atom.linking_index == -1
+         other_srep.atoms.each_with_index do |other_atom, j|
+           if Math.sqrt( (atom.x - other_atom.x)**2 + (atom.y - other_atom.y)**2 ) < (atom.expand_spoke_length[0] + other_atom.expand_spoke_length[0]) #=> intersection
+              atom.linking_index = other_srep.index
+              puts "intersect! "
+             puts "other color: " + other_srep.color
+              atom.corresponding_color = other_srep.color
+              other_atom.linking_index = @index
+           end
+         end
+      end
     end
   end
 
   def computingMask(other_srep)
+    
   end
 
 

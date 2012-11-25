@@ -70,7 +70,7 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
     atom.each_with_index do |foo, index|
 	atom[index] = Float(foo)
     end
-    atomO = Atom.new(li, usi, type, atom[0], atom[1], '#000000')
+    atomO = Atom.new(li, usi, type, atom[0], atom[1], '#FF0000')
     srep.atoms.push(atomO)
   end
   srep.color = '#000000'
