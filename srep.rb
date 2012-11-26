@@ -1,5 +1,5 @@
 class SRep 
-  attr_accessor :index, :atoms, :skeletal_curve, :show_curve, :step_size, :color, :offset, :base_index, :mask_func
+  attr_accessor :index, :atoms, :skeletal_curve, :interpolated_spokes_begin, :interpolated_spokes_end, :show_curve, :step_size, :color, :offset, :base_index, :mask_func
 	
   def initialize(index, atoms, skeletal_curve, step_size, color, offset)
     @index = index
@@ -9,6 +9,8 @@ class SRep
     @color = color
     @offset = offset
     @show_curve = true
+    @interpolated_spokes_begin = []
+    @interpolated_spokes_end = []
     puts "srep fully initialized"
   end
 
@@ -16,6 +18,9 @@ class SRep
     @atoms = []
     @skeletal_curve = []
     @show_curve = true
+    
+    @interpolated_spokes_begin = []
+    @interpolated_spokes_end = []
     puts "null srep initialized"
   end
 

@@ -11,9 +11,9 @@ end
 
 class Field
 
-  attr_accessor :sreps, :shifts, :interpBegin, :interpEnd 
+  attr_accessor :sreps, :shifts
   
-  def initialize(app, points, sreps, shifts, interpBegin, interpEnd)
+  def initialize(app, points, sreps, shifts)
     @app = app
     @field = []
 
@@ -29,8 +29,6 @@ class Field
       color = "#" + color.to_s
       @colorLst << color
     end
-    @interpBegin = interpBegin
-    @interpEnd = interpEnd
   end
   
   def setPoints(points)
@@ -77,7 +75,7 @@ class Field
   def render_spokes(cx, cy, type, spoke_length, spoke_direction, color)
 
  # white: spoke zero
-# black: spoke 1
+ # black: spoke 1
     @app.stroke color
     if type == 'end'
     @app.stroke "#FFFFFF"
@@ -117,9 +115,9 @@ class Field
     end
   
 
-    if @interpBegin.length > 0
+    if srep.interpolated_spokes_begin.length > 0
       puts "render_interp_spokes"
-      render_interp_spokes(shiftx, shifty, '#FFFFFF')
+      render_interp_spokes(shiftx, shifty, '#FFFFFF', srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
     end
   end 
   
@@ -142,10 +140,10 @@ class Field
     end
   end
 
-  def render_interp_spokes(shiftx, shifty, color)
+  def render_interp_spokes(shiftx, shifty, color, ibegin, iend)
     @app.stroke color
-    @interpBegin.each_with_index do |p, i|
-       @app.line(p[0]+shiftx, p[1]+shifty, interpEnd[i][0]+shiftx, interpEnd[i][1]+shifty)
+    ibegin.each_with_index do |p, i|
+       @app.line(p[0]+shiftx, p[1]+shifty, iend[i][0]+shiftx, iend[i][1]+shifty)
     end
   end
 
@@ -340,7 +338,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	      atom.dilate(1.05)
 	    end
 	  end
-          refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+          refresh @points, $sreps, @shifts
         }
 
 	button("Reset") {
@@ -350,12 +348,12 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
 	button("Move") {
 	  @shifts[0] = @shifts[0] + 10
-	  refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+	  refresh @points, $sreps, @shifts
 	}
 
 	button("Rotate") {
 	  rotateSrep(@sreps[0], Math::PI/6)
-	  refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+	  refresh @points, $sreps, @shifts
 	}
 
 	button("Link") {
@@ -364,11 +362,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	  while flag == 0
 	    @sreps.each.with_index do |srep, j|
 	      if j == 0
-	#	srep.each.with_index do |a, i|
-	#	  if @field.totalCorreLst[i][0] == 0 
-	#	    a[2][0] = a[2][0] * 1.05
-	#	  end
-	 #       end
 	      else 
 		srep.each.with_index do |a, i|
 		  @field.totalCorreLst.size.times do |k|
@@ -383,7 +376,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 		end
 	      end
 	    end
-	    refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+	    refresh @points, $sreps, @shifts
 	    count = @field.getHowManyColored
 	    if count >= 7
 	      flag = 1
@@ -404,35 +397,36 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
         }
 
- 	button("interpolate from index 1") {    
-          indices = $sreps[0].base_index
-          foo = $bar
-          c1 = ( indices[foo+1] - indices[foo] ) - $count 
+ 	button("interpolate srep 0 upper") { 
+        # interpolate top   
+          srep_index = 1
+          indices = $sreps[srep_index].base_index
+          foo = $bar1
+          c1 = ( indices[foo+1] - indices[foo] ) - $count1 
           if c1 == 0
-            $count = 0
-            $bar = $bar +1    
-            c1 = ( indices[foo+1] - indices[foo] ) - $count 
-          foo = $bar
+            $count1 = 0
+            $bar1 = $bar1 +1    
+            c1 = ( indices[foo+1] - indices[foo] ) - $count1
+          foo = $bar1
           end
-          d1t = 0.01 * $count
+          d1t = 0.01 * $count1
           d2t = c1 * 0.01 
 
-          
           # ---
           # calculate parameters......
           # read all points, rs, logrkm1s from the file
-          file = File.open('interpolated_points_0', 'r')
+          file = File.open('interpolated_points_' + srep_index.to_s, 'r')
           xt = file.gets.split(' ').collect{|x| x.to_f}
 	  yt = file.gets.split(' ').collect{|y| y.to_f}
-          file = File.open('interpolated_rs_0', 'r')
+          file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
 	  rt = file.gets.split(' ').collect{|r| r.to_f}
-	  file = File.open('interpolated_logrkm1s_0', 'r')
+	  file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
           logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
           ## ---
 
           #-- 
-          v1t = [xt[indices[foo]+$count+1] - xt[indices[foo]], yt[indices[foo]+$count+1] - yt[indices[foo]]]
-          v2t = [xt[indices[foo+1]] - xt[indices[foo]+$count], yt[indices[foo+1]] - yt[indices[foo]+$count]]
+          v1t = [xt[indices[foo]+$count1+1] - xt[indices[foo]], yt[indices[foo]+$count1+1] - yt[indices[foo]]]
+          v2t = [xt[indices[foo+1]] - xt[indices[foo]+$count1], yt[indices[foo+1]] - yt[indices[foo]+$count1]]
           
           puts "v1t: " + v1t.to_s
           size_v1t = v1t[0]**2 + v1t[1]**2
@@ -443,18 +437,75 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
           k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
             
-          u1t = $sreps[0].atoms[foo].spoke_direction[0]
-          u2t = $sreps[0].atoms[foo+1].spoke_direction[0]
+          u1t = $sreps[srep_index].atoms[foo].spoke_direction[0]
+          u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[0]
           ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
           puts "ui: " + ui.to_s
-          $interpBegin << [xt[indices[foo]+$count+1],yt[indices[foo]+$count+1]]    
-          puts "begin: " + $interpBegin.to_s
-          puts "rt: " + rt[indices[foo]+$count].to_s
-          $interpEnd <<  [xt[indices[foo]+$count+1]+ui[0]*rt[indices[foo]+1+$count],yt[indices[foo]+$count+1]-ui[1]*rt[indices[foo]+1+$count]]
-          puts "interpEnd: "+ $interpEnd[$count].to_s
-          $count = $count + 1
-          puts "count: "+ $count.to_s
-          refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count1+1],yt[indices[foo]+$count1+1]]    
+          puts "rt: " + rt[indices[foo]+$count1].to_s
+          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count1+1]+ui[0]*rt[indices[foo]+1+$count1],yt[indices[foo]+$count1+1]-ui[1]*rt[indices[foo]+1+$count1]]
+          $count1 = $count1 + 1
+          puts "count: "+ $count1.to_s
+          
+          # interpolate another side
+          
+
+          refresh @points, $sreps, @shifts
+        }
+   
+        button("interpolate srep 0 lower") { 
+        # interpolate bottom
+          srep_index = 1
+          indices = $sreps[srep_index].base_index
+          foo = $bar2
+          c1 = ( indices[foo+1] - indices[foo] ) - $count2 
+          if c1 == 0
+            $count2 = 0
+            $bar2 = $bar2 +1    
+            c1 = ( indices[foo+1] - indices[foo] ) - $count2
+          foo = $bar2
+          end
+          d1t = 0.01 * $count2
+          d2t = c1 * 0.01 
+
+          # ---
+          # calculate parameters......
+          # read all points, rs, logrkm1s from the file
+          file = File.open('interpolated_points_' + srep_index.to_s, 'r')
+          xt = file.gets.split(' ').collect{|x| x.to_f}
+	  yt = file.gets.split(' ').collect{|y| y.to_f}
+          file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
+	  rt = file.gets.split(' ').collect{|r| r.to_f}
+	  file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
+          logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
+          ## ---
+
+          #-- 
+          v1t = [xt[indices[foo]+$count2+1] - xt[indices[foo]], yt[indices[foo]+$count2+1] - yt[indices[foo]]]
+          v2t = [xt[indices[foo+1]] - xt[indices[foo]+$count2], yt[indices[foo+1]] - yt[indices[foo]+$count2]]
+          
+          puts "v1t: " + v1t.to_s
+          size_v1t = v1t[0]**2 + v1t[1]**2
+          norm_v1t = v1t.collect{|v| v / size_v1t} 
+          size_v2t = v2t[0]**2 + v2t[1]**2
+          norm_v2t = v2t.collect{|v| v / size_v2t} 
+          
+          k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
+          k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
+            
+          u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
+          u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
+          ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
+          puts "ui: " + ui.to_s
+          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1]]    
+          puts "rt: " + rt[indices[foo]+$count2].to_s
+          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2]]
+          $count2 = $count2 + 1
+          puts "count: "+ $count2.to_s
+         
+          
+
+          refresh @points, $sreps, @shifts
         }
      end
 
@@ -472,9 +523,9 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
    end  
  end
   
-def refresh points, sreps, shifts, interpBegin, interpEnd
+def refresh points, sreps, shifts
   self.nofill
-  @field = Field.new self, points, sreps, shifts, interpBegin, interpEnd
+  @field = Field.new self, points, sreps, shifts
   render_field
 end
   
@@ -484,11 +535,11 @@ def initialConfig
   u0 = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
   srep0 = generate2DDiscreteSrep(points0,l0,u0,0.01,0)
   $sreps = [srep0]
-  $count = 0
+  $count1 = 0
+  $count2 = 0
   @shifts = [100, 100]
-  $interpBegin = []
-  $interpEnd = []
-  $bar = 0
+  $bar1 = 0
+  $bar2 = 0
   points1 = [[150,200],[200,190],[250,200],[300,180],[350,180]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u1 = [[[-1,3],[-1,-4],[-9,1]],[[-1,4],[-1,-5]],[[-1,4],[-1,-6]],[[1,9],[1,-8]],[[1,2],[1,-5],[6,1]]]
@@ -514,7 +565,7 @@ def initialConfig
 	  # the first srep in the list is the reference object
   # ----------keep out-------------
 
-  refresh @points, $sreps, @shifts, $interpBegin, $interpEnd
+  refresh @points, $sreps, @shifts
 end
   
 @dontGrowLst = []
