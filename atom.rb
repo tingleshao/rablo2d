@@ -3,7 +3,7 @@ class Atom
 	
   def initialize(spoke_length, spoke_direction, type, x, y, cc)
     @spoke_length = spoke_length
-    @expand_spoke_length = spoke_length
+    @expand_spoke_length = spoke_length.dup
     @spoke_direction = spoke_direction
     @type = type
     @x = x
@@ -24,6 +24,10 @@ class Atom
         @expand_spoke_length[2] = @expand_spoke_length[2] * ratio
       end
     end
+  end
+
+  def getExpandRatio
+    return @expand_spoke_length[0] / @spoke_length
   end
 
 end

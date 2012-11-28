@@ -109,15 +109,16 @@ class Field
       render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
 
       if show_sphere
+	render_circle(atom.x + shiftx - atom.expand_spoke_length[0], atom.y + shifty - atom.expand_spoke_length[0], atom.expand_spoke_length[0] * 2 , srep.color)
 	render_circle(atom.x + shiftx - atom.spoke_length[0], atom.y + shifty - atom.spoke_length[0], atom.spoke_length[0] * 2 , srep.color)
       end
       render_spokes(atom.x+shiftx, atom.y+shifty, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
     end
-  
 
     if srep.interpolated_spokes_begin.length > 0
       puts "render_interp_spokes"
       render_interp_spokes(shiftx, shifty, '#FFFFFF', srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
+      render_extend_interp_spokes(shiftx, shifty, '#FF0000', srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
     end
   end 
   
@@ -146,7 +147,17 @@ class Field
        @app.line(p[0]+shiftx, p[1]+shifty, iend[i][0]+shiftx, iend[i][1]+shifty)
     end
   end
-
+   
+  def render_extend_interp_spokes(shiftx, shifty, color, ibegin, iend)
+    @app.stroke color
+   puts "*********************************"
+   puts "ibegin: " + ibegin.to_s
+   puts "iend: " + iend.to_s 
+    iend.each_with_index do |p, i|
+      @app.line(ibegin[i][0]+shiftx, ibegin[i][1]+shifty, p[0]+shiftx, p[1]+shifty)
+    end
+  end
+  
   def render_atom(x, y, color)
       render_point_big(x, y, color)
   end
@@ -337,6 +348,10 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	    srep.atoms.each do |atom|
 	      atom.dilate(1.05)
 	    end
+            # dilate interpolated spokes....
+            srep.extendInterpolatedSpokes(1.05)
+            # check intersection
+         #   srep.computingMask()
 	  end
           refresh @points, $sreps, @shifts
         }
@@ -425,31 +440,40 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           ## ---
 
           #-- 
-          v1t = [xt[indices[foo]+$count1+1] - xt[indices[foo]], yt[indices[foo]+$count1+1] - yt[indices[foo]]]
-          v2t = [xt[indices[foo+1]] - xt[indices[foo]+$count1], yt[indices[foo+1]] - yt[indices[foo]+$count1]]
+          curr_index = indices[foo] + $count1 + 1 
+          puts "curr_index: " + curr_index.to_s
+          if curr_index < xt.length-1
+            puts "here!!"
+            v1t = [xt[curr_index] - xt[indices[foo]], yt[curr_index] - yt[indices[foo]]]
+            if curr_index == indices[foo+1]
+              v2t = [xt[indices[foo+1]+1] - xt[curr_index], yt[indices[foo+1]+1] - yt[curr_index]]
+            else
+              v2t = [xt[indices[foo+1]] - xt[curr_index], yt[indices[foo+1]] - yt[curr_index]]
+            end
+            puts "v1t: " + v1t.to_s
+            size_v1t = v1t[0]**2 + v1t[1]**2
+            norm_v1t = v1t.collect{|v| v / size_v1t} 
+
+            size_v2t = v2t[0]**2 + v2t[1]**2
+            puts "size_v2t: " + size_v2t.to_s
+            norm_v2t = v2t.collect{|v| v / size_v2t} 
           
-          puts "v1t: " + v1t.to_s
-          size_v1t = v1t[0]**2 + v1t[1]**2
-          norm_v1t = v1t.collect{|v| v / size_v1t} 
-          size_v2t = v2t[0]**2 + v2t[1]**2
-          norm_v2t = v2t.collect{|v| v / size_v2t} 
-          
-          k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
-          k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
+            k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
+            k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
             
-          u1t = $sreps[srep_index].atoms[foo].spoke_direction[0]
-          u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[0]
-          ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
-          puts "ui: " + ui.to_s
-          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count1+1],yt[indices[foo]+$count1+1]]    
-          puts "rt: " + rt[indices[foo]+$count1].to_s
-          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count1+1]+ui[0]*rt[indices[foo]+1+$count1],yt[indices[foo]+$count1+1]-ui[1]*rt[indices[foo]+1+$count1]]
+            u1t = $sreps[srep_index].atoms[foo].spoke_direction[0]
+            u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[0]
+            ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
+            puts "ui: " + ui.to_s
+            $sreps[srep_index].interpolated_spokes_begin << [xt[curr_index],yt[curr_index]]    
+            puts "rt: " + rt[curr_index-1].to_s
+            $sreps[srep_index].interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index]]
+          else
+            # may add another spoke to the end.....
+            alert("at end!")
+          end
           $count1 = $count1 + 1
           puts "count: "+ $count1.to_s
-          
-          # interpolate another side
-          
-
           refresh @points, $sreps, @shifts
         }
    
@@ -502,24 +526,99 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2]]
           $count2 = $count2 + 1
           puts "count: "+ $count2.to_s
-         
-          
 
           refresh @points, $sreps, @shifts
+        }
+          
+        button("Interpolate All") {
+         $sreps.each_with_index do |srep, srep_index| 
+          100.times do
+            # interpolate top   
+          
+            indices = srep.base_index
+            foo = $bar2
+            c1 = ( indices[foo+1] - indices[foo] ) - $count2 
+            if c1 == 0
+              $count2 = 0
+              $bar2 = $bar2 +1    
+              c1 = ( indices[foo+1] - indices[foo] ) - $count2
+              foo = $bar2
+            end
+          
+            curr_index = indices[foo] + $count2 + 1 
+            puts "curr_index: " + curr_index.to_s
+            
+            d1t = 0.01 * $count2
+            d2t = c1 * 0.01 
+
+            # ---
+            # calculate parameters......
+            # read all points, rs, logrkm1s from the file
+            file = File.open('interpolated_points_' + srep_index.to_s, 'r')
+            xt = file.gets.split(' ').collect{|x| x.to_f}
+	    yt = file.gets.split(' ').collect{|y| y.to_f}
+            file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
+	    rt = file.gets.split(' ').collect{|r| r.to_f}
+	    file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
+            logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
+            ## ---
+
+            #-- 
+            if curr_index < xt.length-1
+              v1t = [xt[curr_index] - xt[indices[foo]], yt[curr_index] - yt[indices[foo]]]
+              if curr_index == indices[foo+1]
+                v2t = [xt[indices[foo+1]+1] - xt[curr_index], yt[indices[foo+1]+1] - yt[curr_index]]
+              else
+                v2t = [xt[indices[foo+1]] - xt[curr_index], yt[indices[foo+1]] - yt[curr_index]]
+              end
+              puts "v1t: " + v1t.to_s
+              size_v1t = v1t[0]**2 + v1t[1]**2
+             norm_v1t = v1t.collect{|v| v / size_v1t} 
+
+              size_v2t = v2t[0]**2 + v2t[1]**2
+              puts "size_v2t: " + size_v2t.to_s
+              norm_v2t = v2t.collect{|v| v / size_v2t} 
+          
+              k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
+              k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
+            
+              u1t = srep.atoms[foo].spoke_direction[0]
+              u2t = srep.atoms[foo+1].spoke_direction[0]
+              ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
+              puts "ui: " + ui.to_s
+              srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index]]    
+              puts "rt: " + rt[curr_index-1].to_s
+              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index]]
+          
+      
+            # interpolate bottom
+
+               
+            u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
+            u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
+            ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
+            puts "ui: " + ui.to_s
+          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1]]    
+          puts "rt: " + rt[indices[foo]+$count2].to_s
+          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2]]
+  else
+                # may add another spoke to the end.....
+                alert("!")
+          end
+          $count2 = $count2 + 1
+          puts "count: "+ $count2.to_s
+
+          refresh @points, $sreps, @shifts
+       end
+        $count2 = 0
+        $bar2 = 0
+end
         }
      end
 
      stack do @status = para :stroke => black end
      @field.paint
      para "\n"
-     @field.sreps.each do |srep|
-       rLst = []
-       srep.atoms.each do |atom|
-	 rLst << atom.spoke_length[0].ceil
-       end
-       para rLst.to_s
-       para "\n"
-     end
    end  
  end
   

@@ -415,6 +415,7 @@ def interpolateSpokeAtPos(u1t, v1t, k1t, d1t, u2t, v2t, k2t, d2t)
   utp1dt1 = (1+a1*d1t) * u1t[1] -  k1t * v1t[1] * d1t
   utp2dt0 = (1-a2*d2t) * u2t[0] +  k2t * v2t[0] * d2t
   utp2dt1 = (1-a2*d2t) * u2t[1] +  k2t * v2t[1] * d2t
+  puts "uvkd: " + u2t.to_s + " " + v2t.to_s + " " + k2t.to_s + " " + d2t.to_s
   puts "aaaa: " + utp1dt0.to_s 
   puts "bbbb: " + utp2dt0.to_s
   puts "d1t: "+ d1t.to_s
@@ -428,7 +429,7 @@ def computeAUsingUVK(ut,vt,kt)
   return a
 end
 
-def computeSpokeIntersection(atom1, atom1_spoke_index, srepList)
+def checkSpokeIntersection(atom1, atom1_spoke_index, srepList)
   srepList.each_with_index do |srep|
     
   end
