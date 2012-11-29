@@ -80,30 +80,38 @@ class SRep
     return @extend_interpolated_spokes_end
   end
 
-  def extendInterpolatedSpokes(ratio)
+  def extendInterpolatedSpokes(ratio, sreps)
     if @extend_interpolated_spokes_end.length != @interpolated_spokes_end.length
       @extend_interpolated_spokes_end = @interpolated_spokes_end.dup
     end
 
-    @interpolated_spokes_begin.each_with_index do |isb, ind|
-      if @mask_func.length != @extend_interpolated_spokes_end.length
-        @mask_func = []
-        @extend_interpolated_spokes_end.length.times do 
-          @mask_func << -1
-        end
-      end
-
-      # if mask (func ind == -1) <-- have not intersected to anyone
+    @extend_interpolated_spokes_end.each_with_index do |isb, ind|
+      # if mask_func[ind] == -1) <-- have not intersected to anyone
       #extend spoke
       # calculate direction
       # here assume the stuff in @mask_func is ordered, later it may got modified to something like a map
-      if @mask_func[ind] == -1
+      if isb[2] == -1
         spoke_v = [ @extend_interpolated_spokes_end[ind][0] - @interpolated_spokes_begin[ind][0], @extend_interpolated_spokes_end[ind][1] - @interpolated_spokes_begin[ind][1] ]
         extend_v = spoke_v.collect{|e| e * ratio }
-        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1] ]
+        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1], isb[2]]
         @extend_interpolated_spokes_end[ind] = extend_v_end
         # check intersection with others 
-        
+        sreps.each_with_index do |srep, srep_ind|   
+          srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, spoke_end_index|
+          if (( srep.index != @index ) || ( (ind-spoke_end_index).abs > 1 ) && srep.index == @index  )
+         #   if srep.index != @index
+              check_result = checkSpokeIntersection(@interpolated_spokes_end[ind][0], @interpolated_spokes_end[ind][1], extend_v_end[0], extend_v_end[1], srep.interpolated_spokes_end[spoke_end_index][0], srep.interpolated_spokes_end[spoke_end_index][1], spoke_end[0], spoke_end[1])
+         #     puts "check result: " + check_result.to_s
+              if check_result[0] 
+                @extend_interpolated_spokes_end[ind][2] = srep.index
+                if spoke_end[2] == -1
+                  spoke_end[2] = @index
+                end
+              end
+           
+           end
+          end
+        end
       end
     end
   end

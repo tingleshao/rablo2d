@@ -150,10 +150,7 @@ class Field
    
   def render_extend_interp_spokes(shiftx, shifty, color, ibegin, iend)
     @app.stroke color
-   puts "*********************************"
-   puts "ibegin: " + ibegin.to_s
-   puts "iend: " + iend.to_s 
-    iend.each_with_index do |p, i|
+     iend.each_with_index do |p, i|
       @app.line(ibegin[i][0]+shiftx, ibegin[i][1]+shifty, p[0]+shiftx, p[1]+shifty)
     end
   end
@@ -349,7 +346,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	      atom.dilate(1.05)
 	    end
             # dilate interpolated spokes....
-            srep.extendInterpolatedSpokes(1.05)
+            srep.extendInterpolatedSpokes(1.05, $sreps)
             # check intersection
          #   srep.computingMask()
 	  end
@@ -586,9 +583,9 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
               u2t = srep.atoms[foo+1].spoke_direction[0]
               ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
               puts "ui: " + ui.to_s
-              srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index]]    
+              srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index],-1]    
               puts "rt: " + rt[curr_index-1].to_s
-              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index]]
+              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1]
           
       
             # interpolate bottom
@@ -598,12 +595,12 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
             u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
             ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
             puts "ui: " + ui.to_s
-          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1]]    
+          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1]    
           puts "rt: " + rt[indices[foo]+$count2].to_s
-          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2]]
+          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
   else
                 # may add another spoke to the end.....
-                alert("!")
+                alert(srep_index.to_s + " finished")
           end
           $count2 = $count2 + 1
           puts "count: "+ $count2.to_s
@@ -619,6 +616,8 @@ end
      stack do @status = para :stroke => black end
      @field.paint
      para "\n"
+     para "mask_func[0]: "  + $sreps[0].extend_interpolated_spokes_end.collect{|e| e[2]}.to_s
+     para "mask_func[1]: "  + $sreps[1].extend_interpolated_spokes_end.collect{|e| e[2]}.to_s
    end  
  end
   

@@ -429,11 +429,37 @@ def computeAUsingUVK(ut,vt,kt)
   return a
 end
 
-def checkSpokeIntersection(atom1, atom1_spoke_index, srepList)
-  srepList.each_with_index do |srep|
-    
+def checkSpokeIntersection(x1,y1,x2,y2,x3,y3,x4,y4)
+  if x1 == x2 || x3 == x4 
+    return [false, 0, 0]
   end
-  return intersection_spoke_index, intersection_srep_index, intersection_pos
+  #compute two intervals
+  i1 = [[x1,x2].min, [x1,x2].max]
+  i2 = [[x3,x4].min, [x3,x4].max]
+  # TEST IF THERE IS MUTUAL REGION	
+  if ([x1,x2].max < [x3,x4].min)
+    return [false, 0 ,0]
+  end
+  # compute A and b for two lines
+  a1 = (y1-y2) / (x1-x2)
+  a2 = (y3-y4) / (x3-x4)
+  b1 = y1 - a1 * x1
+  b2 = y3 - a2 * x3 
+  # check if two lines are parallel 
+  if a1 == a2
+    return [false, 0, 0]
+  end
+  # compute the intersection x
+  xa = (b2-b1) / (a1-a2)
+  if ( (xa< [[x1,x2].min, [x3,x4].min].max ) || (xa> [[x1,x2].max, [x3,x4].max].min) )
+    return [false, 0, 0]
+  else 
+    ya = a1 * xa + b1
+   if ya.nan?
+      puts "stuff: " + x1.to_s + " " + y1.to_s + " " + x2.to_s + " " + y2.to_s + " " + x3.to_s + " "  + y3.to_s + " " + x4.to_s + " " + y4.to_s
+   end  
+  return [true, xa, ya]
+  end    
 end 
 
 def generateBentSrep()
