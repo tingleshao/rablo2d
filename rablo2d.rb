@@ -314,7 +314,7 @@ class InterpolateControl
    @app.stack :margin => 3 do 
        @app.para "enter the index of the srep"
        @index = @app.edit_line :width => 50
-       @msg = @app.para "hi"
+       @msg = @app.para ""
      end
      @app.nofill
    end
@@ -407,124 +407,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           window :title => "draw srep", :width => 402, :height => 375 do
 	    dp = InterpolateControl.new(self)
           end
-        }
-
- 	button("interpolate srep 0 upper") { 
-        # interpolate top   
-          srep_index = 1
-          indices = $sreps[srep_index].base_index
-          foo = $bar1
-          c1 = ( indices[foo+1] - indices[foo] ) - $count1 
-          if c1 == 0
-            $count1 = 0
-            $bar1 = $bar1 +1    
-            c1 = ( indices[foo+1] - indices[foo] ) - $count1
-          foo = $bar1
-          end
-          d1t = 0.01 * $count1
-          d2t = c1 * 0.01 
-
-          # ---
-          # calculate parameters......
-          # read all points, rs, logrkm1s from the file
-          file = File.open('interpolated_points_' + srep_index.to_s, 'r')
-          xt = file.gets.split(' ').collect{|x| x.to_f}
-	  yt = file.gets.split(' ').collect{|y| y.to_f}
-          file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
-	  rt = file.gets.split(' ').collect{|r| r.to_f}
-	  file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
-          logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
-          ## ---
-
-          #-- 
-          curr_index = indices[foo] + $count1 + 1 
-          puts "curr_index: " + curr_index.to_s
-          if curr_index < xt.length-1
-            puts "here!!"
-            v1t = [xt[curr_index] - xt[indices[foo]], yt[curr_index] - yt[indices[foo]]]
-            if curr_index == indices[foo+1]
-              v2t = [xt[indices[foo+1]+1] - xt[curr_index], yt[indices[foo+1]+1] - yt[curr_index]]
-            else
-              v2t = [xt[indices[foo+1]] - xt[curr_index], yt[indices[foo+1]] - yt[curr_index]]
-            end
-            puts "v1t: " + v1t.to_s
-            size_v1t = v1t[0]**2 + v1t[1]**2
-            norm_v1t = v1t.collect{|v| v / size_v1t} 
-
-            size_v2t = v2t[0]**2 + v2t[1]**2
-            puts "size_v2t: " + size_v2t.to_s
-            norm_v2t = v2t.collect{|v| v / size_v2t} 
-          
-            k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
-            k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
-            
-            u1t = $sreps[srep_index].atoms[foo].spoke_direction[0]
-            u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[0]
-            ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
-            puts "ui: " + ui.to_s
-            $sreps[srep_index].interpolated_spokes_begin << [xt[curr_index],yt[curr_index]]    
-            puts "rt: " + rt[curr_index-1].to_s
-            $sreps[srep_index].interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index]]
-          else
-            # may add another spoke to the end.....
-            alert("at end!")
-          end
-          $count1 = $count1 + 1
-          puts "count: "+ $count1.to_s
-          refresh @points, $sreps, @shifts
-        }
-   
-        button("interpolate srep 0 lower") { 
-        # interpolate bottom
-          srep_index = 1
-          indices = $sreps[srep_index].base_index
-          foo = $bar2
-          c1 = ( indices[foo+1] - indices[foo] ) - $count2 
-          if c1 == 0
-            $count2 = 0
-            $bar2 = $bar2 +1    
-            c1 = ( indices[foo+1] - indices[foo] ) - $count2
-          foo = $bar2
-          end
-          d1t = 0.01 * $count2
-          d2t = c1 * 0.01 
-
-          # ---
-          # calculate parameters......
-          # read all points, rs, logrkm1s from the file
-          file = File.open('interpolated_points_' + srep_index.to_s, 'r')
-          xt = file.gets.split(' ').collect{|x| x.to_f}
-	  yt = file.gets.split(' ').collect{|y| y.to_f}
-          file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
-	  rt = file.gets.split(' ').collect{|r| r.to_f}
-	  file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
-          logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
-          ## ---
-
-          #-- 
-          v1t = [xt[indices[foo]+$count2+1] - xt[indices[foo]], yt[indices[foo]+$count2+1] - yt[indices[foo]]]
-          v2t = [xt[indices[foo+1]] - xt[indices[foo]+$count2], yt[indices[foo+1]] - yt[indices[foo]+$count2]]
-          
-          puts "v1t: " + v1t.to_s
-          size_v1t = v1t[0]**2 + v1t[1]**2
-          norm_v1t = v1t.collect{|v| v / size_v1t} 
-          size_v2t = v2t[0]**2 + v2t[1]**2
-          norm_v2t = v2t.collect{|v| v / size_v2t} 
-          
-          k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
-          k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
-            
-          u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
-          u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
-          ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
-          puts "ui: " + ui.to_s
-          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1]]    
-          puts "rt: " + rt[indices[foo]+$count2].to_s
-          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2]]
-          $count2 = $count2 + 1
-          puts "count: "+ $count2.to_s
-
-          refresh @points, $sreps, @shifts
         }
           
         button("Interpolate All") {
@@ -628,22 +510,27 @@ def refresh points, sreps, shifts
 end
   
 def initialConfig
-  points0 = [[50,100],[100,75],[150,50],[200,60],[250,80]]
+  points0 = [[110,100],[160,75],[210,50],[260,60],[310,80]]
   l0 = [[35,35,35],[40,40],[50,50],[40,40],[35,35,35]]
-  u0 = [[[-1,3],[-0.1,-4],[-9,1]],[[-1,4],[1.1,-3]],[[-1,4],[0.2,-6]],[[1,9],[0.1,-8]],[[1,2],[1,-5],[6,1]]]
+  u0 = [[[-1,3],[-0.1,-4],[-9,1]],[[-1,4],[1.1,-3]],[[-1,4],[0.2,-6]],[[1,9],[0.05,-8]],[[1,2],[1,-5],[6,1]]]
   srep0 = generate2DDiscreteSrep(points0,l0,u0,0.01,0)
   $sreps = [srep0]
-  $count1 = 0
   $count2 = 0
-  @shifts = [100, 100]
-  $bar1 = 0
+  @shifts = [100, 100, 100]
   $bar2 = 0	
-  points1 = [[150,200],[200,190],[250,200],[300,180],[350,180]]
+  points1 = [[200,190],[250,190],[300,200],[350,180],[400,160]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
-  u1 = [[[-1,6],[2,-5],[-9,1]],[[-1,4],[-1,-3]],[[-1,4],[-0.1,-6]],[[1,9],[1,-4]],[[1,2],[-4,-10],[6,1]]]
+  u1 = [[[-1,6],[0.5,-3],[-9,1]],[[-1,4],[-1,-3]],[[-1,4],[-0.1,-6]],[[1,9],[1,-1.5]],[[1,2],[2,-5],[6,1]]]
   srep1 = generate2DDiscreteSrep(points1,l1,u1,0.01,1)
   srep1.color = "#00FF66"
   $sreps << srep1
+  points2 = [[30,50],[10,100],[9,150],[20,200],[50,240],[110,290]]
+  l2 = [[35,35,35],[35,35],[40,40],[35,35],[40,40],[40,40]]
+  u2 = [[[6,1],[6,-0.5],[-9,1]],[[-1,4],[3,-0.5]],[[-1,4],[5,-0.5]],[[1,9],[5,1]],[[1,9],[5,3]],[[1,2],[3,5],[6,1]]]
+  srep2 = generate2DDiscreteSrep(points2,l2,u2,0.01,2)
+  srep2.color = "#CC66FF"
+  $sreps << srep2
+  
   
   refresh @points, $sreps, @shifts
 end

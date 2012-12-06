@@ -110,37 +110,36 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
   v << [ curve[0][indices[-1]] - curve[0][indices[-1]-1], -1* (curve[1][indices[-1]]- curve[1][indices[-1]-1]) ] 
   puts "v: "+ v.to_s
   refine = true
-if refine
+  if refine
   # get the upper spokes directions 
-  srep.atoms.each_with_index do |atom, i| 
+    srep.atoms.each_with_index do |atom, i| 
     u1 = atom.spoke_direction[1]  
     size_norm_v=  Math.sqrt(v[i][0] **2 + v[i][1] **2)
     norm_v = [v[i][0] / size_norm_v ,  v[i][1] / size_norm_v ]
     u1_proj_on_v = norm_v.collect{|e| e* (u1[0] * norm_v[0] + u1[1] * norm_v[1])} 
-   #--
-   size_proj = Math.sqrt(u1_proj_on_v[0] **2 + u1_proj_on_v[1] **2 )
-   norm_proj = [u1_proj_on_v[0] / size_proj, u1_proj_on_v[1] / size_proj]
-   puts "norm_v: " + norm_v.to_s
-   puts "norm_proj: " + norm_proj.to_s
-# -- 
-   puts "u1_proj_on_v: " + u1_proj_on_v.to_s
+    #--
+    size_proj = Math.sqrt(u1_proj_on_v[0] **2 + u1_proj_on_v[1] **2 )
+    norm_proj = [u1_proj_on_v[0] / size_proj, u1_proj_on_v[1] / size_proj]
+    puts "norm_v: " + norm_v.to_s
+    puts "norm_proj: " + norm_proj.to_s
+    # -- 
+    puts "u1_proj_on_v: " + u1_proj_on_v.to_s
     u1_prep_to_v = [u1[0] - u1_proj_on_v[0], u1[1] - u1_proj_on_v[1]]
     u0 = [1 * u1_proj_on_v[0] - u1_prep_to_v[0], 1  *  u1_proj_on_v[1] - u1_prep_to_v[1]]
     # normalize u0
     u0_size = Math.sqrt(u0[0] ** 2 + u0[1] **2)  
     u0[0] = u0[0] / u0_size
     u0[1] = u0[1] / u0_size
-   #check whether perpendicular
-#--
+    #check whether perpendicular
+    #--
     diff = [u0[0]-u1[0],u0[1]-u1[1]]
     prod = diff[0] * norm_v[0] + diff[1]*norm_v[1]
-  puts "prod: "+ prod.to_s
-#--
+    puts "prod: "+ prod.to_s
+    #--
     atom.spoke_direction[0] = u0
   end
 
   # for the end spokes, set their direction to the v 
-
   a0u2 = [v[0][0], v[0][1]]
   a0u2_size = Math.sqrt(a0u2[0] ** 2 + a0u2[1] **2)
   a0u2[0] = a0u2[0] / a0u2_size
