@@ -17,6 +17,10 @@ To use me, you need install:
 
 ##Short Introduction
 <br/>
+To run me, you can go to the directory that contains me and type the following in command line:
+
+      $ shoes rablo2d.rb
+      
 In rablo2d you can play around with multiple 2d objects. Each one has a boundary that implied by a series of disks. <br/><br/>
 ![img1](https://lh6.googleusercontent.com/-UfgaVkImm2I/UMEMozFNtOI/AAAAAAAAC6w/4cFSuiA2Sa4/s640/Screenshot%2520from%25202012-12-06%252016%253A18%253A01.jpg)
 <br/>
