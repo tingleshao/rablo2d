@@ -81,6 +81,8 @@ class SRep
   end
 
   def extendInterpolatedSpokes(ratio, sreps)
+    # if the @extend_interpolated_spokes_end is not synchronzied with @interpolated_spokes_end, it means that it is the first time extension 
+    # so deep copy the array @interpolated_spokes_end into @extend_interpolated_spokes_end
     if @extend_interpolated_spokes_end.length != @interpolated_spokes_end.length
       @extend_interpolated_spokes_end = @interpolated_spokes_end.dup
     end
@@ -99,9 +101,7 @@ class SRep
         sreps.each_with_index do |srep, srep_ind|   
           srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, spoke_end_index|
           if (( srep.index != @index ) || ( (ind-spoke_end_index).abs > 1 ) && srep.index == @index  )
-         #   if srep.index != @index
               check_result = checkSpokeIntersection(@interpolated_spokes_end[ind][0], @interpolated_spokes_end[ind][1], extend_v_end[0], extend_v_end[1], srep.interpolated_spokes_end[spoke_end_index][0], srep.interpolated_spokes_end[spoke_end_index][1], spoke_end[0], spoke_end[1])
-         #     puts "check result: " + check_result.to_s
               if check_result[0] 
                 @extend_interpolated_spokes_end[ind][2] = srep.index
                 if spoke_end[2] == -1
