@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dilateBinary (image_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File image_toolbox.rb, line 285</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dilateBinary</span>(<span class="ruby-identifier">bin</span>, <span class="ruby-identifier">size</span>, <span class="ruby-identifier">opSize</span>)
+        <span class="ruby-comment cmt"># this function dilates the given binary image. with the DISK operator size indicated by opSize.</span>
+        <span class="ruby-comment cmt"># may be dilation is easier written in matlab......</span>
+        <span class="ruby-comment cmt"># it returns a dilated binary image</span>
+        <span class="ruby-comment cmt"># firstly convert the binary to point list.</span>
+        <span class="ruby-comment cmt"># dilation on list</span>
+        <span class="ruby-comment cmt"># then convert back</span>
+        <span class="ruby-comment cmt"># it turns out that, speed is not so bad in 128 * 128</span>
+        <span class="ruby-identifier">binMat</span> = <span class="ruby-identifier">binaryToBinaryMatrix</span>(<span class="ruby-identifier">bin</span>, <span class="ruby-identifier">size</span>)
+        <span class="ruby-comment cmt"># NOTE: the array returned by local method may just be an address.</span>
+        <span class="ruby-comment cmt">#      Which makes dup() and clone() not work in this case.</span>
+        <span class="ruby-identifier">dilBinMat</span> = <span class="ruby-identifier">dilateBinaryMatrix</span>(<span class="ruby-identifier">binMat</span>, <span class="ruby-identifier">size</span>, <span class="ruby-identifier">opSize</span>)
+        <span class="ruby-identifier">dilBin</span> = <span class="ruby-identifier">binaryMatrixToBinary</span>(<span class="ruby-identifier">dilBinMat</span>, <span class="ruby-identifier">size</span>)
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">dilBin</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

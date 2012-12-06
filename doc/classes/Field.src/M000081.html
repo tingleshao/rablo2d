@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Field)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File expert-minesweeper.rb, line 35</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">app</span>, <span class="ruby-identifier">level</span> = <span class="ruby-identifier">:beginner</span>)
+    <span class="ruby-ivar">@app</span> = <span class="ruby-identifier">app</span>
+    <span class="ruby-ivar">@field</span> = []
+    <span class="ruby-ivar">@w</span>, <span class="ruby-ivar">@h</span>, <span class="ruby-ivar">@bombs</span> = <span class="ruby-constant">LEVELS</span>[<span class="ruby-identifier">level</span>][<span class="ruby-value">0</span>], <span class="ruby-constant">LEVELS</span>[<span class="ruby-identifier">level</span>][<span class="ruby-value">1</span>], <span class="ruby-constant">LEVELS</span>[<span class="ruby-identifier">level</span>][<span class="ruby-value">2</span>]
+    <span class="ruby-ivar">@h</span>.<span class="ruby-identifier">times</span> { <span class="ruby-ivar">@field</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>(<span class="ruby-ivar">@w</span>) { <span class="ruby-constant">EmptyCell</span>.<span class="ruby-identifier">new</span> } }
+    <span class="ruby-ivar">@game_over</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-ivar">@width</span>, <span class="ruby-ivar">@height</span>, <span class="ruby-ivar">@cell_size</span> = <span class="ruby-ivar">@w</span> <span class="ruby-operator">*</span> <span class="ruby-constant">CELL_SIZE</span>, <span class="ruby-ivar">@h</span> <span class="ruby-operator">*</span> <span class="ruby-constant">CELL_SIZE</span>, <span class="ruby-constant">CELL_SIZE</span>
+    <span class="ruby-ivar">@offset</span> = [(<span class="ruby-ivar">@app</span>.<span class="ruby-identifier">width</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@width</span>.<span class="ruby-identifier">to_i</span>) <span class="ruby-operator">/</span> <span class="ruby-value">2</span>, (<span class="ruby-ivar">@app</span>.<span class="ruby-identifier">height</span> <span class="ruby-operator">-</span> <span class="ruby-ivar">@height</span>.<span class="ruby-identifier">to_i</span>) <span class="ruby-operator">/</span> <span class="ruby-value">2</span>]
+    <span class="ruby-identifier">plant_bombs</span>
+    <span class="ruby-ivar">@start_time</span> = <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

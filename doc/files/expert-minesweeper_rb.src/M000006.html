@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>render_field (expert-minesweeper.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File expert-minesweeper.rb, line 231</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render_field</span>
+        <span class="ruby-comment cmt"># clear screen and draw</span>
+    <span class="ruby-identifier">clear</span> <span class="ruby-keyword kw">do</span>
+      <span class="ruby-identifier">background</span> <span class="ruby-identifier">rgb</span>(<span class="ruby-value">50</span>, <span class="ruby-value">50</span>, <span class="ruby-value">90</span>, <span class="ruby-value">0</span><span class="ruby-value">.7</span>)
+      <span class="ruby-identifier">flow</span> <span class="ruby-identifier">:margin</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">4</span> <span class="ruby-keyword kw">do</span> <span class="ruby-comment cmt"># the margib between the buttons and the boundary is 4.</span>
+        <span class="ruby-identifier">button</span>(<span class="ruby-value str">&quot;Beginner&quot;</span>) { <span class="ruby-identifier">new_game</span> <span class="ruby-identifier">:beginner</span> }
+        <span class="ruby-identifier">button</span>(<span class="ruby-value str">&quot;Intermediate&quot;</span>) { <span class="ruby-identifier">new_game</span> <span class="ruby-identifier">:intermediate</span> }
+        <span class="ruby-identifier">button</span>(<span class="ruby-value str">&quot;Expert&quot;</span>) { <span class="ruby-identifier">new_game</span> <span class="ruby-identifier">:expert</span> }
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">stack</span> <span class="ruby-keyword kw">do</span> <span class="ruby-ivar">@status</span> = <span class="ruby-identifier">para</span> <span class="ruby-identifier">:stroke</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">black</span> <span class="ruby-keyword kw">end</span>
+      <span class="ruby-ivar">@field</span>.<span class="ruby-identifier">paint</span>
+      <span class="ruby-identifier">para</span> <span class="ruby-value str">&quot;Left click - open cell, right click - put flag, middle click - reveal empty cells&quot;</span>, <span class="ruby-identifier">:top</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">420</span>, <span class="ruby-identifier">:left</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>, <span class="ruby-identifier">:stroke</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">white</span>,  <span class="ruby-identifier">:font</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;11px&quot;</span>
+    <span class="ruby-keyword kw">end</span>  
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

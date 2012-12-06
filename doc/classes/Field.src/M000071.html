@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>render_spokes (Field)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File rablo2d.rb, line 75</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render_spokes</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">type</span>, <span class="ruby-identifier">spoke_length</span>, <span class="ruby-identifier">spoke_direction</span>, <span class="ruby-identifier">color</span>)
+
+ <span class="ruby-comment cmt"># white: spoke zero</span>
+ <span class="ruby-comment cmt"># black: spoke 1</span>
+    <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-identifier">color</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'end'</span>
+    <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-value str">&quot;#FFFFFF&quot;</span>
+       <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">line</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">cx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">0</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">cy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">0</span>][<span class="ruby-value">1</span>])
+    <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-identifier">color</span>
+       <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">line</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">cx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">1</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">cy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">1</span>][<span class="ruby-value">1</span>])
+    <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-value str">&quot;#00FFFF&quot;</span>
+       <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">line</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">cx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">2</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">cy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">2</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">2</span>][<span class="ruby-value">1</span>])
+    <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">type</span> <span class="ruby-operator">==</span> <span class="ruby-value str">'inner'</span>
+ <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-value str">&quot;#FFFFFF&quot;</span>
+       <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">line</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">cx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">0</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">cy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">0</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">0</span>][<span class="ruby-value">1</span>])
+        <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">stroke</span> <span class="ruby-identifier">color</span>
+       <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">line</span>(<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">cx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">1</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">cy</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">spoke_length</span>[<span class="ruby-value">1</span>] <span class="ruby-operator">*</span> <span class="ruby-identifier">spoke_direction</span>[<span class="ruby-value">1</span>][<span class="ruby-value">1</span>])
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

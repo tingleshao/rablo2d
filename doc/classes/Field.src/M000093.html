@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>reveal! (Field)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File expert-minesweeper.rb, line 139</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">reveal!</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">cell_exists?</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>].<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">Field</span><span class="ruby-operator">::</span><span class="ruby-constant">OpenCell</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">flags_around</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>) <span class="ruby-operator">&gt;=</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>].<span class="ruby-identifier">number</span> <span class="ruby-keyword kw">then</span>
+      (<span class="ruby-value">-1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+        (<span class="ruby-value">-1</span><span class="ruby-operator">..</span><span class="ruby-value">1</span>).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">h</span><span class="ruby-operator">|</span> <span class="ruby-identifier">click!</span>(<span class="ruby-identifier">x</span><span class="ruby-operator">+</span><span class="ruby-identifier">h</span>, <span class="ruby-identifier">y</span><span class="ruby-operator">+</span><span class="ruby-identifier">v</span>) <span class="ruby-keyword kw">unless</span> (<span class="ruby-identifier">v</span><span class="ruby-operator">==</span><span class="ruby-value">0</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">h</span><span class="ruby-operator">==</span><span class="ruby-value">0</span>) <span class="ruby-keyword kw">or</span> <span class="ruby-identifier">has_flag?</span>(<span class="ruby-identifier">x</span><span class="ruby-operator">+</span><span class="ruby-identifier">h</span>, <span class="ruby-identifier">y</span><span class="ruby-operator">+</span><span class="ruby-identifier">v</span>) }
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>      
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

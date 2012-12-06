@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generateBinaryWithBoundary (image_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File image_toolbox.rb, line 38</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generateBinaryWithBoundary</span>(<span class="ruby-identifier">size</span>, <span class="ruby-identifier">rx</span>, <span class="ruby-identifier">ry</span>, <span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>, <span class="ruby-identifier">bend</span>, <span class="ruby-identifier">taper</span>)
+                <span class="ruby-comment cmt"># this function takes all information it needs to generate a binary image. </span>
+        <span class="ruby-comment cmt"># the binary image format is a 2d array. contains 0 or 1</span>
+        <span class="ruby-identifier">image</span> = <span class="ruby-value str">&quot;&quot;</span>
+        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">x</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+                <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">y</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+                        <span class="ruby-comment cmt"># here the row &amp; col value is the actrual x and y.</span>
+                        <span class="ruby-comment cmt"># use the actrual x and y to calculate the x and y before deformatoin</span>
+                        <span class="ruby-comment cmt"># and use that to check the ellipsoid formula</span>
+                        <span class="ruby-comment cmt"># set inside 1, out side 0</span>
+                        <span class="ruby-identifier">normX</span> = ( <span class="ruby-identifier">x</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">cx</span> ).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">size</span>
+                        <span class="ruby-identifier">normY</span> = ( <span class="ruby-identifier">y</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">cy</span> ).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">size</span>
+                        <span class="ruby-identifier">ox</span> = <span class="ruby-identifier">normX</span>
+                        <span class="ruby-identifier">oy</span> = ( <span class="ruby-identifier">normY</span> <span class="ruby-operator">-</span> ( <span class="ruby-identifier">bend</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">normX</span> )<span class="ruby-operator">**</span><span class="ruby-value">2</span> ) <span class="ruby-operator">/</span> (<span class="ruby-constant">Math</span><span class="ruby-operator">::</span><span class="ruby-identifier">exp</span>(<span class="ruby-identifier">taper</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">normX</span>))
+                        <span class="ruby-identifier">realX</span> = ( <span class="ruby-identifier">ox</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">size</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">cx</span> 
+                        <span class="ruby-identifier">realY</span> = ( <span class="ruby-identifier">oy</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">size</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">cy</span>
+                        <span class="ruby-comment cmt"># check whether realX and realY is inside or outside of the ellipsoid</span>
+                        <span class="ruby-keyword kw">if</span>  ( ( ( <span class="ruby-identifier">realX</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">cx</span> ) <span class="ruby-operator">/</span> <span class="ruby-identifier">rx</span> )<span class="ruby-operator">**</span><span class="ruby-value">2</span>  <span class="ruby-operator">+</span> ( ( <span class="ruby-identifier">realY</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">cy</span> ) <span class="ruby-operator">/</span> <span class="ruby-identifier">ry</span> )<span class="ruby-operator">**</span><span class="ruby-value">2</span>).<span class="ruby-identifier">between?</span>(<span class="ruby-value">0</span><span class="ruby-value">.95</span>, <span class="ruby-value">1.05</span>)
+                                <span class="ruby-identifier">image</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;1&quot;</span>
+                        <span class="ruby-keyword kw">else</span>
+                                <span class="ruby-identifier">image</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;0&quot;</span>
+                        <span class="ruby-keyword kw">end</span>
+                <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">image</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

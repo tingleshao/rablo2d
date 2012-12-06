@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>render_number (Field)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File expert-minesweeper.rb, line 108</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">render_number</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>)
+    <span class="ruby-identifier">render_cell</span>(<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>, <span class="ruby-value str">&quot;#999&quot;</span>, <span class="ruby-keyword kw">false</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>].<span class="ruby-identifier">number</span> <span class="ruby-operator">!=</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">then</span>
+      <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">nostroke</span>
+      <span class="ruby-ivar">@app</span>.<span class="ruby-identifier">para</span> <span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>].<span class="ruby-identifier">number</span>.<span class="ruby-identifier">to_s</span>, <span class="ruby-identifier">:left</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">x</span><span class="ruby-operator">*</span><span class="ruby-identifier">cell_size</span> <span class="ruby-operator">+</span> <span class="ruby-value">3</span>, <span class="ruby-identifier">:top</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">y</span><span class="ruby-operator">*</span><span class="ruby-identifier">cell_size</span> <span class="ruby-operator">-</span> <span class="ruby-value">2</span>, 
+        <span class="ruby-identifier">:font</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">'13px'</span>, <span class="ruby-identifier">:stroke</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">COLORS</span>[<span class="ruby-keyword kw">self</span>[<span class="ruby-identifier">x</span>, <span class="ruby-identifier">y</span>].<span class="ruby-identifier">number</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>]
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

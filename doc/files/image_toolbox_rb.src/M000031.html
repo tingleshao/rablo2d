@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generateStandardSrep (image_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File image_toolbox.rb, line 410</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generateStandardSrep</span>(<span class="ruby-identifier">binary</span>, <span class="ruby-identifier">nAtoms</span>, <span class="ruby-identifier">size</span>, <span class="ruby-identifier">rx</span>, <span class="ruby-identifier">ry</span>, <span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>)
+        <span class="ruby-comment cmt"># this function takes a binary ellipsoid image, it should be a standard one</span>
+        <span class="ruby-comment cmt"># it returns a standard s-rep for it</span>
+        <span class="ruby-comment cmt"># srep is a list of </span>
+                <span class="ruby-comment cmt"># sampled medial locus points: p</span>
+                <span class="ruby-comment cmt"># spoke directions: u</span>
+                <span class="ruby-comment cmt"># lengths: r</span>
+        <span class="ruby-comment cmt"># suggest number of atoms in 128 * 128 image 20 * 15 ellip: 9</span>
+        <span class="ruby-comment cmt"># how to calculate the standard s-rep? </span>
+                <span class="ruby-comment cmt"># i need to look at wenqi's c++ code</span>
+        <span class="ruby-comment cmt"># for now, just make an approximate s-rep and use it for display program</span>
+        <span class="ruby-identifier">srep</span> = []
+        <span class="ruby-comment cmt"># set the two end point r_mid to be 1/2 ry</span>
+        <span class="ruby-identifier">r_mid</span> = <span class="ruby-value">1.0</span><span class="ruby-operator">/</span><span class="ruby-value">3</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">ry</span> 
+        <span class="ruby-comment cmt"># set the central point pos </span>
+        <span class="ruby-identifier">p</span> = []
+        <span class="ruby-value">9</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> 
+                <span class="ruby-identifier">p</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">p</span>[<span class="ruby-value">4</span>] = [<span class="ruby-identifier">cx</span>, <span class="ruby-identifier">cy</span>]
+        <span class="ruby-identifier">cx0</span> = <span class="ruby-identifier">cx</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">rx</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">r_mid</span>
+        <span class="ruby-identifier">p</span>[<span class="ruby-value">0</span>] = [<span class="ruby-identifier">cx0</span>, <span class="ruby-identifier">cy</span>]
+        <span class="ruby-identifier">medialLength</span> = <span class="ruby-value">2</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">rx</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">r_mid</span>)
+        <span class="ruby-identifier">stepSize</span> = <span class="ruby-identifier">medialLength</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-value">9</span>
+        <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;step size: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">stepSize</span>.<span class="ruby-identifier">to_s</span>
+        <span class="ruby-value">8</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">p</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>] = [<span class="ruby-identifier">cx0</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">stepSize</span> <span class="ruby-operator">*</span> (<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>), <span class="ruby-identifier">cy</span>]
+        <span class="ruby-keyword kw">end</span>            
+        <span class="ruby-comment cmt"># array for spoke ends diretions </span>
+        <span class="ruby-identifier">u</span> = []
+        <span class="ruby-value">9</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> 
+                <span class="ruby-identifier">u</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-value">0</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">leftEndUpperAngle</span> = <span class="ruby-value">2</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">$pi</span> <span class="ruby-operator">/</span> <span class="ruby-value">3</span>
+        <span class="ruby-identifier">leftEndLowerAngle</span> = <span class="ruby-value">-2</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">$pi</span> <span class="ruby-operator">/</span> <span class="ruby-value">3</span> 
+        <span class="ruby-identifier">u</span>[<span class="ruby-value">0</span>] = [<span class="ruby-identifier">leftEndUpperAngle</span>, <span class="ruby-identifier">leftEndLowerAngle</span>, <span class="ruby-identifier">$pi</span>]
+        <span class="ruby-identifier">angleStepSize</span> = <span class="ruby-identifier">$pi</span> <span class="ruby-operator">/</span> <span class="ruby-value">24</span>
+        <span class="ruby-value">8</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">u</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>] = [<span class="ruby-identifier">leftEndUpperAngle</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">angleStepSize</span>, <span class="ruby-identifier">leftEndLowerAngle</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">angleStepSize</span> , <span class="ruby-identifier">$pi</span>]
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-comment cmt"># array for spoke length</span>
+                <span class="ruby-comment cmt"># for now, i have not derive the spoke length formula, so we assume the spoke length are all the same.</span>
+        <span class="ruby-identifier">r</span> = []
+        <span class="ruby-value">9</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> 
+                <span class="ruby-identifier">one_r</span> = []
+                <span class="ruby-value">3</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span>
+                        <span class="ruby-identifier">one_r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">r_mid</span>
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-identifier">r</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">one_r</span>
+        <span class="ruby-keyword kw">end</span>
+        
+        <span class="ruby-value">9</span>.<span class="ruby-identifier">times</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">srep</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">p</span>[<span class="ruby-identifier">i</span>], <span class="ruby-identifier">u</span>[<span class="ruby-identifier">i</span>], <span class="ruby-identifier">r</span>[<span class="ruby-identifier">i</span>]]
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">srep</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

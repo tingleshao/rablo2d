@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>updateCont (EzXmlBuilder)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File easyXMLBuilder.rb, line 63</span>
+        <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">updateCont</span>()
+                <span class="ruby-comment cmt"># to string</span>
+                <span class="ruby-ivar">@cont</span> = <span class="ruby-value str">''</span>
+                <span class="ruby-ivar">@cont</span> <span class="ruby-operator">+=</span> (<span class="ruby-value str">'&lt;root&gt;'</span>)
+                <span class="ruby-ivar">@cont</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\n&quot;</span>
+        <span class="ruby-comment cmt">#      puts &quot;rootNodeLst size: &quot; + rootNodeLst.size.to_s </span>
+        <span class="ruby-comment cmt">#      puts rootNodeLst</span>
+                <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@rootNodeLst</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+                        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span>(<span class="ruby-ivar">@rootNodeLst</span>.<span class="ruby-identifier">size</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>)
+                                <span class="ruby-identifier">pair</span> = <span class="ruby-ivar">@rootNodeLst</span>[<span class="ruby-identifier">i</span>]
+                        <span class="ruby-comment cmt">#    puts &quot;pair0: &quot; + pair[0].to_s</span>
+                                <span class="ruby-ivar">@cont</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">pair</span>[<span class="ruby-value">0</span>].<span class="ruby-identifier">to_s</span>
+                                <span class="ruby-ivar">@cont</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;\n&quot;</span>
+                        <span class="ruby-keyword kw">end</span>
+                <span class="ruby-keyword kw">end</span>
+                <span class="ruby-ivar">@cont</span> <span class="ruby-operator">+=</span> (<span class="ruby-value str">&quot;&lt;\\root&gt;&quot;</span>) 
+        <span class="ruby-comment cmt">#      @cont = @cont.gsub /^$\n/, ''</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

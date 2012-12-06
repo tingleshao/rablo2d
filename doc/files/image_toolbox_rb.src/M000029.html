@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>dilatePointList (image_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File image_toolbox.rb, line 301</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">dilatePointList</span>(<span class="ruby-identifier">ptLst</span>, <span class="ruby-identifier">size</span>, <span class="ruby-identifier">opSize</span>, <span class="ruby-identifier">do_boundary</span>)
+        <span class="ruby-comment cmt"># NOTE: the array returned by local method may just be an address.</span>
+        <span class="ruby-comment cmt">#      Which makes dup() and clone() not work in this case.</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">do_boundary</span>
+                <span class="ruby-identifier">n</span> = <span class="ruby-value">0</span>
+                <span class="ruby-identifier">ptLstBdy</span> = <span class="ruby-identifier">ptLst</span>.<span class="ruby-identifier">select</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span> ((<span class="ruby-identifier">p</span>[<span class="ruby-value">0</span>]<span class="ruby-operator">-</span><span class="ruby-value">64</span>).<span class="ruby-identifier">to_f</span><span class="ruby-operator">/</span><span class="ruby-value">20</span>)<span class="ruby-operator">**</span><span class="ruby-value">2</span> <span class="ruby-operator">+</span> ((<span class="ruby-identifier">p</span>[<span class="ruby-value">1</span>]<span class="ruby-operator">-</span><span class="ruby-value">64</span>).<span class="ruby-identifier">to_f</span><span class="ruby-operator">/</span><span class="ruby-value">15</span>)<span class="ruby-operator">**</span><span class="ruby-value">2</span> <span class="ruby-operator">&gt;=</span> <span class="ruby-value">0</span><span class="ruby-value">.95</span>}
+                <span class="ruby-identifier">dilPointList</span> = []
+                <span class="ruby-identifier">ptLstBdy</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span>
+                        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">p</span>[<span class="ruby-value">0</span>]
+                        <span class="ruby-identifier">y</span> = <span class="ruby-identifier">p</span>[<span class="ruby-value">1</span>]
+                        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span><span class="ruby-operator">-</span> <span class="ruby-identifier">opSize</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">-1</span>
+                                <span class="ruby-identifier">xLow</span> = <span class="ruby-identifier">x</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">opSize</span>
+                        <span class="ruby-keyword kw">else</span> 
+                                <span class="ruby-identifier">xLow</span> = <span class="ruby-value">0</span>
+                        <span class="ruby-keyword kw">end</span>
+                        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">x</span><span class="ruby-operator">+</span><span class="ruby-identifier">opSize</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">size</span>
+                                <span class="ruby-identifier">xHigh</span> = <span class="ruby-identifier">x</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">opSize</span>
+                        <span class="ruby-keyword kw">else</span>
+                                <span class="ruby-identifier">xHigh</span> = <span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+                        <span class="ruby-keyword kw">end</span>
+                        <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dilRow</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">xLow</span><span class="ruby-operator">..</span><span class="ruby-identifier">xHigh</span>
+                                <span class="ruby-identifier">foo</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sqrt</span>(<span class="ruby-identifier">opSize</span><span class="ruby-operator">**</span><span class="ruby-value">2</span><span class="ruby-operator">-</span>(<span class="ruby-identifier">dilRow</span><span class="ruby-operator">-</span><span class="ruby-identifier">x</span>)<span class="ruby-operator">**</span><span class="ruby-value">2</span>)
+                                <span class="ruby-identifier">yCalcLow</span> = (<span class="ruby-identifier">y</span><span class="ruby-operator">-</span><span class="ruby-identifier">foo</span>).<span class="ruby-identifier">floor</span>
+                                <span class="ruby-identifier">yCalcHigh</span> = (<span class="ruby-identifier">y</span><span class="ruby-operator">+</span><span class="ruby-identifier">foo</span>).<span class="ruby-identifier">ceil</span>
+                                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">yCalcLow</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">-1</span>
+                                        <span class="ruby-identifier">yLow</span> = <span class="ruby-identifier">yCalcLow</span>
+                                <span class="ruby-keyword kw">else</span> 
+                                        <span class="ruby-identifier">yLow</span> = <span class="ruby-value">0</span>
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">yCalcHigh</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">size</span>
+                                        <span class="ruby-identifier">yHigh</span> = <span class="ruby-identifier">yCalcHigh</span>
+                                <span class="ruby-keyword kw">else</span> 
+                                        <span class="ruby-identifier">yHigh</span> = <span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+                                <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">dilCol</span> <span class="ruby-keyword kw">in</span> <span class="ruby-identifier">yLow</span><span class="ruby-operator">..</span><span class="ruby-identifier">yHigh</span>
+                                        <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span>( <span class="ruby-identifier">dilPointList</span>.<span class="ruby-identifier">include?</span>([<span class="ruby-identifier">dilRow</span>,<span class="ruby-identifier">dilCol</span>]) )
+                                                <span class="ruby-identifier">dilPointList</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-identifier">dilRow</span>,<span class="ruby-identifier">dilCol</span>]
+                                                <span class="ruby-identifier">n</span> = <span class="ruby-identifier">n</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>
+                                                <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;add one! &quot;</span> <span class="ruby-operator">+</span>  <span class="ruby-identifier">n</span>.<span class="ruby-identifier">to_s</span>
+                                        <span class="ruby-keyword kw">end</span>
+                                <span class="ruby-keyword kw">end</span>
+                        <span class="ruby-keyword kw">end</span>
+                <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">else</span> 
+                <span class="ruby-identifier">bin</span> = <span class="ruby-identifier">pointListToBinary</span>(<span class="ruby-identifier">ptLst</span>,<span class="ruby-value">128</span>)
+                <span class="ruby-identifier">dilPointList</span> = <span class="ruby-identifier">binaryToPointList</span>(<span class="ruby-identifier">dilateBinary</span>(<span class="ruby-identifier">bin</span>,<span class="ruby-value">128</span>,<span class="ruby-identifier">opSize</span>), <span class="ruby-value">128</span>)
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">ptLst</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">p</span><span class="ruby-operator">|</span>
+                <span class="ruby-identifier">dilPointList</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">p</span>
+        <span class="ruby-keyword kw">end</span>
+        <span class="ruby-identifier">dilPointList</span> = <span class="ruby-identifier">dilPointList</span>.<span class="ruby-identifier">uniq</span>
+        <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;done!&quot;</span>
+        <span class="ruby-comment cmt">#  convert binmat to bin, return bin</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">dilPointList</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

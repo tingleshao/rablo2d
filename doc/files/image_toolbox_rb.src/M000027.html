@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>displayBinaryWithSrep (image_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File image_toolbox.rb, line 209</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">displayBinaryWithSrep</span>(<span class="ruby-identifier">bin</span>, <span class="ruby-identifier">size</span>, <span class="ruby-identifier">srep</span>, <span class="ruby-identifier">filename</span>)
+        <span class="ruby-identifier">require</span> <span class="ruby-value str">'rubyvis'</span>
+
+        <span class="ruby-comment cmt"># this function generates a html file that contains svg. The html displays the ellipsoid with the srep.</span>
+        <span class="ruby-comment cmt"># parameters: image in binary format, size of the image,  center of the ellipsoid, the output filename and the srep points list.</span>
+        <span class="ruby-identifier">p</span> = <span class="ruby-identifier">binaryToPointList</span>(<span class="ruby-identifier">bin</span>, <span class="ruby-identifier">size</span>)
+        <span class="ruby-identifier">data</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-identifier">range</span>(<span class="ruby-identifier">p</span>.<span class="ruby-identifier">size</span>).<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span> 
+          <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>({<span class="ruby-identifier">x</span><span class="ruby-operator">:</span> <span class="ruby-identifier">p</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">y</span><span class="ruby-operator">:</span> <span class="ruby-identifier">p</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">1</span>], <span class="ruby-identifier">z</span><span class="ruby-operator">:</span> <span class="ruby-value">1</span>})
+        }
+        
+        <span class="ruby-identifier">sdata</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-identifier">range</span>(<span class="ruby-identifier">srep</span>.<span class="ruby-identifier">size</span>).<span class="ruby-identifier">map</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">i</span><span class="ruby-operator">|</span> 
+          <span class="ruby-constant">OpenStruct</span>.<span class="ruby-identifier">new</span>({<span class="ruby-identifier">x</span><span class="ruby-operator">:</span> <span class="ruby-identifier">srep</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">0</span>][<span class="ruby-value">0</span>], <span class="ruby-identifier">y</span><span class="ruby-operator">:</span> <span class="ruby-identifier">srep</span>[<span class="ruby-identifier">i</span>][<span class="ruby-value">0</span>][<span class="ruby-value">1</span>], <span class="ruby-identifier">z</span><span class="ruby-operator">:</span> <span class="ruby-value">90</span>})
+        }
+        
+        <span class="ruby-identifier">w</span> = <span class="ruby-value">400</span>        
+        <span class="ruby-identifier">h</span> = <span class="ruby-value">400</span>
+
+        <span class="ruby-identifier">x</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-constant">Scale</span>.<span class="ruby-identifier">linear</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">size</span>).<span class="ruby-identifier">range</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">w</span>)
+        <span class="ruby-identifier">y</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-constant">Scale</span>.<span class="ruby-identifier">linear</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">size</span>).<span class="ruby-identifier">range</span>(<span class="ruby-value">0</span>, <span class="ruby-identifier">h</span>)
+
+        <span class="ruby-identifier">c</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-constant">Scale</span>.<span class="ruby-identifier">log</span>(<span class="ruby-value">1</span>, <span class="ruby-value">100</span>).<span class="ruby-identifier">range</span>(<span class="ruby-value str">&quot;orange&quot;</span>, <span class="ruby-value str">&quot;brown&quot;</span>)
+
+        <span class="ruby-comment cmt"># The root panel.</span>
+        <span class="ruby-identifier">vis</span> = <span class="ruby-identifier">pv</span>.<span class="ruby-constant">Panel</span>.<span class="ruby-identifier">new</span>()
+            .<span class="ruby-identifier">width</span>(<span class="ruby-identifier">w</span>)
+            .<span class="ruby-identifier">height</span>(<span class="ruby-identifier">h</span>)
+            .<span class="ruby-identifier">bottom</span>(<span class="ruby-value">20</span>)
+            .<span class="ruby-identifier">left</span>(<span class="ruby-value">20</span>)
+            .<span class="ruby-identifier">right</span>(<span class="ruby-value">10</span>)
+            .<span class="ruby-identifier">top</span>(<span class="ruby-value">5</span>);
+
+        <span class="ruby-comment cmt"># Y-axis and ticks. </span>
+        <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Rule</span>)
+            .<span class="ruby-identifier">data</span>(<span class="ruby-identifier">y</span>.<span class="ruby-identifier">ticks</span>())
+            .<span class="ruby-identifier">bottom</span>(<span class="ruby-identifier">y</span>)
+            .<span class="ruby-identifier">strokeStyle</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">d!</span>=<span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value str">&quot;#eee&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;#000&quot;</span>})
+          .<span class="ruby-identifier">anchor</span>(<span class="ruby-value str">&quot;left&quot;</span>).<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Label</span>)
+          .<span class="ruby-identifier">visible</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span>  <span class="ruby-identifier">d</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">128</span>})
+          .<span class="ruby-identifier">text</span>(<span class="ruby-identifier">y</span>.<span class="ruby-identifier">tick_format</span>)
+
+        <span class="ruby-comment cmt"># X-axis and ticks. </span>
+        <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Rule</span>)
+            .<span class="ruby-identifier">data</span>(<span class="ruby-identifier">x</span>.<span class="ruby-identifier">ticks</span>())
+            .<span class="ruby-identifier">left</span>(<span class="ruby-identifier">x</span>)
+            .<span class="ruby-identifier">stroke_style</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">d!</span>=<span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-value str">&quot;#eee&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-value str">&quot;#000&quot;</span>})
+          .<span class="ruby-identifier">anchor</span>(<span class="ruby-value str">&quot;bottom&quot;</span>).<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Label</span>)
+          .<span class="ruby-identifier">visible</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span>  <span class="ruby-identifier">d</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span> <span class="ruby-keyword kw">and</span> <span class="ruby-identifier">d</span> <span class="ruby-operator">&lt;</span> <span class="ruby-value">128</span>})
+          .<span class="ruby-identifier">text</span>(<span class="ruby-identifier">x</span>.<span class="ruby-identifier">tick_format</span>);
+
+        <span class="ruby-comment cmt">#/* The dot plot! */</span>
+        <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Panel</span>)
+            .<span class="ruby-identifier">data</span>(<span class="ruby-identifier">data</span>)
+          .<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Dot</span>)
+          .<span class="ruby-identifier">left</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">x</span>)})
+          .<span class="ruby-identifier">bottom</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">y</span>)})
+          .<span class="ruby-identifier">stroke_style</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>)})
+          .<span class="ruby-identifier">fill_style</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>).<span class="ruby-identifier">alpha</span>(<span class="ruby-value">0</span><span class="ruby-value">.2</span>)})
+          .<span class="ruby-identifier">shape_size</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>})
+          .<span class="ruby-identifier">title</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-value str">&quot;%0.1f&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>})
+
+        <span class="ruby-comment cmt"># s-rep plot</span>
+        <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Panel</span>)
+            .<span class="ruby-identifier">data</span>(<span class="ruby-identifier">sdata</span>)
+          .<span class="ruby-identifier">add</span>(<span class="ruby-identifier">pv</span>.<span class="ruby-constant">Dot</span>)
+          .<span class="ruby-identifier">left</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">x</span>)})
+          .<span class="ruby-identifier">bottom</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">y</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">y</span>)})
+          .<span class="ruby-identifier">stroke_style</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-value">1</span>)})
+          .<span class="ruby-identifier">fill_style</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">scale</span>(<span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>).<span class="ruby-identifier">alpha</span>(<span class="ruby-value">1</span>)})
+          .<span class="ruby-identifier">shape_size</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-value">10</span>})
+          .<span class="ruby-identifier">title</span>(<span class="ruby-identifier">lambda</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">d</span><span class="ruby-operator">|</span> <span class="ruby-value str">&quot;%0.1f&quot;</span> <span class="ruby-operator">%</span> <span class="ruby-identifier">d</span>.<span class="ruby-identifier">z</span>})
+        <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">render</span>()
+
+        <span class="ruby-identifier">f</span> = <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-identifier">filename</span><span class="ruby-operator">+</span><span class="ruby-value str">'.html'</span>, <span class="ruby-value str">'w'</span>)
+        <span class="ruby-identifier">f</span>.<span class="ruby-identifier">puts</span> <span class="ruby-identifier">vis</span>.<span class="ruby-identifier">to_svg</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

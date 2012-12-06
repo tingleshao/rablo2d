@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generateStraight2DDiscreteSrep (srep_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File srep_toolbox.rb, line 7</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generateStraight2DDiscreteSrep</span>(<span class="ruby-identifier">rx</span>,<span class="ruby-identifier">ry</span>,<span class="ruby-identifier">cx</span>,<span class="ruby-identifier">cy</span>,<span class="ruby-identifier">size</span>,<span class="ruby-identifier">nOfatomDiv2Minus1</span>)
+  <span class="ruby-identifier">mr</span> = (<span class="ruby-identifier">rx</span><span class="ruby-operator">**</span><span class="ruby-value">2</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">ry</span><span class="ruby-operator">**</span><span class="ruby-value">2</span>).<span class="ruby-identifier">to_f</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">rx</span>
+  <span class="ruby-identifier">noadm</span> = <span class="ruby-identifier">nOfatomDiv2Minus1</span>
+  <span class="ruby-comment cmt"># hand code the u's </span>
+  <span class="ruby-identifier">m</span> = []
+  <span class="ruby-identifier">angle</span> = [<span class="ruby-identifier">$pi</span><span class="ruby-operator">*</span><span class="ruby-value">2</span><span class="ruby-operator">/</span><span class="ruby-value">3</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">*</span><span class="ruby-value">11</span><span class="ruby-operator">/</span><span class="ruby-value">18</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">*</span><span class="ruby-value">5</span><span class="ruby-operator">/</span><span class="ruby-value">9</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">/</span><span class="ruby-value">2</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">*</span><span class="ruby-value">4</span><span class="ruby-operator">/</span><span class="ruby-value">9</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">*</span><span class="ruby-value">7</span><span class="ruby-operator">/</span><span class="ruby-value">18</span>, <span class="ruby-identifier">$pi</span><span class="ruby-operator">/</span><span class="ruby-value">3</span>] <span class="ruby-operator">*</span>  (<span class="ruby-identifier">noadm</span> <span class="ruby-regexp re">/3)
+  #~ alert angle
+  for i in -noadm..noadm
+    a = []
+    # calculate p
+    step = mr/</span>(<span class="ruby-identifier">noadm</span>)
+    <span class="ruby-identifier">p</span> = [<span class="ruby-identifier">cx</span><span class="ruby-operator">-</span><span class="ruby-identifier">step</span><span class="ruby-operator">*</span><span class="ruby-identifier">i</span>, <span class="ruby-identifier">cy</span>]
+    <span class="ruby-comment cmt"># calculate u0, u1, u2</span>
+    <span class="ruby-identifier">sx</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">cos</span>(<span class="ruby-identifier">angle</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-identifier">noadm</span>])
+    <span class="ruby-identifier">sy</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sin</span>(<span class="ruby-identifier">angle</span>[<span class="ruby-identifier">i</span><span class="ruby-operator">+</span><span class="ruby-identifier">noadm</span>])
+    <span class="ruby-identifier">u0</span> = [<span class="ruby-identifier">sx</span>, <span class="ruby-identifier">sy</span>]
+    <span class="ruby-identifier">u1</span> = [<span class="ruby-identifier">sx</span>, <span class="ruby-value">-1</span><span class="ruby-operator">*</span><span class="ruby-identifier">sy</span>]
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">noadm</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">u2</span> = [<span class="ruby-value">1</span>,<span class="ruby-value">0</span>] <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">u2</span> = [<span class="ruby-value">-1</span>,<span class="ruby-value">0</span>] <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">u</span> = [<span class="ruby-identifier">u0</span>, <span class="ruby-identifier">u1</span>, <span class="ruby-identifier">u2</span>]
+    <span class="ruby-comment cmt"># calculate r0, r1, r2</span>
+    <span class="ruby-comment cmt"># now don't calculate, just set they all the same.</span>
+    <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;rx: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">rx</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;mr: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">mr</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">r_same</span> = (<span class="ruby-identifier">rx</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">mr</span> ) <span class="ruby-operator">*</span><span class="ruby-value">2</span>
+    <span class="ruby-identifier">r0</span> = <span class="ruby-identifier">r1</span> = <span class="ruby-identifier">r_same</span> <span class="ruby-operator">*</span>  <span class="ruby-value">3.0</span><span class="ruby-operator">/</span><span class="ruby-value">7</span> <span class="ruby-operator">*</span> <span class="ruby-constant">Math</span>.<span class="ruby-identifier">log</span>(<span class="ruby-identifier">noadm</span> <span class="ruby-operator">*</span> <span class="ruby-value">2</span> <span class="ruby-operator">+</span><span class="ruby-value">10</span><span class="ruby-operator">-</span> <span class="ruby-identifier">i</span>.<span class="ruby-identifier">abs</span>)
+    <span class="ruby-comment cmt">#~ r0 = r1 = r_same</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-operator">-</span><span class="ruby-identifier">noadm</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">r2</span>  = <span class="ruby-identifier">r_same</span>  <span class="ruby-keyword kw">elsif</span> <span class="ruby-identifier">i</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">noadm</span> <span class="ruby-keyword kw">then</span> <span class="ruby-identifier">r2</span> = <span class="ruby-identifier">r_same</span> <span class="ruby-keyword kw">else</span> <span class="ruby-identifier">r2</span> = <span class="ruby-value">0</span> <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">r</span> = [<span class="ruby-identifier">r0</span>, <span class="ruby-identifier">r1</span>, <span class="ruby-identifier">r2</span>]
+    <span class="ruby-identifier">a</span> = [<span class="ruby-identifier">p</span>, <span class="ruby-identifier">u</span>, <span class="ruby-identifier">r</span>]
+    <span class="ruby-identifier">puts</span> <span class="ruby-value str">&quot;r: &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">r</span>.<span class="ruby-identifier">to_s</span>
+    <span class="ruby-identifier">m</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">a</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
