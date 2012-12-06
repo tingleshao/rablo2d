@@ -107,8 +107,10 @@ class SRep
                 if spoke_end[2] == -1
                   spoke_end[2] = @index
                 end
+              # even though the two spokes are not strictly intersect, if any spoke goes too far into a dilated disk, it should be considered as intersected with sth.  
+              elsif srep.index != @index and checkSpokeEndAndDiskIntersection(@extend_interpolated_spokes_end[ind][0], @extend_interpolated_spokes_end[ind][1], srep)
+                @extend_interpolated_spokes_end[ind][2] = srep.index
               end
-           
            end
           end
         end
