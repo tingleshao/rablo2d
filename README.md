@@ -1,7 +1,7 @@
 rablo2d
 =======
 
-##Description:
+##Description
 rablo2d is a tool for: <br/>
 1. Producing 2d objects in medial representation. <br/>
 2. Analyzing their relationship in multi-object context. <br/>
