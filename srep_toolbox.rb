@@ -98,7 +98,7 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
 
   # use the curve and upper spokes to get the value of lower spokes and end spokes 
   # calculate v at base points
- v= []
+  v= []
   v << [ -1*(curve[0][indices[0]+1]-curve[0][indices[0]]), 1*(curve[1][indices[0]+1]-curve[1][indices[0]])]
 
   indices.each_with_index do |ind, i |
@@ -108,8 +108,8 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
   end
    
   v << [ curve[0][indices[-1]] - curve[0][indices[-1]-1], -1* (curve[1][indices[-1]]- curve[1][indices[-1]-1]) ] 
- puts "v: "+ v.to_s
-refine = true
+  puts "v: "+ v.to_s
+  refine = true
 if refine
   # get the upper spokes directions 
   srep.atoms.each_with_index do |atom, i| 
