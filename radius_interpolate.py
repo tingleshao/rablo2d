@@ -25,13 +25,13 @@ for xp in xx:
 	x.append(float(xp))
 for rp in rr:
 	r.append(float(rp))
-
+print "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
 print x
 print r
 
-t = np.arange(0.0,1.2,0.2)
+t = np.arange(0.0,1.2,1.2/len(xx))
 tck,u = interpolate.splprep([x,r],s=0)
-unew = np.arange(0.0,1.01,step_size)
+unew = np.arange(0.0,1.0+step_size,step_size)
 out = interpolate.splev(unew,tck)
 print out
 

@@ -85,7 +85,7 @@ class Field
     @app.stroke "#00FFFF"
        @app.line(cx, cy, cx + spoke_length[2] * spoke_direction[2][0], cy - spoke_length[2] * spoke_direction[2][1])
     elsif type == 'inner'
- @app.stroke "#FFFFFF"
+    @app.stroke "#FFFFFF"
        @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
         @app.stroke color
        @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
@@ -98,9 +98,8 @@ class Field
     shifty = args[2]
     scale = args[4]
     show_sphere = args[5]
-    show_curve = args[6]
       
-    if show_curve
+    if srep.show_curve
       # display the interpolated curve points (gamma) 
       render_curve(srep.index, srep, shiftx, shifty)
     end
@@ -109,15 +108,21 @@ class Field
       render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
 
       if show_sphere
-	render_circle(atom.x + shiftx - atom.expand_spoke_length[0], atom.y + shifty - atom.expand_spoke_length[0], atom.expand_spoke_length[0] * 2 , srep.color)
 	render_circle(atom.x + shiftx - atom.spoke_length[0], atom.y + shifty - atom.spoke_length[0], atom.spoke_length[0] * 2 , srep.color)
       end
+
+      if srep.show_extend_disk
+        render_circle(atom.x + shiftx - atom.expand_spoke_length[0], atom.y + shifty - atom.expand_spoke_length[0], atom.expand_spoke_length[0] * 2 , srep.color)
+      end 
       render_spokes(atom.x+shiftx, atom.y+shifty, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
     end
 
-    if srep.interpolated_spokes_begin.length > 0
+    if srep.interpolated_spokes_begin.length > 0 and srep.show_interpolated_spokes
       puts "render_interp_spokes"
       render_interp_spokes(shiftx, shifty, '#FFFFFF', srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
+    end
+
+    if (srep.getExtendInterpolatedSpokesEnd()).length > 0 and srep.show_extend_spokes
       render_extend_interp_spokes(shiftx, shifty, '#FF0000', srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
     end
   end 
@@ -164,7 +169,7 @@ class Field
     checkSrepIntersection
 
     $sreps.each.with_index do |srep, i|
-      render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true, srep.show_curve)
+      render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true)
     end
   end  
  
@@ -273,10 +278,11 @@ class InterpolateControl
       # interpolate radius
           index = @index.text
           srep =  $sreps[index.to_i]
-          xt = srep.atoms.collect{|atom| atom.x.to_s}
+          xt = srep.atoms.collect{|atom| atom.x}
+          yt = srep.atoms.collect{|atom| atom.y}
           rt = srep.atoms.collect{|atom| atom.spoke_length[0].to_s} 
           step_size = 0.01
-          rs = interpolateRadius(xt,rt,step_size,index)
+          rs = interpolateRadius(xt,yt,rt,step_size,index)
           rr = rs.strip.split(' ').collect{|r| r.to_f} 
       # interpolate kappa
           # read interpolated file
@@ -345,10 +351,9 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	    srep.atoms.each do |atom|
 	      atom.dilate(1.05)
 	    end
-            # dilate interpolated spokes....
+            # dilate interpolated spokes.
+            # and check intersection
             srep.extendInterpolatedSpokes(1.05, $sreps)
-            # check intersection
-         #   srep.computingMask()
 	  end
           refresh @points, $sreps, @shifts
         }
@@ -400,13 +405,42 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	  fileName = 'pat101_31_par_link.txt'
 	  File.open(fileName,'w') {|file|
 	    file.write (@field.totalCorreLst.to_s)
-	    file.close}
+	    file.close
+          }
 	}
  
         button("Check r-k File") {
           window :title => "draw srep", :width => 402, :height => 375 do
 	    dp = InterpolateControl.new(self)
           end
+        }
+
+        button("Hide Curve") {
+          $sreps.each do |srep| 
+             srep.show_curve = false
+          end
+          refresh @points, $sreps, @shifts
+        }
+  
+        button("Hide Interpolated Spokes") {
+          $sreps.each do |srep| 
+             srep.show_interpolated_spokes = false
+          end
+          refresh @points, $sreps, @shifts
+        }
+
+        button("Hide Extend Spokes") {
+          $sreps.each do |srep| 
+             srep.show_extend_spokes = false
+          end
+          refresh @points, $sreps, @shifts
+        }
+
+        button("Hide Extend Disks") {
+          $sreps.each do |srep| 
+             srep.show_extend_disk = false
+          end
+          refresh @points, $sreps, @shifts
         }
           
         button("Interpolate All") {
@@ -430,7 +464,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
             d1t = 0.01 * $count2
             d2t = c1 * 0.01 
 
-            # ---
             # calculate parameters......
             # read all points, rs, logrkm1s from the file
             file = File.open('interpolated_points_' + srep_index.to_s, 'r')
@@ -440,9 +473,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	    rt = file.gets.split(' ').collect{|r| r.to_f}
 	    file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
             logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
-            ## ---
 
-            #-- 
             if curr_index < xt.length-1
               v1t = [xt[curr_index] - xt[indices[foo]], yt[curr_index] - yt[indices[foo]]]
               if curr_index == indices[foo+1]
@@ -452,7 +483,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
               end
               puts "v1t: " + v1t.to_s
               size_v1t = v1t[0]**2 + v1t[1]**2
-             norm_v1t = v1t.collect{|v| v / size_v1t} 
+              norm_v1t = v1t.collect{|v| v / size_v1t} 
 
               size_v2t = v2t[0]**2 + v2t[1]**2
               puts "size_v2t: " + size_v2t.to_s
@@ -469,30 +500,27 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
               puts "rt: " + rt[curr_index-1].to_s
               srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1]
           
-      
-            # interpolate bottom
+              # interpolate bottom
+              u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
+              u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
+              ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
+              puts "ui: " + ui.to_s
+              $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1]    
+              puts "rt: " + rt[indices[foo]+$count2].to_s
+              $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
+            else
+              # may add another spoke to the end.....
+              alert(srep_index.to_s + " finished")
+            end
+            $count2 = $count2 + 1
+            puts "count: "+ $count2.to_s
 
-               
-            u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
-            u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
-            ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
-            puts "ui: " + ui.to_s
-          $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1]    
-          puts "rt: " + rt[indices[foo]+$count2].to_s
-          $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
-  else
-                # may add another spoke to the end.....
-                alert(srep_index.to_s + " finished")
+            refresh @points, $sreps, @shifts
           end
-          $count2 = $count2 + 1
-          puts "count: "+ $count2.to_s
-
-          refresh @points, $sreps, @shifts
-       end
-        $count2 = 0
-        $bar2 = 0
-end
-        }
+          $count2 = 0
+          $bar2 = 0
+        end
+       }
      end
 
      stack do @status = para :stroke => black end
@@ -530,7 +558,6 @@ def initialConfig
   srep2 = generate2DDiscreteSrep(points2,l2,u2,0.01,2)
   srep2.color = "#CC66FF"
   $sreps << srep2
-  
   
   refresh @points, $sreps, @shifts
 end

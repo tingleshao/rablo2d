@@ -40,7 +40,7 @@ print y
 #	x.append(p[0])
 #	y.append(p[1])
 # the parameterization t should range between 0 to 1
-t = np.arange(0.0,1.2,0.2)
+t = np.arange(0.0,1.2,(1.2)/len(xx))
 tck,u = interpolate.splprep([x,y],s=0)
 unew = np.arange(0.0,1.01,step_size)
 out = interpolate.splev(unew,tck)

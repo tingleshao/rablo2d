@@ -295,12 +295,20 @@ def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
   return ixs, iys
 end
 
-def interpolateRadius(xt,rt,step_size,index)
+def interpolateRadius(xt,yt,rt,step_size,index)
 # this function interpolates r values
 # parameters: x values         xt
+#             y values         yt
 #             r values         rt 
 #             step size        step_size
-  xs = '"[' + xt.join(" ") + ']"'
+  xyt = ["0"]
+  xt.each_with_index do |x, i|
+    if i !=0 
+      xy = xyt[i-1].to_f + Math.sqrt( (xt[i] - xt[i-1]) ** 2 + (yt[i] - yt[i-1]) ** 2 )
+      xyt << xy.to_s
+    end
+  end
+  xs = '"[' + xyt.join(" ") + ']"'
   rs = '"[' + rt.join(" ") + ']"'
   step_size_s = step_size.to_s
   system("python radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s + ' ' + index )

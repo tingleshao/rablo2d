@@ -23,7 +23,7 @@ for foo in rkk:
 
 print "rk: " +  str(rk)
 
-t = np.arange(0.0,1.25,0.25)
+t = np.arange(0.0,1.25,(1.25-0.0)/len(rk))
 x = t
 print "x: " + str(x)
 tck,u = interpolate.splprep([x,rk],s=0)
@@ -32,7 +32,7 @@ out = interpolate.splev(unew,tck)
 print out
 
 print "index: " + index
-f = open('interpolated_logrkm1s_'+index,'w')
+f = open('interpolated_logrkm1s_'+str(index),'w')
 writelogrk(out[1],f)
 
 plt.figure()
