@@ -1,3 +1,0 @@
-# this is an image statistics toolbox written in ruby...
-# may be easier written in matlab. we will see.
-# Author: Chong Shao (cshao@cs.unc.edu)

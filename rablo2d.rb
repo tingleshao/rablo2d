@@ -1,5 +1,5 @@
-load 'ellip_factory.rb'
-load 'image_toolbox.rb'
+#load 'ellip_factory.rb'
+#load 'image_toolbox.rb'
 load 'srep_toolbox.rb'
 
 def point(x, y, color, bg_color, app)
@@ -295,7 +295,7 @@ class InterpolateControl
           step_size = 0.01
           rs = interpolateRadius(xt,yt,rt,step_size,index)
           rr = rs.strip.split(' ').collect{|r| r.to_f} 
-      # interpolate kappa
+          # interpolate kappa
           # read interpolated file
           step_size = 0.01
           # rt and kt are the r's and k's on the base points 
@@ -350,19 +350,19 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
     clear do
       background rgb(50, 50, 90, 0.7)
       flow :margin => 6 do
-	button("Srep Image"){
-	  window :title => "draw srep", :width => 402, :height => 375 do
-	    dp = DrawPad.new self
-	    dp.refresh
-          end
-	}
+#	button("Srep Image"){
+#	  window :title => "draw srep", :width => 402, :height => 375 do
+#	    dp = DrawPad.new self
+#	    dp.refresh
+#         end
+#	}
 
         button("Dilate") { 
 	  $sreps.each do |srep|
 	    srep.atoms.each do |atom|
 	      atom.dilate(1.05)
 	    end
-            # dilate interpolated spokes.
+            # dilate interpolated spokes
             # and check intersection
             srep.extendInterpolatedSpokes(1.05, $sreps)
 	  end
@@ -412,13 +412,13 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
 	}
 
-	button("Save") {
-	  fileName = 'pat101_31_par_link.txt'
-	  File.open(fileName,'w') {|file|
-	    file.write (@field.totalCorreLst.to_s)
-	    file.close
-          }
-	}
+#	button("Save") {
+#	  fileName = 'pat101_31_par_link.txt'
+#	  File.open(fileName,'w') {|file|
+#	    file.write (@field.totalCorreLst.to_s)
+#	    file.close
+#         }
+#	}
  
         button("Check r-k File") {
           window :title => "draw srep", :width => 402, :height => 375 do
@@ -426,30 +426,30 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
         }
 
-        button("Hide Curve") {
+        button("Curve Visibility") {
           $sreps.each do |srep| 
-             srep.show_curve = false
+             srep.show_curve = !srep.show_curve
           end
           refresh @points, $sreps, @shifts
         }
   
-        button("Hide Interpolated Spokes") {
+        button("Interpolated Spokes Visbility") {
           $sreps.each do |srep| 
-             srep.show_interpolated_spokes = false
+             srep.show_interpolated_spokes = !srep.show_interpolated_spokes
           end
           refresh @points, $sreps, @shifts
         }
 
-        button("Hide Extend Spokes") {
+        button("Extend Spokes Visibility") {
           $sreps.each do |srep| 
-             srep.show_extend_spokes = false
+             srep.show_extend_spokes = !srep.show_extend_spokes
           end
           refresh @points, $sreps, @shifts
         }
 
-        button("Hide Extend Disks") {
+        button("Extend Disks Visibility") {
           $sreps.each do |srep| 
-             srep.show_extend_disk = false
+             srep.show_extend_disk = !srep.show_extend_disk
           end
           refresh @points, $sreps, @shifts
         }
@@ -552,6 +552,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
      para "\n"
      para "mask_func[0]: "  + $sreps[0].extend_interpolated_spokes_end.collect{|e| e[2]}.to_s
      para "mask_func[1]: "  + $sreps[1].extend_interpolated_spokes_end.collect{|e| e[2]}.to_s
+     para "mask_func[2]: "  + $sreps[2].extend_interpolated_spokes_end.collect{|e| e[2]}.to_s
    end  
  end
   
@@ -590,3 +591,6 @@ end
   
 initialConfig
 end
+
+# TODO; interpolated on the end disks 
+#        check the correctness of the linking structure
