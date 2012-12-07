@@ -164,12 +164,23 @@ class Field
       render_point_big(x, y, color)
   end
   
+  def render_linking_structure(shifts)
+     shift = shifts[0] + 200
+     $linkingPts.each do |pt|
+       render_atom(pt[0]+shift, pt[1]+shift, "#000000")
+     end
+  end
+
   def paint
     @app.nostroke
     checkSrepIntersection
 
     $sreps.each.with_index do |srep, i|
       render_srep(srep, 200 + @shifts[i] , 200 + @shifts[i] , @colorLst[i], 1.5, true)
+    end
+
+    if $show_linking_structure 
+       render_linking_structure(@shifts)
     end
   end  
  
@@ -442,6 +453,19 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
           refresh @points, $sreps, @shifts
         }
+
+        button("Show linking structure") {
+          $linkingPts = []
+          $sreps.each do |srep|
+             srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, i|
+                if spoke_end[2] != -1 
+                   $linkingPts << [spoke_end[0], spoke_end[1]]  
+                end
+             end
+          end
+          $show_linking_structure = true
+          refresh @points, $sreps, @shifts
+	}
           
         button("Interpolate All") {
          $sreps.each_with_index do |srep, srep_index| 
@@ -558,7 +582,9 @@ def initialConfig
   srep2 = generate2DDiscreteSrep(points2,l2,u2,0.01,2)
   srep2.color = "#CC66FF"
   $sreps << srep2
-  
+  $linkingPts = []
+  $show_linking_structure = false
+   
   refresh @points, $sreps, @shifts
 end
   
