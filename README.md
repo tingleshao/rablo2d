@@ -35,5 +35,7 @@ By keeping push "Dilate" button, all the spokes will extend by a small ratio, on
 <br/>
 The linking structure can be displayed.<br/><br/>
 ![img4](https://lh4.googleusercontent.com/-c8JSBUiqn4o/UMTQbilhxAI/AAAAAAAADCo/0_PTHE0jPgo/s640/Screenshot%2520from%25202012-12-09%252012%253A49%253A08.jpg)
+<br/>
+<br/>
 User can change the visibility of any elements to make the result more clear.<br/><br>/
 ![img5](https://lh4.googleusercontent.com/-vvS6IxvZHV4/UMTQbspNEjI/AAAAAAAADCs/TV0yV7vhDOY/s640/Screenshot%2520from%25202012-12-09%252012%253A49%253A13.jpg)
