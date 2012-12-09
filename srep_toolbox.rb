@@ -1,42 +1,7 @@
-#load 'image_toolbox.rb'
 load 'srep.rb'
 load 'atom.rb'
 
 $pi = Math::PI
-
-def generateStraight2DDiscreteSrep(rx,ry,cx,cy,size,nOfatomDiv2Minus1)
-  mr = (rx**2 - ry**2).to_f / rx
-  noadm = nOfatomDiv2Minus1
-  # hand code the u's 
-  m = []
-  angle = [$pi*2/3, $pi*11/18, $pi*5/9, $pi/2, $pi*4/9, $pi*7/18, $pi/3] *  (noadm /3)
-  #~ alert angle
-  for i in -noadm..noadm
-    a = []
-    # calculate p
-    step = mr/(noadm)
-    p = [cx-step*i, cy]
-    # calculate u0, u1, u2
-    sx = Math.cos(angle[i+noadm])
-    sy = Math.sin(angle[i+noadm])
-    u0 = [sx, sy]
-    u1 = [sx, -1*sy]
-    if i == noadm then u2 = [1,0] else u2 = [-1,0] end
-    u = [u0, u1, u2]
-    # calculate r0, r1, r2
-    # now don't calculate, just set they all the same.
-    puts "rx: " + rx.to_s + "mr: " + mr.to_s
-    r_same = (rx - mr ) *2
-    r0 = r1 = r_same *  3.0/7 * Math.log(noadm * 2 +10- i.abs)
-    #~ r0 = r1 = r_same
-    if i == -noadm then r2  = r_same  elsif i == noadm then r2 = r_same else r2 = 0 end
-    r = [r0, r1, r2]
-    a = [p, u, r]
-    puts "r: " + r.to_s
-    m << a
-  end
-  return m
-end
 
 def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep_index)
   # the atoms is passed as a list of x-y's 
@@ -156,19 +121,6 @@ end
   return srep
 end
 
-
-def generate2DDiscreteSrepC(atoms, spoke_length, spoke_direction, curves)
-	# this method returns the s-rep object by taking the discrete atoms position, spokes and dense discrete curve points as parameters
-	
-end
-
-def generate2DDiscreteSrepBySampledPointsC(atoms, spoke_length, spoke_direction)
-	# this method would firstly call the spline interpolation method to intepolate the curve
-	
-end
-
-
-
 def rotateSrep(srep, angle)
 	# rotate the srep, with the rotation cencter being the srep's center
 	if srep.size % 2 ==1 then centerP = srep[srep.size / 2][0] else centerP = [(srep[srep.size/2 -1][0][0] + srep[srep.size/2][0][0]), (srep[srep.size/2 -1][0][1] + srep[srep.size/2][0][1])] end
@@ -246,16 +198,6 @@ def checkSrepIntersection(srep1, srep2, shift1, shift2)
   end
   return correLst
 end
-
-
-
-def calculateDeformSrep(band, tapper, rx, ry, cx, cy, srep)
-  # this function takes a srep and information that needed for calculate the deformed srep
-  # it returns a deformed s-rep for it
-  # srep is a list of sampled medial locus points, and a list of spoke directions and lengths 
-	
-end 
-
 
 def parseSavedSrep(filename)
 	srepf = File.open(filename, 'r')
@@ -403,11 +345,6 @@ def computeBaseKappa(xt,yt, indices, h, rt)
   return kappa, kr 
 end
 
-def interpolateSpokeAtPosition(t,ut,kt,at,pos)
-  #************************************
- 
-end
-
 def interpolateSpokeAtPos(u1t, v1t, k1t, d1t, u2t, v2t, k2t, d2t)
   # we know the 
   # this function interpolates the spole at 1st base points to the right..
@@ -481,12 +418,6 @@ def checkSpokeEndAndDiskIntersection(x,y,srep)
   end
   return false
 end
-
-def generateBentSrep()
-# work on it later
-end
-
-
 
 
 
