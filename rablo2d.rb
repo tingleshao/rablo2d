@@ -519,13 +519,13 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
               puts "ui: " + ui.to_s
               srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index],-1]    
               puts "rt: " + rt[curr_index-1].to_s
-              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1]
+              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1,[]]
               # interpolate another side
               u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
               u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
               ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
               puts "ui: " + ui.to_s
-              $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1]    
+              $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1,[]]    
               puts "rt: " + rt[indices[foo]+$count2].to_s
               $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
             else
@@ -559,7 +559,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                   previous_x = new_spoke_dir_x
                   previous_y = new_spoke_dir_y
                   # calculate interpolated spoke end
-                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1]
+                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[]]
                   $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                   $sreps[srep_index].interpolated_spokes_end << new_spoke_end
                 end
@@ -575,7 +575,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                   previous_x = new_spoke_dir_x
                   previous_y = new_spoke_dir_y
                   # calculate interpolated spoke end
-                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1]
+                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[]]
                   $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                   $sreps[srep_index].interpolated_spokes_end << new_spoke_end
                 end
@@ -641,6 +641,5 @@ initialConfig
 end
 
 # TODO; 
-#        check the correctness of the linking structure
+#        check the correctness of the linking structure ( go one step backward)
 #        link the linking structure
-#        store correpondence

@@ -51,10 +51,6 @@ class SRep
     end
   end
 
-  def rotate
-  # this method would rotate the srep.
-  end
-
   def checkIntersection(other_srep)
   # this method checks the intersection between self and another srep, for the BASE points
   # based on this intersection, decide the curve's linking index
@@ -63,20 +59,12 @@ class SRep
           other_srep.atoms.each_with_index do |other_atom, j|
            if Math.sqrt( (atom.x - other_atom.x)**2 + (atom.y - other_atom.y)**2 ) < (atom.expand_spoke_length[0] + other_atom.expand_spoke_length[0]) #=> intersection
               atom.linking_index = other_srep.index
-              puts "intersect! "
-             puts "other color: " + other_srep.color
               atom.corresponding_color = other_srep.color
               other_atom.linking_index = @index
               other_atom.corresponding_color = @color
            end
          end
       end
-    end
-  end
-
-  def computingMask(all)
-    @extend_interpolated_spokes_end.each_with_index do |e, i|
-      
     end
   end
 
@@ -98,7 +86,6 @@ class SRep
       # if mask_func[ind] == -1) <-- have not intersected to anyone
       #extend spoke
       # calculate direction
-      # here assume the stuff in @mask_func is ordered, later it may got modified to something like a map
       if isb[2] == -1
         spoke_v = [ @extend_interpolated_spokes_end[ind][0] - @interpolated_spokes_begin[ind][0], @extend_interpolated_spokes_end[ind][1] - @interpolated_spokes_begin[ind][1] ]
         extend_v = spoke_v.collect{|e| e * ratio }
@@ -111,8 +98,10 @@ class SRep
               check_result = checkSpokeIntersection(@interpolated_spokes_end[ind][0], @interpolated_spokes_end[ind][1], extend_v_end[0], extend_v_end[1], srep.interpolated_spokes_end[spoke_end_index][0], srep.interpolated_spokes_end[spoke_end_index][1], spoke_end[0], spoke_end[1])
               if check_result[0] 
                 @extend_interpolated_spokes_end[ind][2] = srep.index
+                @extend_interpolated_spokes_end[ind][3] = srep.interpolated_spokes_begin[spoke_end_index]
                 if spoke_end[2] == -1
                   spoke_end[2] = @index
+                  spoke_end[3] = @interpolated_spokes_begin[ind]
                 end
               # even though the two spokes are not strictly intersect, if any spoke goes too far into a dilated disk, it should be considered as intersected with sth.  
               elsif srep.index != @index and checkSpokeEndAndDiskIntersection(@extend_interpolated_spokes_end[ind][0], @extend_interpolated_spokes_end[ind][1], srep)
