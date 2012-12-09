@@ -31,3 +31,9 @@ By pushing "Interpolate All" button, the spokes that in between base points will
 <br/>
 By keeping push "Dilate" button, all the spokes will extend by a small ratio, once it intersects with other spokes, it will stop extending itself. Finally this process yields a linking structure in the spakes between objects.<br/><br/>
 ![img3](https://lh6.googleusercontent.com/-rOI0k-YHYLI/UMEMoyyBX4I/AAAAAAAAC60/srwV3Efu81U/s640/Screenshot%2520from%25202012-12-06%252016%253A20%253A25.jpg)
+<br/>
+<br/>
+The linking structure can be displayed.<br/><br/>
+![img4](https://lh4.googleusercontent.com/-c8JSBUiqn4o/UMTQbilhxAI/AAAAAAAADCo/0_PTHE0jPgo/s640/Screenshot%2520from%25202012-12-09%252012%253A49%253A08.jpg)
+User can change the visibility of any elements to make the result more clear.<br/><br>/
+![img5](https://lh4.googleusercontent.com/-vvS6IxvZHV4/UMTQbspNEjI/AAAAAAAADCs/TV0yV7vhDOY/s640/Screenshot%2520from%25202012-12-09%252012%253A49%253A13.jpg)
