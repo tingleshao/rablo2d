@@ -59,10 +59,6 @@
                 rablo2d.rb
                 </a>
         <br />
-                <a href="../files/expert-minesweeper_rb.html">
-                expert-minesweeper.rb
-                </a>
-        <br />
             </td>
         </tr>
 
@@ -90,38 +86,26 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000079">[]</a>&nbsp;&nbsp;
-      <a href="#M000080">[]=</a>&nbsp;&nbsp;
-      <a href="#M000067">addShift</a>&nbsp;&nbsp;
-      <a href="#M000065">addSrep</a>&nbsp;&nbsp;
-      <a href="#M000092">all_found?</a>&nbsp;&nbsp;
-      <a href="#M000091">bombs_left</a>&nbsp;&nbsp;
-      <a href="#M000078">checkSrepIntersection</a>&nbsp;&nbsp;
-      <a href="#M000083">click!</a>&nbsp;&nbsp;
-      <a href="#M000084">flag!</a>&nbsp;&nbsp;
-      <a href="#M000085">game_over?</a>&nbsp;&nbsp;
-      <a href="#M000062">new</a>&nbsp;&nbsp;
-      <a href="#M000081">new</a>&nbsp;&nbsp;
-      <a href="#M000090">paint</a>&nbsp;&nbsp;
-      <a href="#M000077">paint</a>&nbsp;&nbsp;
-      <a href="#M000076">render_atom</a>&nbsp;&nbsp;
-      <a href="#M000088">render_bomb</a>&nbsp;&nbsp;
-      <a href="#M000086">render_cell</a>&nbsp;&nbsp;
-      <a href="#M000070">render_circle</a>&nbsp;&nbsp;
-      <a href="#M000073">render_curve</a>&nbsp;&nbsp;
-      <a href="#M000075">render_extend_interp_spokes</a>&nbsp;&nbsp;
-      <a href="#M000069">render_figure</a>&nbsp;&nbsp;
-      <a href="#M000087">render_flag</a>&nbsp;&nbsp;
-      <a href="#M000074">render_interp_spokes</a>&nbsp;&nbsp;
-      <a href="#M000089">render_number</a>&nbsp;&nbsp;
-      <a href="#M000068">render_point_big</a>&nbsp;&nbsp;
-      <a href="#M000071">render_spokes</a>&nbsp;&nbsp;
-      <a href="#M000072">render_srep</a>&nbsp;&nbsp;
-      <a href="#M000093">reveal!</a>&nbsp;&nbsp;
-      <a href="#M000063">setPoints</a>&nbsp;&nbsp;
-      <a href="#M000066">setShift</a>&nbsp;&nbsp;
-      <a href="#M000064">setSrep</a>&nbsp;&nbsp;
-      <a href="#M000082">total_time</a>&nbsp;&nbsp;
+      <a href="#M000037">[]</a>&nbsp;&nbsp;
+      <a href="#M000038">[]=</a>&nbsp;&nbsp;
+      <a href="#M000024">addShift</a>&nbsp;&nbsp;
+      <a href="#M000022">addSrep</a>&nbsp;&nbsp;
+      <a href="#M000036">checkSrepIntersection</a>&nbsp;&nbsp;
+      <a href="#M000019">new</a>&nbsp;&nbsp;
+      <a href="#M000035">paint</a>&nbsp;&nbsp;
+      <a href="#M000033">render_atom</a>&nbsp;&nbsp;
+      <a href="#M000027">render_circle</a>&nbsp;&nbsp;
+      <a href="#M000030">render_curve</a>&nbsp;&nbsp;
+      <a href="#M000032">render_extend_interp_spokes</a>&nbsp;&nbsp;
+      <a href="#M000026">render_figure</a>&nbsp;&nbsp;
+      <a href="#M000031">render_interp_spokes</a>&nbsp;&nbsp;
+      <a href="#M000034">render_linking_structure</a>&nbsp;&nbsp;
+      <a href="#M000025">render_point_big</a>&nbsp;&nbsp;
+      <a href="#M000028">render_spokes</a>&nbsp;&nbsp;
+      <a href="#M000029">render_srep</a>&nbsp;&nbsp;
+      <a href="#M000020">setPoints</a>&nbsp;&nbsp;
+      <a href="#M000023">setShift</a>&nbsp;&nbsp;
+      <a href="#M000021">setSrep</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -132,34 +116,7 @@
 
     <div id="section">
 
-    <div id="class-list">
-      <h3 class="section-bar">Classes and Modules</h3>
 
-      Class <a href="Field/Bomb.html" class="link">Field::Bomb</a><br />
-Class <a href="Field/Cell.html" class="link">Field::Cell</a><br />
-Class <a href="Field/EmptyCell.html" class="link">Field::EmptyCell</a><br />
-Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
-
-    </div>
-
-    <div id="constants-list">
-      <h3 class="section-bar">Constants</h3>
-
-      <div class="name-list">
-        <table summary="Constants">
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">CELL_SIZE</td>
-          <td>=</td>
-          <td class="context-item-value">20</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">COLORS</td>
-          <td>=</td>
-          <td class="context-item-value">%w(#00A #0A0 #A00 #004 #040 #400 #000)</td>
-        </tr>
-        </table>
-      </div>
-    </div>
 
 
 
@@ -168,16 +125,6 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
 
       <div class="name-list">
         <table>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">cell_size</td>
-          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
-          <td class="context-item-desc"></td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">offset</td>
-          <td class="context-item-value">&nbsp;[R]&nbsp;</td>
-          <td class="context-item-desc"></td>
-        </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">shifts</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
@@ -198,27 +145,13 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000062" class="method-detail">
-        <a name="M000062"></a>
+      <div id="method-M000019" class="method-detail">
+        <a name="M000019"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000062.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000062.html');return false;">
+          <a href="Field.src/M000019.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000019.html');return false;">
           <span class="method-name">new</span><span class="method-args">(app, points, sreps, shifts)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000081" class="method-detail">
-        <a name="M000081"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000081.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000081.html');return false;">
-          <span class="method-name">new</span><span class="method-args">(app, level = :beginner)</span>
           </a>
         </div>
       
@@ -228,12 +161,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000079" class="method-detail">
-        <a name="M000079"></a>
+      <div id="method-M000037" class="method-detail">
+        <a name="M000037"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000079.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000079.html');return false;">
+          <a href="Field.src/M000037.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000037.html');return false;">
           <span class="method-name">[]</span><span class="method-args">(*args)</span>
           </a>
         </div>
@@ -242,12 +175,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000080" class="method-detail">
-        <a name="M000080"></a>
+      <div id="method-M000038" class="method-detail">
+        <a name="M000038"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000080.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000080.html');return false;">
+          <a href="Field.src/M000038.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000038.html');return false;">
           <span class="method-name">[]=</span><span class="method-args">(*args)</span>
           </a>
         </div>
@@ -256,12 +189,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000067" class="method-detail">
-        <a name="M000067"></a>
+      <div id="method-M000024" class="method-detail">
+        <a name="M000024"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000067.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000067.html');return false;">
+          <a href="Field.src/M000024.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000024.html');return false;">
           <span class="method-name">addShift</span><span class="method-args">(shift)</span>
           </a>
         </div>
@@ -270,12 +203,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000065" class="method-detail">
-        <a name="M000065"></a>
+      <div id="method-M000022" class="method-detail">
+        <a name="M000022"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000065.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000065.html');return false;">
+          <a href="Field.src/M000022.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000022.html');return false;">
           <span class="method-name">addSrep</span><span class="method-args">(srep)</span>
           </a>
         </div>
@@ -284,40 +217,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000092" class="method-detail">
-        <a name="M000092"></a>
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000092.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000092.html');return false;">
-          <span class="method-name">all_found?</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000091" class="method-detail">
-        <a name="M000091"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000091.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000091.html');return false;">
-          <span class="method-name">bombs_left</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000078" class="method-detail">
-        <a name="M000078"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000078.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000078.html');return false;">
+          <a href="Field.src/M000036.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000036.html');return false;">
           <span class="method-name">checkSrepIntersection</span><span class="method-args">()</span>
           </a>
         </div>
@@ -326,54 +231,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000083" class="method-detail">
-        <a name="M000083"></a>
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000083.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000083.html');return false;">
-          <span class="method-name">click!</span><span class="method-args">(x, y)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000084" class="method-detail">
-        <a name="M000084"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000084.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000084.html');return false;">
-          <span class="method-name">flag!</span><span class="method-args">(x, y)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000085" class="method-detail">
-        <a name="M000085"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000085.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000085.html');return false;">
-          <span class="method-name">game_over?</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000090" class="method-detail">
-        <a name="M000090"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000090.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000090.html');return false;">
+          <a href="Field.src/M000035.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000035.html');return false;">
           <span class="method-name">paint</span><span class="method-args">()</span>
           </a>
         </div>
@@ -382,26 +245,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000077" class="method-detail">
-        <a name="M000077"></a>
+      <div id="method-M000033" class="method-detail">
+        <a name="M000033"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000077.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000077.html');return false;">
-          <span class="method-name">paint</span><span class="method-args">()</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000076" class="method-detail">
-        <a name="M000076"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000076.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000076.html');return false;">
+          <a href="Field.src/M000033.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000033.html');return false;">
           <span class="method-name">render_atom</span><span class="method-args">(x, y, color)</span>
           </a>
         </div>
@@ -410,40 +259,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000088" class="method-detail">
-        <a name="M000088"></a>
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000088.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000088.html');return false;">
-          <span class="method-name">render_bomb</span><span class="method-args">(x, y)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000086" class="method-detail">
-        <a name="M000086"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000086.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000086.html');return false;">
-          <span class="method-name">render_cell</span><span class="method-args">(x, y, color = &quot;</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000070" class="method-detail">
-        <a name="M000070"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000070.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000070.html');return false;">
+          <a href="Field.src/M000027.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000027.html');return false;">
           <span class="method-name">render_circle</span><span class="method-args">(cx, cy, d, color)</span>
           </a>
         </div>
@@ -452,12 +273,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000073" class="method-detail">
-        <a name="M000073"></a>
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000073.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000073.html');return false;">
+          <a href="Field.src/M000030.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000030.html');return false;">
           <span class="method-name">render_curve</span><span class="method-args">(index, srep, shiftx, shifty)</span>
           </a>
         </div>
@@ -466,12 +287,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000075" class="method-detail">
-        <a name="M000075"></a>
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000075.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000075.html');return false;">
+          <a href="Field.src/M000032.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000032.html');return false;">
           <span class="method-name">render_extend_interp_spokes</span><span class="method-args">(shiftx, shifty, color, ibegin, iend)</span>
           </a>
         </div>
@@ -480,12 +301,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000069" class="method-detail">
-        <a name="M000069"></a>
+      <div id="method-M000026" class="method-detail">
+        <a name="M000026"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000069.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000069.html');return false;">
+          <a href="Field.src/M000026.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000026.html');return false;">
           <span class="method-name">render_figure</span><span class="method-args">(points, shiftx, shifty, color, is_big, scale)</span>
           </a>
         </div>
@@ -494,26 +315,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000087" class="method-detail">
-        <a name="M000087"></a>
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000087.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000087.html');return false;">
-          <span class="method-name">render_flag</span><span class="method-args">(x, y)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000074" class="method-detail">
-        <a name="M000074"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000074.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000074.html');return false;">
+          <a href="Field.src/M000031.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000031.html');return false;">
           <span class="method-name">render_interp_spokes</span><span class="method-args">(shiftx, shifty, color, ibegin, iend)</span>
           </a>
         </div>
@@ -522,13 +329,13 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000089" class="method-detail">
-        <a name="M000089"></a>
+      <div id="method-M000034" class="method-detail">
+        <a name="M000034"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000089.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000089.html');return false;">
-          <span class="method-name">render_number</span><span class="method-args">(x, y)</span>
+          <a href="Field.src/M000034.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000034.html');return false;">
+          <span class="method-name">render_linking_structure</span><span class="method-args">(shifts)</span>
           </a>
         </div>
       
@@ -536,12 +343,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000068" class="method-detail">
-        <a name="M000068"></a>
+      <div id="method-M000025" class="method-detail">
+        <a name="M000025"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000068.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000068.html');return false;">
+          <a href="Field.src/M000025.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000025.html');return false;">
           <span class="method-name">render_point_big</span><span class="method-args">(x, y, color)</span>
           </a>
         </div>
@@ -550,12 +357,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000071" class="method-detail">
-        <a name="M000071"></a>
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000071.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000071.html');return false;">
+          <a href="Field.src/M000028.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000028.html');return false;">
           <span class="method-name">render_spokes</span><span class="method-args">(cx, cy, type, spoke_length, spoke_direction, color)</span>
           </a>
         </div>
@@ -564,12 +371,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000072" class="method-detail">
-        <a name="M000072"></a>
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000072.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000072.html');return false;">
+          <a href="Field.src/M000029.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000029.html');return false;">
           <span class="method-name">render_srep</span><span class="method-args">(*args)</span>
           </a>
         </div>
@@ -578,26 +385,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000093" class="method-detail">
-        <a name="M000093"></a>
+      <div id="method-M000020" class="method-detail">
+        <a name="M000020"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000093.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000093.html');return false;">
-          <span class="method-name">reveal!</span><span class="method-args">(x, y)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000063" class="method-detail">
-        <a name="M000063"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000063.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000063.html');return false;">
+          <a href="Field.src/M000020.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000020.html');return false;">
           <span class="method-name">setPoints</span><span class="method-args">(points)</span>
           </a>
         </div>
@@ -606,12 +399,12 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000066" class="method-detail">
-        <a name="M000066"></a>
+      <div id="method-M000023" class="method-detail">
+        <a name="M000023"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000066.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000066.html');return false;">
+          <a href="Field.src/M000023.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000023.html');return false;">
           <span class="method-name">setShift</span><span class="method-args">(shift, index)</span>
           </a>
         </div>
@@ -620,27 +413,13 @@ Class <a href="Field/OpenCell.html" class="link">Field::OpenCell</a><br />
         </div>
       </div>
 
-      <div id="method-M000064" class="method-detail">
-        <a name="M000064"></a>
+      <div id="method-M000021" class="method-detail">
+        <a name="M000021"></a>
 
         <div class="method-heading">
-          <a href="Field.src/M000064.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000064.html');return false;">
+          <a href="Field.src/M000021.html" target="Code" class="method-signature"
+            onclick="popupCode('Field.src/M000021.html');return false;">
           <span class="method-name">setSrep</span><span class="method-args">(srep, index)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000082" class="method-detail">
-        <a name="M000082"></a>
-
-        <div class="method-heading">
-          <a href="Field.src/M000082.html" target="Code" class="method-signature"
-            onclick="popupCode('Field.src/M000082.html');return false;">
-          <span class="method-name">total_time</span><span class="method-args">()</span>
           </a>
         </div>
       

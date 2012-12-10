@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>rotateOneAtom (lib/srep_toolbox.rb)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/srep_toolbox.rb, line 145</span>
+<span class="ruby-keyword kw">def</span> <span class="ruby-identifier">rotateOneAtom</span>(<span class="ruby-identifier">cX</span>, <span class="ruby-identifier">cY</span>, <span class="ruby-identifier">xx</span>, <span class="ruby-identifier">yy</span>, <span class="ruby-identifier">angle</span>)
+  <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">cX</span>.<span class="ruby-identifier">to_f</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">xx</span>.<span class="ruby-identifier">to_f</span>)
+    <span class="ruby-comment cmt"># theta is the angle in radius</span>
+    <span class="ruby-comment cmt"># phi is the x, y old angle reltative to horizontal</span>
+    <span class="ruby-identifier">x</span> = <span class="ruby-identifier">xx</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">y</span> = <span class="ruby-identifier">yy</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">centerX</span> = <span class="ruby-identifier">cX</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">centerY</span> = <span class="ruby-identifier">cY</span>.<span class="ruby-identifier">to_f</span>
+    <span class="ruby-identifier">relativeX</span> = <span class="ruby-identifier">x</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">centerX</span>
+    <span class="ruby-identifier">relativeY</span> = <span class="ruby-identifier">y</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">centerY</span>
+    <span class="ruby-identifier">r</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sqrt</span>(<span class="ruby-identifier">relativeX</span><span class="ruby-operator">**</span><span class="ruby-value">2</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">relativeY</span><span class="ruby-operator">**</span><span class="ruby-value">2</span>)
+    <span class="ruby-identifier">cosphi</span> = <span class="ruby-identifier">relativeX</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">r</span>
+    <span class="ruby-identifier">sinphi</span> = <span class="ruby-identifier">relativeY</span> <span class="ruby-operator">/</span> <span class="ruby-identifier">r</span>
+    <span class="ruby-identifier">cosThetaPlusPhi</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">cos</span>(<span class="ruby-identifier">angle</span>) <span class="ruby-operator">*</span> <span class="ruby-identifier">cosphi</span> <span class="ruby-operator">-</span> <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sin</span>(<span class="ruby-identifier">angle</span>) <span class="ruby-operator">*</span> <span class="ruby-identifier">sinphi</span>
+    <span class="ruby-identifier">d1</span> = <span class="ruby-identifier">r</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">cosThetaPlusPhi</span> 
+    <span class="ruby-identifier">newX</span> = <span class="ruby-identifier">centerX</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">d1</span>
+    <span class="ruby-identifier">sinThetaPlusPhi</span> = <span class="ruby-constant">Math</span>.<span class="ruby-identifier">sin</span>(<span class="ruby-identifier">angle</span>) <span class="ruby-operator">*</span> <span class="ruby-identifier">cosphi</span> <span class="ruby-operator">+</span> <span class="ruby-constant">Math</span>.<span class="ruby-identifier">cos</span>(<span class="ruby-identifier">angle</span>) <span class="ruby-operator">*</span> <span class="ruby-identifier">sinphi</span> 
+    <span class="ruby-identifier">d3</span> = <span class="ruby-identifier">r</span> <span class="ruby-operator">*</span> <span class="ruby-identifier">sinThetaPlusPhi</span>
+    <span class="ruby-identifier">newY</span> = <span class="ruby-identifier">y</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">d3</span>
+    <span class="ruby-identifier">newP</span> = [<span class="ruby-identifier">newX</span>, <span class="ruby-identifier">newY</span>]
+  <span class="ruby-keyword kw">else</span> 
+    <span class="ruby-identifier">newP</span> = [<span class="ruby-identifier">xx</span>, <span class="ruby-identifier">yy</span>]
+  <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">newP</span>
+<span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
