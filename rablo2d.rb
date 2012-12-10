@@ -1,4 +1,4 @@
-load 'srep_toolbox.rb'
+load 'lib/srep_toolbox.rb'
 
 def point(x, y, color, bg_color, app)
  app.stroke color
@@ -126,7 +126,7 @@ class Field
   end 
   
   def render_curve(index, srep, shiftx, shifty)
-    file_name = "interpolated_points_" + index.to_s
+    file_name = "data/interpolated_points_" + index.to_s
     if File::exists?(file_name)
       gamma_file = File.open(file_name, "r")
     else
@@ -299,7 +299,7 @@ class InterpolateControl
           # rt and kt are the r's and k's on the base points 
           # need to calculate kappa at base positions using the curvature formula
 
-          f = File.new('interpolated_points_'+ index, 'r')   
+          f = File.new('data/interpolated_points_'+ index, 'r')   
           xs = f.gets.strip.split(' ')
           ys = f.gets.strip.split(' ')  
           xt = []
@@ -312,7 +312,7 @@ class InterpolateControl
           end
           h = step_size
           f.close
-          ff = File.new('interpolated_rs_0', 'r')
+          ff = File.new('data/interpolated_rs_0', 'r')
           rs = ff.gets.strip.split(' ')
           puts "rr: " + rr.to_s
 
@@ -487,12 +487,12 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
             # calculate parameters......
             # read all points, rs, logrkm1s from the file
-            file = File.open('interpolated_points_' + srep_index.to_s, 'r')
+            file = File.open('data/interpolated_points_' + srep_index.to_s, 'r')
             xt = file.gets.split(' ').collect{|x| x.to_f}
 	    yt = file.gets.split(' ').collect{|y| y.to_f}
-            file = File.open('interpolated_rs_' + srep_index.to_s, 'r')
+            file = File.open('data/interpolated_rs_' + srep_index.to_s, 'r')
 	    rt = file.gets.split(' ').collect{|r| r.to_f}
-	    file = File.open('interpolated_logrkm1s_' + srep_index.to_s, 'r')
+	    file = File.open('data/interpolated_logrkm1s_' + srep_index.to_s, 'r')
             logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
 
             if curr_index < xt.length-1
