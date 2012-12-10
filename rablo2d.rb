@@ -97,10 +97,7 @@ class Field
     scale = args[4]
     show_sphere = args[5]
       
-    if srep.show_curve
-      # display the interpolated curve points
-      render_curve(srep.index, srep, shiftx, shifty)
-    end
+
     srep.atoms.each_with_index do |atom|
 
       render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
@@ -123,9 +120,14 @@ class Field
     if (srep.getExtendInterpolatedSpokesEnd()).length > 0 and srep.show_extend_spokes
       render_extend_interp_spokes(shiftx, shifty, '#FF0000', srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
     end
+    
+    if srep.show_curve
+      # display the interpolated curve points
+      render_curve($sreps, srep.index, srep, shiftx, shifty)
+    end
   end 
   
-  def render_curve(index, srep, shiftx, shifty)
+  def render_curve(sreps, index, srep, shiftx, shifty)
     file_name = "data/interpolated_points_" + index.to_s
     if File::exists?(file_name)
       gamma_file = File.open(file_name, "r")
@@ -134,13 +136,38 @@ class Field
       xt = srep.atoms.collect{|atom| atom.x}
       yt = srep.atoms.collect{|atom| atom.y}
       step_size = 0.01
-      interpolateSkeletalCurveGamma(xt,yt,step_size,srep.sreindex)
+      interpolateSkeletalCurveGamma(xt,yt,step_size,srep.index)
       gamma_file = File.open(file_name, "r")
     end 
     xs = gamma_file.gets.split(" ").collect{|x| x.to_f}
     ys = gamma_file.gets.split(" ").collect{|y| y.to_f}
-    xs.each_with_index do |x,i|
-      render_atom(x+shiftx,ys[i]+shifty,"#000000")
+   
+
+    if (srep.interpolate_finished)
+    
+      xs.each_with_index do |x,i|
+      spoke_ind = i*2
+      linkingIndex = srep.getExtendInterpolatedSpokesEnd()[spoke_ind][2]
+      if linkingIndex == -1
+        color1 = srep.color
+      else 
+        color1 = sreps[linkingIndex].color
+      end
+      linkingIndex = srep.extend_interpolated_spokes_end[spoke_ind+1][2]
+      if linkingIndex == -1
+        color2 = srep.color
+      else 
+        color2 = sreps[linkingIndex].color
+      end
+      render_atom(x+shiftx,ys[i]+shifty, color1)
+      
+      render_atom(x+shiftx+1, ys[i]+shifty-1, color2)
+    end
+    else 
+      xs.each_with_index do |x,i|
+        render_atom(x+shiftx,ys[i]+shifty, srep.color)
+        render_atom(x+shiftx+1, ys[i]+shifty-1, srep.color)
+      end
     end
   end
 
@@ -361,9 +388,15 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	      atom.dilate(1.05)
 	    end
             # dilate interpolated spokes
-            # and check intersection
-            srep.extendInterpolatedSpokes(1.05, $sreps)
+            # and check intersection 
+            # user can specify first serval count to speed up dilate
+            if $dilateCount > 6
+              srep.extendInterpolatedSpokes(1.05, $sreps, true)
+            else
+              srep.extendInterpolatedSpokes(1.05, $sreps, false)
+            end
 	  end
+          $dilateCount = $dilateCount + 1
           refresh @points, $sreps, @shifts
         }
 
@@ -463,6 +496,8 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           end
           $show_linking_structure = true
           refresh @points, $sreps, @shifts
+          linkLinkingStructurePoints($sreps, self, 300)
+          
 	}
           
         button("Interpolate All") {
@@ -519,13 +554,13 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
               puts "ui: " + ui.to_s
               srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index],-1]    
               puts "rt: " + rt[curr_index-1].to_s
-              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1,[]]
+              srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1,[],'regular']
               # interpolate another side
               u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
               u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
               ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
               puts "ui: " + ui.to_s
-              $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1,[]]    
+              $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1,[],'regular']    
               puts "rt: " + rt[indices[foo]+$count2].to_s
               $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
             else
@@ -559,7 +594,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                   previous_x = new_spoke_dir_x
                   previous_y = new_spoke_dir_y
                   # calculate interpolated spoke end
-                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[]]
+                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[],'end']
                   $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                   $sreps[srep_index].interpolated_spokes_end << new_spoke_end
                 end
@@ -575,9 +610,10 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                   previous_x = new_spoke_dir_x
                   previous_y = new_spoke_dir_y
                   # calculate interpolated spoke end
-                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[]]
+                  new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[],'end']
                   $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                   $sreps[srep_index].interpolated_spokes_end << new_spoke_end
+                  $sreps[srep_index].interpolate_finished = true
                 end
               end
               $info = "interpolation finished"
@@ -619,6 +655,7 @@ def initialConfig
   @shifts = [300,300,300]
   $bar2 = 0	
   $info = ""
+  $dilateCount = 0
   points1 = [[200,190],[250,190],[300,200],[350,180],[400,160]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u1 = [[[-1,6],[0.5,-3],[-9,1]],[[-1,4],[-1,-3]],[[-1,4],[-0.1,-6]],[[1,9],[1,-1.5]],[[1,2],[2,-5],[6,1]]]

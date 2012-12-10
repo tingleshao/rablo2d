@@ -1,5 +1,5 @@
 class SRep 
-  attr_accessor :index, :atoms, :skeletal_curve, :interpolated_spokes_begin, :interpolated_spokes_end, :extend_interpolated_spokes_end, :show_curve, :show_interpolated_spokes, :show_extend_disk, :show_extend_spokes, :step_size, :color, :offset, :base_index, :mask_func
+  attr_accessor :interpolate_finished, :index, :atoms, :skeletal_curve, :interpolated_spokes_begin, :interpolated_spokes_end, :extend_interpolated_spokes_end, :show_curve, :show_interpolated_spokes, :show_extend_disk, :show_extend_spokes, :step_size, :color, :offset, :base_index, :mask_func
 	
   def initialize(index, atoms, skeletal_curve, step_size, color, offset)
     @index = index
@@ -75,7 +75,7 @@ class SRep
     return @extend_interpolated_spokes_end
   end
 
-  def extendInterpolatedSpokes(ratio, sreps)
+  def extendInterpolatedSpokes(ratio, sreps, checkIntersection)
     # if the @extend_interpolated_spokes_end is not synchronzied with @interpolated_spokes_end, it means that it is the first time extension 
     # so deep copy the array @interpolated_spokes_end into @extend_interpolated_spokes_end
     if @extend_interpolated_spokes_end.length != @interpolated_spokes_end.length
@@ -87,32 +87,33 @@ class SRep
       #extend spoke
       # calculate direction
       if isb[2] == -1
-        old_extend_end = @extend_interpolated_spokes_end[ind]
-        spoke_v = [ old_extend_end[0] - @interpolated_spokes_begin[ind][0], old_extend_end[1] - @interpolated_spokes_begin[ind][1]]
+        spoke_v = [ isb[0] - @interpolated_spokes_begin[ind][0], isb[1] - @interpolated_spokes_begin[ind][1]]
         extend_v = spoke_v.collect{|e| e * ratio }
-        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1], isb[2], []]
-        
+        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1], isb[2], isb[3] ,isb[4]]
+
         @extend_interpolated_spokes_end[ind] = extend_v_end
         # check intersection with others 
+        if checkIntersection 
         sreps.each_with_index do |srep, srep_ind|   
           srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, spoke_end_index|
           if (( srep.index != @index ) || ( (ind-spoke_end_index).abs > 1 ) && srep.index == @index  )
               check_result = checkSpokeIntersection(@interpolated_spokes_end[ind][0], @interpolated_spokes_end[ind][1], extend_v_end[0], extend_v_end[1], srep.interpolated_spokes_end[spoke_end_index][0], srep.interpolated_spokes_end[spoke_end_index][1], spoke_end[0], spoke_end[1])
               if check_result[0] 
-		@extend_interpolated_spokes_end[ind] = old_extend_end
+		@extend_interpolated_spokes_end[ind] = isb
                 @extend_interpolated_spokes_end[ind][2] = srep.index
-                @extend_interpolated_spokes_end[ind][3] = srep.interpolated_spokes_begin[spoke_end_index]
+                @extend_interpolated_spokes_end[ind][3] = srep.extend_interpolated_spokes_end[spoke_end_index]
                 if spoke_end[2] == -1
                   spoke_end[2] = @index
-                  spoke_end[3] = @interpolated_spokes_begin[ind]
+                  spoke_end[3] = @extend_interpolated_spokes_end[ind]
                 end
               # even though the two spokes are not strictly intersect, if any spoke goes too far into a dilated disk, it should be considered as intersected with sth.  
               elsif srep.index != @index and checkSpokeEndAndDiskIntersection(@extend_interpolated_spokes_end[ind][0], @extend_interpolated_spokes_end[ind][1], srep)
-                @extend_interpolated_spokes_end[ind] = old_extend_end
+                @extend_interpolated_spokes_end[ind] = isb
                 @extend_interpolated_spokes_end[ind][2] = srep.index
               end
            end
           end
+        end
         end
       end
     end

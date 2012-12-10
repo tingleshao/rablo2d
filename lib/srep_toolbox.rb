@@ -419,9 +419,25 @@ def checkSpokeEndAndDiskIntersection(x,y,srep)
   return false
 end
 
-def linkLinkingStructurePoints(sreps, app)
+def linkLinkingStructurePoints(sreps, app, shift)
 # this function links the intersection points to form a linking structure
-
+  sreps.each_with_index do |srep, srep_index|
+    srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, spoke_end_index|
+      app.stroke("#3399FF")
+      if spoke_end[3].length > 0
+        puts "case0: " + ( spoke_end[3].length > 0 ).to_s
+        app.line(spoke_end[0]+shift, spoke_end[1]+shift, spoke_end[3][0]+shift, spoke_end[3][1]+shift)
+      end
+      puts "case3: " + (spoke_end[2] != -1).to_s
+      if spoke_end[2] != -1
+        if spoke_end_index+2 < srep.extend_interpolated_spokes_end.length and srep.extend_interpolated_spokes_end[spoke_end_index+2][2] != -1 and spoke_end[4] == 'regular' and srep.extend_interpolated_spokes_end[spoke_end_index+2][4] == 'regular'
+          puts "case1: " + ( spoke_end_index+2 < srep.extend_interpolated_spokes_end.length ).to_s
+          puts "case2: " + ( srep.extend_interpolated_spokes_end[spoke_end_index+2][2] != -1 ).to_s
+          app.line(spoke_end[0]+shift, spoke_end[1]+shift, srep.extend_interpolated_spokes_end[spoke_end_index+2][0]+shift,  srep.extend_interpolated_spokes_end[spoke_end_index+2][1]+shift)
+        end
+      end
+    end
+  end
 end
 
 
