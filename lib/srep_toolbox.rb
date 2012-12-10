@@ -419,5 +419,11 @@ def checkSpokeEndAndDiskIntersection(x,y,srep)
   return false
 end
 
+def linkLinkingStructurePoints(sreps, app)
+# this function links the intersection points to form a linking structure
+
+end
+
+
 
 

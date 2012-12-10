@@ -14,7 +14,7 @@ class Field
   def initialize(app, points, sreps, shifts)
     @app = app
     @field = []
-
+    # set window size
     @width, @height= 800, 600
 
     @offset = [(@app.width - @width.to_i) / 2, (@app.height - @height.to_i) / 2]

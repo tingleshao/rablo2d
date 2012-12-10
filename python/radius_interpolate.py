@@ -25,7 +25,6 @@ for xp in xx:
 	x.append(float(xp))
 for rp in rr:
 	r.append(float(rp))
-print "wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww"
 print x
 print r
 

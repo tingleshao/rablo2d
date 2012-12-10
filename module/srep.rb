@@ -87,9 +87,11 @@ class SRep
       #extend spoke
       # calculate direction
       if isb[2] == -1
-        spoke_v = [ @extend_interpolated_spokes_end[ind][0] - @interpolated_spokes_begin[ind][0], @extend_interpolated_spokes_end[ind][1] - @interpolated_spokes_begin[ind][1] ]
+        old_extend_end = @extend_interpolated_spokes_end[ind]
+        spoke_v = [ old_extend_end[0] - @interpolated_spokes_begin[ind][0], old_extend_end[1] - @interpolated_spokes_begin[ind][1]]
         extend_v = spoke_v.collect{|e| e * ratio }
-        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1], isb[2]]
+        extend_v_end = [@interpolated_spokes_begin[ind][0] + extend_v[0], @interpolated_spokes_begin[ind][1] + extend_v[1], isb[2], []]
+        
         @extend_interpolated_spokes_end[ind] = extend_v_end
         # check intersection with others 
         sreps.each_with_index do |srep, srep_ind|   
@@ -97,6 +99,7 @@ class SRep
           if (( srep.index != @index ) || ( (ind-spoke_end_index).abs > 1 ) && srep.index == @index  )
               check_result = checkSpokeIntersection(@interpolated_spokes_end[ind][0], @interpolated_spokes_end[ind][1], extend_v_end[0], extend_v_end[1], srep.interpolated_spokes_end[spoke_end_index][0], srep.interpolated_spokes_end[spoke_end_index][1], spoke_end[0], spoke_end[1])
               if check_result[0] 
+		@extend_interpolated_spokes_end[ind] = old_extend_end
                 @extend_interpolated_spokes_end[ind][2] = srep.index
                 @extend_interpolated_spokes_end[ind][3] = srep.interpolated_spokes_begin[spoke_end_index]
                 if spoke_end[2] == -1
@@ -105,6 +108,7 @@ class SRep
                 end
               # even though the two spokes are not strictly intersect, if any spoke goes too far into a dilated disk, it should be considered as intersected with sth.  
               elsif srep.index != @index and checkSpokeEndAndDiskIntersection(@extend_interpolated_spokes_end[ind][0], @extend_interpolated_spokes_end[ind][1], srep)
+                @extend_interpolated_spokes_end[ind] = old_extend_end
                 @extend_interpolated_spokes_end[ind][2] = srep.index
               end
            end
