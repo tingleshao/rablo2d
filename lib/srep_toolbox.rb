@@ -3,6 +3,8 @@ load 'module/atom.rb'
 load 'lib/color.rb'
 
 $points_file_path = "data/interpolated_points_"
+$radius_file_path = "data/interpolated_rs_"
+$logrk_file_path = 'data/interpolated_logrkm1s_'
 $pi = Math::PI
 
 def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep_index)
@@ -253,7 +255,7 @@ def interpolateRadius(xt,yt,rt,step_size,index)
   step_size_s = step_size.to_s
   system("python python/radius_interpolate.py " + xs + ' ' + rs + ' ' + step_size_s + ' ' + index )
   # the 'interpolated_radius_[index]' file contains interpolated points
-  r_file = File.new("data/interpolated_rs_"+index, "r")
+  r_file = File.new($radius_file_path+index, "r")
   irs = r_file.gets
   puts "irs: " + irs  
   return irs
@@ -271,7 +273,7 @@ def interpolateKappa(rt, kt, step_size, index)
   step_size_s = step_size.to_s
   system("python python/logrk_interpolate.py " + logrkm1s + ' ' + step_size_s + ' ' + index.to_s)
   # the 'interpolated_logrkm1s' file contains interpolated log(1-rk)
-  logrkm1_file = File.new("data/interpolated_logrkm1s_" + index.to_s , "r")
+  logrkm1_file = File.new($logrk_file_path + index.to_s , "r")
   ilogrkm1s = logrkm1_file.gets
   puts "ilogrkm1s: " + ilogrkm1s
   return ilogrkm1s

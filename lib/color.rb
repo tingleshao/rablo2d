@@ -4,7 +4,9 @@ class Color
   @@white = '#FFFFFF'
   @@blue = '#00FFFF'   
   @@red = '#FF0000'
-  
+  @@green = "#00FF66" 
+  @@purple = "#CC66FF"
+ 
   def initialize()
   end
  
@@ -22,6 +24,14 @@ class Color
  
   def self.red
     @@red
+  end
+
+  def self.green
+    @@green
+  end
+
+  def self.purple
+    @@purple
   end
 
   def self.default
