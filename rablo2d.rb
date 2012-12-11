@@ -5,6 +5,8 @@ $points_file_path = "data/interpolated_points_"
 $radius_file_path = "data/interpolated_rs_"
 $logrk_file_path = 'data/interpolated_logrkm1s_'
 $dilate_ratio = 1.05
+$a_big_number = 100
+$end_disk_spoke_number = 20
 
 class Field
 
@@ -367,25 +369,24 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
           linkLinkingStructurePoints($sreps, self, 300)          
 	}
           
-        button("Interpolate All") {
+        button("Interpolate All Spokes") {
          $sreps.each_with_index do |srep, srep_index| 
-           100.times do
+           $a_big_number.times do
              # interpolate one side
              indices = srep.base_index
-             foo = $bar2
-             c1 = ( indices[foo+1] - indices[foo] ) - $count2 
-             if c1 == 0
-               $count2 = 0
-               $bar2 = $bar2 +1    
-               c1 = ( indices[foo+1] - indices[foo] ) - $count2
-               foo = $bar2
+             base_index = $current_base_index
+             distance_to_next_base = ( indices[base_index+1] - indices[base_index] ) - $step_go_so_far 
+             if distance_to_next_base == 0 # <= reached another base point
+               $step_go_so_far  = 0
+               $current_base_index = $current_base_index +1    
+               distance_to_next_base = ( indices[base_index+1] - indices[base_index] ) - $step_go_so_far 
+               spoke_index = $current_base_index
              end
           
-             curr_index = indices[foo] + $count2 + 1 
-             puts "curr_index: " + curr_index.to_s
+             curr_index = indices[base_index] + $step_go_so_far  + 1 
             
-             d1t = 0.01 * $count2
-             d2t = c1 * 0.01 
+             d1t = 0.01 * $step_go_so_far 
+             d2t = distance_to_next_base * 0.01 
 
              # calculate parameters
              # read all points, rs, logrkm1s from the file
@@ -398,11 +399,11 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
              logrkm1 = file.gets.split(' ').collect{|logrkm1| logrkm1.to_f}
 
              if curr_index < xt.length-1
-               v1t = [xt[curr_index] - xt[indices[foo]], yt[curr_index] - yt[indices[foo]]]
-               if curr_index == indices[foo+1]
-                 v2t = [xt[indices[foo+1]+1] - xt[curr_index], yt[indices[foo+1]+1] - yt[curr_index]]
+               v1t = [xt[curr_index] - xt[indices[base_index]], yt[curr_index] - yt[indices[base_index]]]
+               if curr_index == indices[base_index+1]
+                 v2t = [xt[indices[base_index+1]+1] - xt[curr_index], yt[indices[base_index+1]+1] - yt[curr_index]]
                else
-                 v2t = [xt[indices[foo+1]] - xt[curr_index], yt[indices[foo+1]] - yt[curr_index]]
+                 v2t = [xt[indices[base_index+1]] - xt[curr_index], yt[indices[base_index+1]] - yt[curr_index]]
                end
                puts "v1t: " + v1t.to_s
                size_v1t = v1t[0]**2 + v1t[1]**2
@@ -412,31 +413,36 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                puts "size_v2t: " + size_v2t.to_s
                norm_v2t = v2t.collect{|v| v / size_v2t} 
           
-               k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo]]   ) ) ) / rt[indices[foo]] 
-               k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[foo+1]] ) ) ) / rt[indices[foo+1]] 
+               k1t = ( 1 + ( -1 * Math.exp(logrkm1[indices[base_index]]   ) ) ) / rt[indices[base_index]] 
+               k2t = ( 1 + ( -1 * Math.exp(logrkm1[indices[base_index+1]] ) ) ) / rt[indices[base_index+1]] 
             
-               u1t = srep.atoms[foo].spoke_direction[0]
-               u2t = srep.atoms[foo+1].spoke_direction[0]
+               u1t = srep.atoms[base_index].spoke_direction[0]
+               u2t = srep.atoms[base_index+1].spoke_direction[0]
                ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
                puts "ui: " + ui.to_s
                srep.interpolated_spokes_begin << [xt[curr_index],yt[curr_index],-1]    
                puts "rt: " + rt[curr_index-1].to_s
                srep.interpolated_spokes_end  <<  [xt[curr_index]+ui[0]*rt[curr_index],yt[curr_index]-ui[1]*rt[curr_index],-1,[],'regular']
                # interpolate another side
-               u1t = $sreps[srep_index].atoms[foo].spoke_direction[1]
-               u2t = $sreps[srep_index].atoms[foo+1].spoke_direction[1]
+               u1t = $sreps[srep_index].atoms[base_index].spoke_direction[1]
+               u2t = $sreps[srep_index].atoms[base_index+1].spoke_direction[1]
                ui = interpolateSpokeAtPos(u1t, norm_v1t, k1t, d1t, u2t, norm_v2t, k2t, d2t)
                puts "ui: " + ui.to_s
-               $sreps[srep_index].interpolated_spokes_begin << [xt[indices[foo]+$count2+1],yt[indices[foo]+$count2+1],-1,[],'regular']    
-               puts "rt: " + rt[indices[foo]+$count2].to_s
-               $sreps[srep_index].interpolated_spokes_end  <<  [xt[indices[foo]+$count2+1]+ui[0]*rt[indices[foo]+1+$count2],yt[indices[foo]+$count2+1]-ui[1]*rt[indices[foo]+1+$count2],-1]
+               spoke_index = indices[base_index]+$step_go_so_far+1
+               spoke_begin_x = xt[spoke_index]
+               spoke_begin_y = yt[spoke_index ]
+               $sreps[srep_index].interpolated_spokes_begin << [spoke_begin_x,spoke_begin_y,-1,[],'regular']    
+               puts "rt: " + rt[indices[base_index]+$step_go_so_far].to_s
+               spoke_end_x = spoke_begin_x + ui[0]*rt[spoke_index]
+               spoke_end_y = spoke_begin_y - ui[1]*rt[spoke_index]
+               $sreps[srep_index].interpolated_spokes_end  <<  [spoke_end_x,spoke_end_y,-1,[],'regular']
              else
                # add spoke interpolation for end disks
                # get atom for end disks
                end_atom_one = srep.atoms[0]
                end_atom_two = srep.atoms[-1]
                end_atoms = [end_atom_one, end_atom_two]
-               # get upper and lower and middle disks 
+               # get upper and lower and middle spokes
                end_atoms.each_with_index do |atom, i|
                  atom_spoke_dir_plus1 = atom.spoke_direction[0]
                  atom_spoke_dir_minus1 = atom.spoke_direction[1]
@@ -451,7 +457,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                  y_step_size_2 = y_diff_2.to_f / 15
                  previous_x = atom_spoke_dir_plus1[0] 
                  previous_y = atom_spoke_dir_plus1[1] 
-                 20.times do 
+                 $end_disk_spoke_number.times do 
                    new_spoke_dir_x = previous_x + x_step_size_1
                    new_spoke_dir_y = previous_y + y_step_size_1
                    # normalize 
@@ -461,13 +467,15 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                    previous_x = new_spoke_dir_x
                    previous_y = new_spoke_dir_y
                    # calculate interpolated spoke end
-                   new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[],'end']
+                   new_spoke_vector_x = atom.spoke_length[0]*new_spoke_dir_x
+                   new_spoke_vector_y = atom.spoke_length[0]*new_spoke_dir_y
+                   new_spoke_end = [atom.x + new_spoke_vector_x, atom.y - new_spoke_vector_y,-1,[],'end']
                    $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                    $sreps[srep_index].interpolated_spokes_end << new_spoke_end
                  end
                  previous_x = atom_spoke_dir_minus1[0]
                  previous_y = atom_spoke_dir_minus1[1]
-                 20.times do 
+                 $end_disk_spoke_number.times do 
                    new_spoke_dir_x = previous_x + x_step_size_2
                    new_spoke_dir_y = previous_y + y_step_size_2
                    # normalize 
@@ -477,7 +485,9 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                    previous_x = new_spoke_dir_x
                    previous_y = new_spoke_dir_y
                    # calculate interpolated spoke end
-                   new_spoke_end = [atom.x + atom.spoke_length[0]*new_spoke_dir_x, atom.y - atom.spoke_length[0]*new_spoke_dir_y,-1,[],'end']
+                   new_spoke_vector_x = atom.spoke_length[0]*new_spoke_dir_x
+                   new_spoke_vector_y = atom.spoke_length[0]*new_spoke_dir_y
+                   new_spoke_end = [atom.x + new_spoke_vector_x, atom.y - new_spoke_vector_y,-1,[],'end']
                    $sreps[srep_index].interpolated_spokes_begin << [atom.x, atom.y]
                    $sreps[srep_index].interpolated_spokes_end << new_spoke_end
                    $sreps[srep_index].interpolate_finished = true
@@ -485,13 +495,13 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
                end
                $info = "interpolation finished"
              end
-             $count2 = $count2 + 1
-             puts "count: "+ $count2.to_s
+             $step_go_so_far = $step_go_so_far + 1
+             puts "count: "+ $step_go_so_far.to_s
              
              refresh @points, $sreps, @shifts
            end
-           $count2 = 0
-           $bar2 = 0
+           $step_go_so_far = 0
+           $current_base_index = 0
          end
        }
      end
@@ -510,16 +520,19 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
  end
   
 def initialConfig
-   points0 = [[110,100],[160,75],[210,50],[260,60],[310,80]]
+  $step_go_so_far = 0
+  @shifts = [300,300,300]
+  $current_base_index = 0	
+  $info = ""
+  $dilateCount = 0
+  $linkingPts = []
+  $show_linking_structure = false
+
+  points0 = [[110,100],[160,75],[210,50],[260,60],[310,80]]
   l0 = [[35,35,35],[40,40],[50,50],[40,40],[35,35,35]]
   u0 = [[[-1,3],[-0.1,-4],[-9,1]],[[-1,4],[1.1,-3]],[[-1,4],[0.2,-6]],[[1,9],[0.05,-8]],[[1,2],[1,-5],[6,1]]]
   srep0 = generate2DDiscreteSrep(points0,l0,u0,0.01,0)
   $sreps = [srep0]
-  $count2 = 0
-  @shifts = [300,300,300]
-  $bar2 = 0	
-  $info = ""
-  $dilateCount = 0
   points1 = [[200,190],[250,190],[300,200],[350,180],[400,160]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u1 = [[[-1,6],[0.5,-3],[-9,1]],[[-1,4],[-1,-3]],[[-1,4],[-0.1,-6]],[[1,9],[1,-1.5]],[[1,2],[2,-5],[6,1]]]
@@ -532,8 +545,6 @@ def initialConfig
   srep2 = generate2DDiscreteSrep(points2,l2,u2,0.01,2)
   srep2.color = Color.purple
   $sreps << srep2
-  $linkingPts = []
-  $show_linking_structure = false
    
   refresh @points, $sreps, @shifts
 end
