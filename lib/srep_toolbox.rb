@@ -2,6 +2,7 @@ load 'module/srep.rb'
 load 'module/atom.rb'
 load 'lib/color.rb'
 
+$points_file_path = "data/interpolated_points_"
 $pi = Math::PI
 
 def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep_index)
@@ -36,10 +37,10 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
     atom.each_with_index do |foo, index|
 	atom[index] = Float(foo)
     end
-    atomO = Atom.new(li, usi, type, atom[0], atom[1], Color.red)
-    srep.atoms.push(atomO)
+    atom_obj = Atom.new(li, usi, type, atom[0], atom[1], Color.red)
+    srep.atoms.push(atom_obj)
   end
-  srep.color = Color.black
+  srep.color = Color.default
 
   # compute the interpolated curve 
   xt = srep.atoms.collect{|atom| atom.x }
@@ -228,7 +229,7 @@ def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
   system("python python/curve_interpolate.py " + xs + ' ' + ys + ' ' + step_size_s + ' ' + index.to_s)
   # the 'interpolated_points_[index]' file contains interpolated points
 
-  curve_file = File.new("data/interpolated_points_"+index.to_s, "r")
+  curve_file = File.new($points_file_path+index.to_s, "r")
   ixs = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
   iys = curve_file.gets.strip.split(' ').collect{|x| x.to_f}
   return ixs, iys

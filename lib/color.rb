@@ -23,4 +23,8 @@ class Color
   def self.red
     @@red
   end
+
+  def self.default
+    @@black
+  end
 end

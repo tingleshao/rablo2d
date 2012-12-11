@@ -1,6 +1,7 @@
 load 'lib/srep_toolbox.rb'
 load 'lib/color.rb'
 
+$points_file_path = "data/interpolated_points_"
 
 class Field
 
@@ -63,26 +64,34 @@ class Field
     show_sphere = args[4]
       
     srep.atoms.each_with_index do |atom|
-
-      render_atom(atom.x + shiftx, atom.y + shifty, atom.corresponding_color)
-
+      render_atom(atom.x + shiftx, atom.y + shifty, atom.color)
       if show_sphere
-	render_circle(atom.x + shiftx - atom.spoke_length[0], atom.y + shifty - atom.spoke_length[0], atom.spoke_length[0] * 2 , srep.color)
+        center_x = atom.x + shiftx - atom.spoke_length[0]
+        center_y = atom.y + shifty - atom.spoke_length[0]
+        d = atom.spoke_length[0] * 2
+	render_circle(center_x, center_y, d, srep.color)
       end
-
       if srep.show_extend_disk
-        render_circle(atom.x + shiftx - atom.expand_spoke_length[0], atom.y + shifty - atom.expand_spoke_length[0], atom.expand_spoke_length[0] * 2 , srep.color)
+        center_x = atom.x + shiftx - atom.expand_spoke_length[0]
+        center_y = atom.y + shifty - atom.expand_spoke_length[0]
+        d = atom.expand_spoke_length[0] * 2 
+        render_circle(center_x, center_y, d, srep.color)
       end 
-      render_spokes(atom.x+shiftx, atom.y+shifty, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
+      atom_x = atom.x+shiftx
+      atom_y = atom.y+shifty
+      render_spokes(atom_x, atom_y, atom.type, atom.spoke_length, atom.spoke_direction, srep.color)
     end
 
     if srep.interpolated_spokes_begin.length > 0 and srep.show_interpolated_spokes
-      puts "render_interp_spokes"
-      render_interp_spokes(shiftx, shifty, Color.white, srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
+      spoke_begin = srep.interpolated_spokes_begin
+      spoke_end = srep.interpolated_spokes_end
+      render_interp_spokes(shiftx, shifty, Color.white, spoke_begin, spoke_end)
     end
 
     if (srep.getExtendInterpolatedSpokesEnd()).length > 0 and srep.show_extend_spokes
-      render_extend_interp_spokes(shiftx, shifty, Color.red, srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
+      spoke_begin = srep.interpolated_spokes_end  
+      spoke_end = srep.getExtendInterpolatedSpokesEnd()
+      render_extend_interp_spokes(shiftx, shifty, Color.red, spoke_begin, spoke_end)
     end
     
     if srep.show_curve
@@ -92,7 +101,7 @@ class Field
   end 
   
   def render_curve(sreps, index, srep, shiftx, shifty)
-    file_name = "data/interpolated_points_" + index.to_s
+    file_name = $points_file_path + index.to_s
     if File::exists?(file_name)
       gamma_file = File.open(file_name, "r")
     else
