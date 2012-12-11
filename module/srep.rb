@@ -69,7 +69,7 @@ class SRep
   end
 
   def getExtendInterpolatedSpokesEnd()
-    if @extend_interpolated_spokes_end.length != @interpolated_spokes_end.length
+    if @extend_interpolated_spokes_end.length < @interpolated_spokes_end.length
       @extend_interpolated_spokes_end = @interpolated_spokes_end.dup
     end
     return @extend_interpolated_spokes_end

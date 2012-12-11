@@ -1,11 +1,6 @@
 load 'lib/srep_toolbox.rb'
+load 'lib/color.rb'
 
-def point(x, y, color, bg_color, app)
- app.stroke color
- app.line x, y, x, y+1
- app.stroke bg_color
- app.line x, y+1, x+1, y+1
-end
 
 class Field
 
@@ -33,6 +28,13 @@ class Field
     @app.nofill
     @app.oval x-1,y-1, 2
   end
+
+  def render_point_small(x, y, color, bg_color)
+   @app.stroke color
+   @app.line x, y, x, y+1
+   @app.stroke bg_color
+   @app.line x, y+1, x+1, y+1
+  end
  
   def render_circle(cx, cy, d, color)
     @app.stroke color
@@ -41,21 +43,15 @@ class Field
   end
 
   def render_spokes(cx, cy, type, spoke_length, spoke_direction, color)
- # white: spoke zero
- # black: spoke 1
     @app.stroke color
+    u_p1 = spoke_direction[0]
+    u_m1 = spoke_direction[1] 
+    @app.stroke color
+    @app.line(cx, cy, cx + spoke_length[0] * u_p1[0], cy - spoke_length[0] * u_p1[1])
+    @app.line(cx, cy, cx + spoke_length[1] * u_m1[0], cy - spoke_length[1] * u_m1[1])
     if type == 'end'
-    @app.stroke "#FFFFFF"
-       @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
-    @app.stroke color
-       @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
-    @app.stroke "#00FFFF"
-       @app.line(cx, cy, cx + spoke_length[2] * spoke_direction[2][0], cy - spoke_length[2] * spoke_direction[2][1])
-    elsif type == 'inner'
-    @app.stroke "#FFFFFF"
-       @app.line(cx, cy, cx + spoke_length[0] * spoke_direction[0][0], cy - spoke_length[0] * spoke_direction[0][1])
-        @app.stroke color
-       @app.line(cx, cy, cx + spoke_length[1] * spoke_direction[1][0], cy - spoke_length[1] * spoke_direction[1][1])
+    u_0 = spoke_direction[2]
+    @app.line(cx, cy, cx + spoke_length[2] * u_0[0], cy - spoke_length[2] * u_0[1])
     end
   end
 
@@ -82,11 +78,11 @@ class Field
 
     if srep.interpolated_spokes_begin.length > 0 and srep.show_interpolated_spokes
       puts "render_interp_spokes"
-      render_interp_spokes(shiftx, shifty, '#FFFFFF', srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
+      render_interp_spokes(shiftx, shifty, Color.white, srep.interpolated_spokes_begin, srep.interpolated_spokes_end)
     end
 
     if (srep.getExtendInterpolatedSpokesEnd()).length > 0 and srep.show_extend_spokes
-      render_extend_interp_spokes(shiftx, shifty, '#FF0000', srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
+      render_extend_interp_spokes(shiftx, shifty, Color.red, srep.interpolated_spokes_end, srep.getExtendInterpolatedSpokesEnd() )
     end
     
     if srep.show_curve
@@ -112,22 +108,27 @@ class Field
    
     if (srep.interpolate_finished)
       xs.each_with_index do |x,i|
-      spoke_ind = i*2
-      linkingIndex = srep.getExtendInterpolatedSpokesEnd()[spoke_ind][2]
-      if linkingIndex == -1
-        color1 = srep.color
-      else 
-        color1 = sreps[linkingIndex].color
+        spoke_ind = i*2
+        if srep.getExtendInterpolatedSpokesEnd()[spoke_ind][4] != 'end' and srep.getExtendInterpolatedSpokesEnd()[spoke_ind+1][4] != 'end'
+          linkingIndex = srep.getExtendInterpolatedSpokesEnd()[spoke_ind][2]
+          if linkingIndex == -1
+            color1 = srep.color
+          else 
+            color1 = sreps[linkingIndex].color
+          end
+            linkingIndex = srep.getExtendInterpolatedSpokesEnd()[spoke_ind+1][2]
+          if linkingIndex == -1
+            color2 = srep.color
+          else 
+            color2 = sreps[linkingIndex].color
+          end
+        else 
+          color1 = srep.color
+          color2 = srep.color
+        end
+        render_atom(x+shiftx,ys[i]+shifty, color1)
+        render_atom(x+shiftx+1, ys[i]+shifty-1, color2)
       end
-      linkingIndex = srep.extend_interpolated_spokes_end[spoke_ind+1][2]
-      if linkingIndex == -1
-        color2 = srep.color
-      else 
-        color2 = sreps[linkingIndex].color
-      end
-      render_atom(x+shiftx,ys[i]+shifty, color1)
-      render_atom(x+shiftx+1, ys[i]+shifty-1, color2)
-    end
     else 
       xs.each_with_index do |x,i|
         render_atom(x+shiftx,ys[i]+shifty, srep.color)
@@ -157,7 +158,7 @@ class Field
   def render_linking_structure(shifts)
      shift = shifts[0]
      $linkingPts.each do |pt|
-       render_atom(pt[0]+shift, pt[1]+shift, "#000000")
+       render_atom(pt[0]+shift, pt[1]+shift, Color.black)
      end
   end
 
@@ -527,6 +528,4 @@ end
 initialConfig
 end
 
-# TODO; 
-#        check the correctness of the linking structure ( go one step backward)
-#        link the linking structure
+

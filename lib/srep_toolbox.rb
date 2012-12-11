@@ -1,5 +1,6 @@
 load 'module/srep.rb'
 load 'module/atom.rb'
+load 'lib/color.rb'
 
 $pi = Math::PI
 
@@ -35,10 +36,10 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
     atom.each_with_index do |foo, index|
 	atom[index] = Float(foo)
     end
-    atomO = Atom.new(li, usi, type, atom[0], atom[1], '#FF0000')
+    atomO = Atom.new(li, usi, type, atom[0], atom[1], Color.red)
     srep.atoms.push(atomO)
   end
-  srep.color = '#000000'
+  srep.color = Color.black
 
   # compute the interpolated curve 
   xt = srep.atoms.collect{|atom| atom.x }
@@ -136,10 +137,6 @@ def rotateSrep(srep, angle)
 		#~ alert "a: " + a.to_s
 	end
 	return srep
-end
-
-def moveAtomPositionByClick(srep, atomIndex, translationVector)
-	
 end
 
 def rotateOneAtom(cX, cY, xx, yy, angle)
