@@ -149,12 +149,12 @@ class Field
           color2 = srep.color
         end
         render_atom(x+shiftx,ys[i]+shifty, color1)
-        render_atom(x+shiftx+1, ys[i]+shifty-1, color2)
+        render_atom(x+shiftx+3*srep.orientation[0], ys[i]+shifty+3*srep.orientation[1], color2)
       end
     else 
       xs.each_with_index do |x,i|
         render_atom(x+shiftx,ys[i]+shifty, srep.color)
-        render_atom(x+shiftx+1, ys[i]+shifty-1, srep.color)
+        render_atom(x+shiftx+3*srep.orientation[0], ys[i]+shifty+3*srep.orientation[1], srep.color)
       end
     end
   end
@@ -465,7 +465,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 
      end
 
-     @list = ['Medial Curve', 'Interpolated Spokes', 'Extended? Spokes', 'Extended? Disks', 'Linking Structure']
+     @list = ['Medial Curve', 'Interpolated Spokes', 'Extended Spokes', 'Extended Disks', 'Linking Structure']
      stack do
        @list.map! do |name|
          flow { @c = check; para name }
@@ -536,18 +536,23 @@ def initialConfig
   l0 = [[35,35,35],[40,40],[50,50],[40,40],[35,35,35]]
   u0 = [[[-1,3],[-0.1,-4],[-9,1]],[[-1,4],[1.1,-3]],[[-1,4],[0.2,-6]],[[1,9],[0.05,-8]],[[1,2],[1,-5],[6,1]]]
   srep0 = generate2DDiscreteSrep(points0,l0,u0,0.01,0)
+  srep0.orientation = [0,1]
   $sreps = [srep0]
+
   points1 = [[200,190],[250,190],[300,200],[350,180],[400,160]]
   l1 = [[35,35,35],[40,40],[45,45],[40,40],[35,35,35]]
   u1 = [[[-1,6],[0.5,-3],[-9,1]],[[-1,4],[-1,-3]],[[-1,4],[-0.1,-6]],[[1,9],[1,-1.5]],[[1,2],[2,-5],[6,1]]]
   srep1 = generate2DDiscreteSrep(points1,l1,u1,0.01,1)
   srep1.color = Color.green
+  srep1.orientation = [0,1]
   $sreps << srep1
+
   points2 = [[30,50],[10,100],[9,150],[20,200],[50,240],[110,290]]
   l2 = [[35,35,35],[35,35],[40,40],[35,35],[40,40],[40,40,40]]
   u2 = [[[6,1],[6,-0.5],[-9,1]],[[-1,4],[3,-0.5]],[[-1,4],[5,-0.5]],[[1,9],[5,1]],[[1,9],[5,3]],[[1,2],[3,5],[6,1]]]
   srep2 = generate2DDiscreteSrep(points2,l2,u2,0.01,2)
   srep2.color = Color.purple
+  srep2.orientation = [1,0]
   $sreps << srep2
    
   refresh @points, $sreps, @shifts

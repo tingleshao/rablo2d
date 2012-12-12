@@ -1,7 +1,7 @@
 class SRep 
   attr_accessor :interpolate_finished, :index, :atoms, :skeletal_curve, :interpolated_spokes_begin, 
      :interpolated_spokes_end, :extend_interpolated_spokes_end, :show_curve, :show_interpolated_spokes, 
-     :show_extend_disk, :show_extend_spokes, :step_size, :color, :offset, :base_index, :mask_func
+     :show_extend_disk, :show_extend_spokes, :step_size, :color, :offset, :base_index, :mask_func, :orientation
 	
   def initialize(index, atoms, skeletal_curve, step_size, color, offset)
     @index = index
