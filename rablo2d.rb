@@ -326,48 +326,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
 	    dp = InterpolateControl.new(self)
           end
         }
-
-        button("Curve Visibility") {
-          $sreps.each do |srep| 
-             srep.show_curve = !srep.show_curve
-          end
-          refresh @points, $sreps, @shifts
-        }
-  
-        button("Interpolated Spokes Visbility") {
-          $sreps.each do |srep| 
-             srep.show_interpolated_spokes = !srep.show_interpolated_spokes
-          end
-          refresh @points, $sreps, @shifts
-        }
-
-        button("Extend Spokes Visibility") {
-          $sreps.each do |srep| 
-             srep.show_extend_spokes = !srep.show_extend_spokes
-          end
-          refresh @points, $sreps, @shifts
-        }
-
-        button("Extend Disks Visibility") {
-          $sreps.each do |srep| 
-             srep.show_extend_disk = !srep.show_extend_disk
-          end
-          refresh @points, $sreps, @shifts
-        }
-
-        button("Show linking structure") {
-          $linkingPts = []
-          $sreps.each do |srep|
-             srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, i|
-                if spoke_end[2] != -1 
-                   $linkingPts << [spoke_end[0], spoke_end[1]]  
-                end
-             end
-          end
-          $show_linking_structure = true
-          refresh @points, $sreps, @shifts
-          linkLinkingStructurePoints($sreps, self, 300)          
-	}
           
         button("Interpolate All Spokes") {
          $sreps.each_with_index do |srep, srep_index| 
@@ -504,11 +462,57 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
            $current_base_index = 0
          end
        }
+
+     end
+
+     @list = ['Medial Curve', 'Interpolated Spokes', 'Extended? Spokes', 'Extended? Disks', 'Linking Structure']
+     stack do
+       @list.map! do |name|
+         flow { @c = check; para name }
+         [@c, name]
+       end
+       if $sreps[0].show_curve 
+         @list[0][0].checked = true
+       end
+       if $sreps[0].show_interpolated_spokes
+         @list[1][0].checked = true
+       end
+       if $sreps[0].show_extend_spokes 
+         @list[2][0].checked = true
+       end
+       if $sreps[0].show_extend_disk 
+         @list[3][0].checked = true
+       end
+       if $show_linking_structure
+         @list[4][0].checked = true
+       end
+       button "Refresh" do
+         $sreps.each do |srep| 
+           srep.show_curve = @list[0][0].checked?
+           srep.show_interpolated_spokes = @list[1][0].checked?
+           srep.show_extend_spokes = @list[2][0].checked?
+           srep.show_extend_disk = @list[3][0].checked?
+         end
+         $show_linking_structure = @list[4][0].checked?
+         if @list[4][0].checked?
+           $linkingPts = []
+           $sreps.each do |srep|
+             srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, i|
+                if spoke_end[2] != -1 
+                   $linkingPts << [spoke_end[0], spoke_end[1]]  
+                end
+             end
+           end
+         end
+         refresh @points, $sreps, @shifts
+         if @list[4][0].checked?
+           linkLinkingStructurePoints($sreps, self, 300) 
+         end         
+       end
      end
 
      stack do @status = para :stroke => black end
      @field.paint
-     para "\n"
      para $info
    end  
  end
