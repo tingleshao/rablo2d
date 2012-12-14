@@ -1,3 +1,14 @@
+# rablo2d.rb
+# This is the main program of the 2D objects in context protypeing system.
+# It contains a class Field that abstracts the canvas of the main window that displays the s-reps. 
+# It contains a class InterpolationControl that abstracts a subwindow for user 
+#  to select which s-rep's spokes to interpolate. 
+# The last part: Shoes.app runs the program.
+#
+# Author: Chong Shao (cshao@cs.unc.edu)
+# ----------------------------------------------------------------
+
+
 load 'lib/srep_toolbox.rb'
 load 'lib/color.rb'
 
@@ -9,7 +20,7 @@ $a_big_number = 100
 $end_disk_spoke_number = 20
 
 class Field
-
+# this is the Field class that draws everything about s-rep on the main UI
   attr_accessor :sreps, :shifts
   
   def initialize(app, points, sreps, shifts)
@@ -28,6 +39,7 @@ class Field
     @sreps << srep
   end
  
+  # methods for rendering points 
   def render_point_big(x, y, color)
     @app.stroke color
     @app.strokewidth 2
@@ -41,13 +53,15 @@ class Field
    @app.stroke bg_color
    @app.line x, y+1, x+1, y+1
   end
- 
+  
+  # methods for rendering disks
   def render_circle(cx, cy, d, color)
     @app.stroke color
     @app.nofill 
     @app.oval cx, cy, d
   end
 
+  # methods for rendering spokes
   def render_spokes(cx, cy, type, spoke_length, spoke_direction, color)
     @app.stroke color
     u_p1 = spoke_direction[0]
@@ -67,6 +81,7 @@ class Field
     end
   end
 
+  # the method for rendering s-reps
   def render_srep(*args)
     srep = args[0]
     shiftx  = args[1]
@@ -159,6 +174,7 @@ class Field
     end
   end
 
+  # method for rendering interpolated spokes
   def render_interp_spokes(shiftx, shifty, color, ibegin, iend)
     @app.stroke color
     ibegin.each_with_index do |p, i|
@@ -166,6 +182,7 @@ class Field
     end
   end
    
+  # method for rendering extended part of spokes
   def render_extend_interp_spokes(shiftx, shifty, color, ibegin, iend)
     @app.stroke color
     iend.each_with_index do |p, i|
@@ -173,17 +190,22 @@ class Field
     end
   end
   
+  # method for rendering atoms
   def render_atom(x, y, color)
     render_point_big(x, y, color)
   end
   
+  # method for rendering linking structure
   def render_linking_structure(shifts)
      shift = shifts[0]
      $linkingPts.each do |pt|
-       render_atom(pt[0]+shift, pt[1]+shift, Color.black)
+       if pt != []
+         render_atom(pt[0]+shift, pt[1]+shift, Color.black)
+       end
      end
   end
 
+  # this method calls the render_srep() and render_linking_structure() method
   def paint
     @app.nostroke
     checkSrepIntersection
@@ -197,6 +219,7 @@ class Field
     end
   end  
  
+  # this method interates the sreps and let them check the spoke intersection
   def checkSrepIntersection
    (0..$sreps.length-1).each do |j|
     (0..$sreps.length-1).each do |i|
@@ -219,6 +242,7 @@ class Field
  end
 end
 
+# a class for the subwindow for choosing the srep to compute interpolation
 class InterpolateControl
 	
   attr_accessor :app, :index, :msg
@@ -292,12 +316,14 @@ class InterpolateControl
    end
 end
 
+# this is the driver for the main program
 Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
   def render_field
     clear do
       background rgb(50, 50, 90, 0.7)
       flow :margin => 6 do
 
+       # code for buttons
         button("Dilate") { 
 	  $sreps.each do |srep|
 	    srep.atoms.each do |atom|
@@ -307,11 +333,15 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
             # and check intersection 
             # user can specify first serval count to speed up dilate
             if $dilateCount > 6
-              srep.extendInterpolatedSpokes($dilate_ratio, $sreps, true)
+              sublinkingPts = srep.extendInterpolatedSpokes($dilate_ratio, $sreps, true)
+              sublinkingPts.each do |p|
+                $linkingPts << p
+              end
             else
               srep.extendInterpolatedSpokes($dilate_ratio, $sreps, false)
             end
 	  end
+          $linkingPts = $linkingPts.uniq
           $dilateCount = $dilateCount + 1
           refresh @points, $sreps, @shifts
         }
@@ -458,13 +488,13 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
              
              refresh @points, $sreps, @shifts
            end
-           $step_go_so_far = 0
+           $step_go_so_far = 1
            $current_base_index = 0
          end
        }
 
      end
-
+     # code for the check list 
      @list = ['Medial Curve', 'Interpolated Spokes', 'Extended Spokes', 'Extended Disks', 'Linking Structure']
      stack do
        @list.map! do |name|
@@ -495,7 +525,6 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
          end
          $show_linking_structure = @list[4][0].checked?
          if @list[4][0].checked?
-           $linkingPts = []
            $sreps.each do |srep|
              srep.extend_interpolated_spokes_end.each_with_index do |spoke_end, i|
                 if spoke_end[2] != -1 
@@ -506,7 +535,7 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
          end
          refresh @points, $sreps, @shifts
          if @list[4][0].checked?
-           linkLinkingStructurePoints($sreps, self, 300) 
+       #    linkLinkingStructurePoints($sreps, self, 300) 
          end         
        end
      end
@@ -517,12 +546,14 @@ Shoes.app :width => 1000, :height => 800, :title => '2d multi object' do
    end  
  end
   
+# refresh the UI
  def refresh points, sreps, shifts
    self.nofill
    @field = Field.new self, points, sreps, shifts
    render_field
  end
   
+# initialization
 def initialConfig
   $step_go_so_far = 0
   @shifts = [300,300,300]
@@ -554,7 +585,7 @@ def initialConfig
   srep2.color = Color.purple
   srep2.orientation = [1,0]
   $sreps << srep2
-   
+  
   refresh @points, $sreps, @shifts
 end
   

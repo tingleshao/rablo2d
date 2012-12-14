@@ -1,3 +1,10 @@
+# atom.rb
+# This is a class that model the atom in an s-rep.
+# 
+# Author: Chong Shao (cshao@cs.unc.edu)
+# ----------------------------------------------------------------
+
+
 class Atom
 # this is the Atom class. It represents a discrete atom in the m-rep
 

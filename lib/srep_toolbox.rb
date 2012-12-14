@@ -1,3 +1,11 @@
+# srep_toolbox.rb
+# This file contains functions for generating discrete 2D sreps and 
+#  functions for interpolating spokes from base atoms information.
+#
+# Author: Chong Shao (cshao@cs.unc.edu)
+# ----------------------------------------------------------------
+
+
 load 'module/srep.rb'
 load 'module/atom.rb'
 load 'lib/color.rb'
@@ -8,8 +16,7 @@ $logrk_file_path = 'data/interpolated_logrkm1s_'
 $pi = Math::PI
 
 def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep_index)
-  # the atoms is passed as a list of x-y's 
-  # should generate atom objects for that
+  # This function returns an srep which has parameters specified in the arguments lists
   srep = SRep.new()
   srep.index = srep_index	
   atoms.each_with_index do |atom, i|
@@ -75,100 +82,55 @@ def generate2DDiscreteSrep(atoms, spoke_length, spoke_direction, step_size, srep
       v << [curve[0][ind+1]-curve[0][ind], -1*(curve[1][ind+1]-curve[1][ind])]
     end
   end
-   
+  
   v << [ curve[0][indices[-1]] - curve[0][indices[-1]-1], -1* (curve[1][indices[-1]]- curve[1][indices[-1]-1]) ] 
   puts "v: "+ v.to_s
   refine = true
   if refine
+  # make sure the upper and lower spokes have the same angle
   # get the upper spokes directions 
     srep.atoms.each_with_index do |atom, i| 
-    u1 = atom.spoke_direction[1]  
-    size_norm_v=  Math.sqrt(v[i][0] **2 + v[i][1] **2)
-    norm_v = [v[i][0] / size_norm_v ,  v[i][1] / size_norm_v ]
-    u1_proj_on_v = norm_v.collect{|e| e* (u1[0] * norm_v[0] + u1[1] * norm_v[1])} 
-    #--
-    size_proj = Math.sqrt(u1_proj_on_v[0] **2 + u1_proj_on_v[1] **2 )
-    norm_proj = [u1_proj_on_v[0] / size_proj, u1_proj_on_v[1] / size_proj]
-    puts "norm_v: " + norm_v.to_s
-    puts "norm_proj: " + norm_proj.to_s
-    # -- 
-    puts "u1_proj_on_v: " + u1_proj_on_v.to_s
-    u1_prep_to_v = [u1[0] - u1_proj_on_v[0], u1[1] - u1_proj_on_v[1]]
-    u0 = [1 * u1_proj_on_v[0] - u1_prep_to_v[0], 1  *  u1_proj_on_v[1] - u1_prep_to_v[1]]
-    # normalize u0
-    u0_size = Math.sqrt(u0[0] ** 2 + u0[1] **2)  
-    u0[0] = u0[0] / u0_size
-    u0[1] = u0[1] / u0_size
-    #check whether perpendicular
-    #--
-    diff = [u0[0]-u1[0],u0[1]-u1[1]]
-    prod = diff[0] * norm_v[0] + diff[1]*norm_v[1]
-    puts "prod: "+ prod.to_s
-    #--
-    atom.spoke_direction[0] = u0
+      u1 = atom.spoke_direction[1]  
+      size_norm_v=  Math.sqrt(v[i][0] **2 + v[i][1] **2)
+      norm_v = [v[i][0] / size_norm_v ,  v[i][1] / size_norm_v ]
+      u1_proj_on_v = norm_v.collect{|e| e* (u1[0] * norm_v[0] + u1[1] * norm_v[1])} 
+      size_proj = Math.sqrt(u1_proj_on_v[0] **2 + u1_proj_on_v[1] **2 )
+      norm_proj = [u1_proj_on_v[0] / size_proj, u1_proj_on_v[1] / size_proj]
+      puts "norm_v: " + norm_v.to_s
+      puts "norm_proj: " + norm_proj.to_s
+
+      puts "u1_proj_on_v: " + u1_proj_on_v.to_s
+      u1_prep_to_v = [u1[0] - u1_proj_on_v[0], u1[1] - u1_proj_on_v[1]]
+      u0 = [1 * u1_proj_on_v[0] - u1_prep_to_v[0], 1  *  u1_proj_on_v[1] - u1_prep_to_v[1]]
+      # normalize u0
+      u0_size = Math.sqrt(u0[0] ** 2 + u0[1] **2)  
+      u0[0] = u0[0] / u0_size
+      u0[1] = u0[1] / u0_size
+      #check whether perpendicular
+      diff = [u0[0]-u1[0],u0[1]-u1[1]]
+      prod = diff[0] * norm_v[0] + diff[1]*norm_v[1]
+      puts "prod: "+ prod.to_s
+      atom.spoke_direction[0] = u0
+    end
+
+    # for the end spokes, set their direction to the v 
+    a0u2 = [v[0][0], v[0][1]]
+    a0u2_size = Math.sqrt(a0u2[0] ** 2 + a0u2[1] **2)
+    a0u2[0] = a0u2[0] / a0u2_size
+    a0u2[1] = a0u2[1] / a0u2_size
+    srep.atoms[0].spoke_direction[2] = a0u2
+
+    aendu2 = [v[-1][0], v[-1][1]]
+    aendu2_size = Math.sqrt(aendu2[0] ** 2 + aendu2[1] **2)
+    aendu2[0] = aendu2[0] / aendu2_size
+    aendu2[1] = aendu2[1] / aendu2_size
+    srep.atoms[-1].spoke_direction[2] = aendu2
   end
-
-  # for the end spokes, set their direction to the v 
-  a0u2 = [v[0][0], v[0][1]]
-  a0u2_size = Math.sqrt(a0u2[0] ** 2 + a0u2[1] **2)
-  a0u2[0] = a0u2[0] / a0u2_size
-  a0u2[1] = a0u2[1] / a0u2_size
-  srep.atoms[0].spoke_direction[2] = a0u2
-
-  aendu2 = [v[-1][0], v[-1][1]]
-  aendu2_size = Math.sqrt(aendu2[0] ** 2 + aendu2[1] **2)
-  aendu2[0] = aendu2[0] / aendu2_size
-  aendu2[1] = aendu2[1] / aendu2_size
-  srep.atoms[-1].spoke_direction[2] = aendu2
-end
-
   return srep
 end
 
-def rotateSrep(srep, angle)
-	# rotate the srep, with the rotation cencter being the srep's center
-	if srep.size % 2 ==1 then centerP = srep[srep.size / 2][0] else centerP = [(srep[srep.size/2 -1][0][0] + srep[srep.size/2][0][0]), (srep[srep.size/2 -1][0][1] + srep[srep.size/2][0][1])] end
-	cx = centerP[0]
-	cy = centerP[1]
-	srep.each do |a|
-		p = a[0]
-		#~ alert "P: " + p.to_s
-		#~ alert "centerP: "+ cx.to_s + " " + cy.to_s
-		newP = rotateOneAtom(cx, cy, p[0], p[1], angle)
-		a[0][0] = newP[0]
-		a[0][1] = newP[1]
-		#~ alert "a: " + a.to_s
-	end
-	return srep
-end
-
-def rotateOneAtom(cX, cY, xx, yy, angle)
-  if (cX.to_f != xx.to_f)
-    # theta is the angle in radius
-    # phi is the x, y old angle reltative to horizontal
-    x = xx.to_f
-    y = yy.to_f
-    centerX = cX.to_f
-    centerY = cY.to_f
-    relativeX = x - centerX
-    relativeY = y - centerY
-    r = Math.sqrt(relativeX**2 + relativeY**2)
-    cosphi = relativeX / r
-    sinphi = relativeY / r
-    cosThetaPlusPhi = Math.cos(angle) * cosphi - Math.sin(angle) * sinphi
-    d1 = r * cosThetaPlusPhi 
-    newX = centerX + d1
-    sinThetaPlusPhi = Math.sin(angle) * cosphi + Math.cos(angle) * sinphi 
-    d3 = r * sinThetaPlusPhi
-    newY = y + d3
-    newP = [newX, newY]
-  else 
-    newP = [xx, yy]
-  end
-  return newP
-end
-
 def checkSrepIntersection(srep1, srep2, shift1, shift2)
+  # this function checks the intersection between s-reps before spoke interpolation
   # returns a list indicates that for each atom in srep1, what is the correspoinding neighbor srep color 
   correLst = []
   srep1.atoms.each_with_index do |atom1, j|
@@ -197,23 +159,6 @@ def checkSrepIntersection(srep1, srep2, shift1, shift2)
     end
   end
   return correLst
-end
-
-def parseSavedSrep(filename)
-	srepf = File.open(filename, 'r')
-	srepst = srepf.gets.strip
-	sreps = []
-	matches = srepst.scan(/[0-9]+, [0-9]+, [0-9]+\.[0-9]+/)
-	matches.each do |m|
-		xyr =  m.scan(/[0-9]+/)
-		x = xyr[0].to_f
-		y = xyr[1].to_f
-		r = xyr[2].to_f + xyr[3].to_f/10
-		#~ x = x + Math.sqrt(2) * r
-		#~ y = y + Math.sqrt(2) * r
-		sreps << [[x, y],[[0,0],[0,0],[0,0]], [r,r,r]]
-	end
-	return sreps
 end
 
 def interpolateSkeletalCurveGamma(xt,yt,step_size,index)
@@ -407,6 +352,7 @@ def checkSpokeIntersection(x1,y1,x2,y2,x3,y3,x4,y4)
 end 
 
 def checkSpokeEndAndDiskIntersection(x,y,srep)
+  # this function avoids a few spokes that goes too far away
   srep.atoms.each do |atom|
     disk_x = atom.x
     disk_y = atom.y
@@ -439,7 +385,4 @@ def linkLinkingStructurePoints(sreps, app, shift)
     end
   end
 end
-
-
-
 

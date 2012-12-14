@@ -78,6 +78,15 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+srep.rb This is a class that models an s-rep.
+</p>
+<p>
+Author: Chong Shao (cshao@.cs.unc.edu)
+</p>
+<hr size="10"></hr>
+    </div>
 
 
    </div>
@@ -86,13 +95,13 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000043">checkIntersection</a>&nbsp;&nbsp;
-      <a href="#M000045">extendInterpolatedSpokes</a>&nbsp;&nbsp;
-      <a href="#M000044">getExtendInterpolatedSpokesEnd</a>&nbsp;&nbsp;
-      <a href="#M000042">getLength</a>&nbsp;&nbsp;
-      <a href="#M000039">new</a>&nbsp;&nbsp;
-      <a href="#M000040">new</a>&nbsp;&nbsp;
-      <a href="#M000041">to_s</a>&nbsp;&nbsp;
+      <a href="#M000030">checkIntersection</a>&nbsp;&nbsp;
+      <a href="#M000032">extendInterpolatedSpokes</a>&nbsp;&nbsp;
+      <a href="#M000031">getExtendInterpolatedSpokesEnd</a>&nbsp;&nbsp;
+      <a href="#M000029">getLength</a>&nbsp;&nbsp;
+      <a href="#M000026">new</a>&nbsp;&nbsp;
+      <a href="#M000027">new</a>&nbsp;&nbsp;
+      <a href="#M000028">to_s</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -138,6 +147,11 @@
           <td class="context-item-desc"></td>
         </tr>
         <tr class="top-aligned-row context-row">
+          <td class="context-item-name">interpolate_finished</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
           <td class="context-item-name">interpolated_spokes_begin</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
           <td class="context-item-desc"></td>
@@ -154,6 +168,11 @@
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">offset</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">orientation</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
           <td class="context-item-desc"></td>
         </tr>
@@ -197,12 +216,12 @@
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000039" class="method-detail">
-        <a name="M000039"></a>
+      <div id="method-M000026" class="method-detail">
+        <a name="M000026"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000039.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000039.html');return false;">
+          <a href="SRep.src/M000026.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000026.html');return false;">
           <span class="method-name">new</span><span class="method-args">(index, atoms, skeletal_curve, step_size, color, offset)</span>
           </a>
         </div>
@@ -211,12 +230,12 @@
         </div>
       </div>
 
-      <div id="method-M000040" class="method-detail">
-        <a name="M000040"></a>
+      <div id="method-M000027" class="method-detail">
+        <a name="M000027"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000040.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000040.html');return false;">
+          <a href="SRep.src/M000027.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000027.html');return false;">
           <span class="method-name">new</span><span class="method-args">()</span>
           </a>
         </div>
@@ -227,12 +246,12 @@
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000043" class="method-detail">
-        <a name="M000043"></a>
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000043.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000043.html');return false;">
+          <a href="SRep.src/M000030.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000030.html');return false;">
           <span class="method-name">checkIntersection</span><span class="method-args">(other_srep)</span>
           </a>
         </div>
@@ -241,13 +260,13 @@
         </div>
       </div>
 
-      <div id="method-M000045" class="method-detail">
-        <a name="M000045"></a>
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000045.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000045.html');return false;">
-          <span class="method-name">extendInterpolatedSpokes</span><span class="method-args">(ratio, sreps)</span>
+          <a href="SRep.src/M000032.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000032.html');return false;">
+          <span class="method-name">extendInterpolatedSpokes</span><span class="method-args">(ratio, sreps, checkIntersection)</span>
           </a>
         </div>
       
@@ -255,12 +274,12 @@
         </div>
       </div>
 
-      <div id="method-M000044" class="method-detail">
-        <a name="M000044"></a>
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000044.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000044.html');return false;">
+          <a href="SRep.src/M000031.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000031.html');return false;">
           <span class="method-name">getExtendInterpolatedSpokesEnd</span><span class="method-args">()</span>
           </a>
         </div>
@@ -269,12 +288,12 @@
         </div>
       </div>
 
-      <div id="method-M000042" class="method-detail">
-        <a name="M000042"></a>
+      <div id="method-M000029" class="method-detail">
+        <a name="M000029"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000042.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000042.html');return false;">
+          <a href="SRep.src/M000029.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000029.html');return false;">
           <span class="method-name">getLength</span><span class="method-args">()</span>
           </a>
         </div>
@@ -283,12 +302,12 @@
         </div>
       </div>
 
-      <div id="method-M000041" class="method-detail">
-        <a name="M000041"></a>
+      <div id="method-M000028" class="method-detail">
+        <a name="M000028"></a>
 
         <div class="method-heading">
-          <a href="SRep.src/M000041.html" target="Code" class="method-signature"
-            onclick="popupCode('SRep.src/M000041.html');return false;">
+          <a href="SRep.src/M000028.html" target="Code" class="method-signature"
+            onclick="popupCode('SRep.src/M000028.html');return false;">
           <span class="method-name">to_s</span><span class="method-args">()</span>
           </a>
         </div>

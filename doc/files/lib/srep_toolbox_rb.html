@@ -56,7 +56,7 @@
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Sun Dec 09 22:51:52 -0500 2012</td>
+      <td>Fri Dec 14 12:12:57 -0500 2012</td>
     </tr>
     </table>
   </div>
@@ -68,6 +68,19 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+srep_toolbox.rb This file contains functions for generating discrete 2D
+sreps and
+</p>
+<pre>
+ functions for interpolating spokes from base atoms information.
+</pre>
+<p>
+Author: Chong Shao (cshao@cs.unc.edu)
+</p>
+<hr size="10"></hr>
+    </div>
 
 
    </div>
@@ -76,20 +89,17 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000018">checkSpokeEndAndDiskIntersection</a>&nbsp;&nbsp;
-      <a href="#M000017">checkSpokeIntersection</a>&nbsp;&nbsp;
-      <a href="#M000009">checkSrepIntersection</a>&nbsp;&nbsp;
-      <a href="#M000016">computeAUsingUVK</a>&nbsp;&nbsp;
-      <a href="#M000014">computeBaseKappa</a>&nbsp;&nbsp;
-      <a href="#M000005">generate2DDiscreteSrep</a>&nbsp;&nbsp;
-      <a href="#M000013">interpolateKappa</a>&nbsp;&nbsp;
-      <a href="#M000012">interpolateRadius</a>&nbsp;&nbsp;
-      <a href="#M000011">interpolateSkeletalCurveGamma</a>&nbsp;&nbsp;
-      <a href="#M000015">interpolateSpokeAtPos</a>&nbsp;&nbsp;
-      <a href="#M000007">moveAtomPositionByClick</a>&nbsp;&nbsp;
-      <a href="#M000010">parseSavedSrep</a>&nbsp;&nbsp;
-      <a href="#M000008">rotateOneAtom</a>&nbsp;&nbsp;
-      <a href="#M000006">rotateSrep</a>&nbsp;&nbsp;
+      <a href="#M000013">checkSpokeEndAndDiskIntersection</a>&nbsp;&nbsp;
+      <a href="#M000012">checkSpokeIntersection</a>&nbsp;&nbsp;
+      <a href="#M000005">checkSrepIntersection</a>&nbsp;&nbsp;
+      <a href="#M000011">computeAUsingUVK</a>&nbsp;&nbsp;
+      <a href="#M000009">computeBaseKappa</a>&nbsp;&nbsp;
+      <a href="#M000004">generate2DDiscreteSrep</a>&nbsp;&nbsp;
+      <a href="#M000008">interpolateKappa</a>&nbsp;&nbsp;
+      <a href="#M000007">interpolateRadius</a>&nbsp;&nbsp;
+      <a href="#M000006">interpolateSkeletalCurveGamma</a>&nbsp;&nbsp;
+      <a href="#M000010">interpolateSpokeAtPos</a>&nbsp;&nbsp;
+      <a href="#M000014">linkLinkingStructurePoints</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -111,97 +121,13 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000018" class="method-detail">
-        <a name="M000018"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000018.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000018.html');return false;">
-          <span class="method-name">checkSpokeEndAndDiskIntersection</span><span class="method-args">(x,y,srep)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000017" class="method-detail">
-        <a name="M000017"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000017.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000017.html');return false;">
-          <span class="method-name">checkSpokeIntersection</span><span class="method-args">(x1,y1,x2,y2,x3,y3,x4,y4)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000009" class="method-detail">
-        <a name="M000009"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000009.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000009.html');return false;">
-          <span class="method-name">checkSrepIntersection</span><span class="method-args">(srep1, srep2, shift1, shift2)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000016" class="method-detail">
-        <a name="M000016"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000016.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000016.html');return false;">
-          <span class="method-name">computeAUsingUVK</span><span class="method-args">(ut,vt,kt)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000014" class="method-detail">
-        <a name="M000014"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000014.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000014.html');return false;">
-          <span class="method-name">computeBaseKappa</span><span class="method-args">(xt,yt, indices, h, rt)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000005" class="method-detail">
-        <a name="M000005"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000005.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000005.html');return false;">
-          <span class="method-name">generate2DDiscreteSrep</span><span class="method-args">(atoms, spoke_length, spoke_direction, step_size, srep_index)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
       <div id="method-M000013" class="method-detail">
         <a name="M000013"></a>
 
         <div class="method-heading">
           <a href="srep_toolbox_rb.src/M000013.html" target="Code" class="method-signature"
             onclick="popupCode('srep_toolbox_rb.src/M000013.html');return false;">
-          <span class="method-name">interpolateKappa</span><span class="method-args">(rt, kt, step_size, index)</span>
+          <span class="method-name">checkSpokeEndAndDiskIntersection</span><span class="method-args">(x,y,srep)</span>
           </a>
         </div>
       
@@ -215,7 +141,21 @@
         <div class="method-heading">
           <a href="srep_toolbox_rb.src/M000012.html" target="Code" class="method-signature"
             onclick="popupCode('srep_toolbox_rb.src/M000012.html');return false;">
-          <span class="method-name">interpolateRadius</span><span class="method-args">(xt,yt,rt,step_size,index)</span>
+          <span class="method-name">checkSpokeIntersection</span><span class="method-args">(x1,y1,x2,y2,x3,y3,x4,y4)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="srep_toolbox_rb.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000005.html');return false;">
+          <span class="method-name">checkSrepIntersection</span><span class="method-args">(srep1, srep2, shift1, shift2)</span>
           </a>
         </div>
       
@@ -229,7 +169,7 @@
         <div class="method-heading">
           <a href="srep_toolbox_rb.src/M000011.html" target="Code" class="method-signature"
             onclick="popupCode('srep_toolbox_rb.src/M000011.html');return false;">
-          <span class="method-name">interpolateSkeletalCurveGamma</span><span class="method-args">(xt,yt,step_size,index)</span>
+          <span class="method-name">computeAUsingUVK</span><span class="method-args">(ut,vt,kt)</span>
           </a>
         </div>
       
@@ -237,13 +177,13 @@
         </div>
       </div>
 
-      <div id="method-M000015" class="method-detail">
-        <a name="M000015"></a>
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
 
         <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000015.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000015.html');return false;">
-          <span class="method-name">interpolateSpokeAtPos</span><span class="method-args">(u1t, v1t, k1t, d1t, u2t, v2t, k2t, d2t)</span>
+          <a href="srep_toolbox_rb.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000009.html');return false;">
+          <span class="method-name">computeBaseKappa</span><span class="method-args">(xt,yt, indices, h, rt)</span>
           </a>
         </div>
       
@@ -251,27 +191,13 @@
         </div>
       </div>
 
-      <div id="method-M000007" class="method-detail">
-        <a name="M000007"></a>
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
 
         <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000007.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000007.html');return false;">
-          <span class="method-name">moveAtomPositionByClick</span><span class="method-args">(srep, atomIndex, translationVector)</span>
-          </a>
-        </div>
-      
-        <div class="method-description">
-        </div>
-      </div>
-
-      <div id="method-M000010" class="method-detail">
-        <a name="M000010"></a>
-
-        <div class="method-heading">
-          <a href="srep_toolbox_rb.src/M000010.html" target="Code" class="method-signature"
-            onclick="popupCode('srep_toolbox_rb.src/M000010.html');return false;">
-          <span class="method-name">parseSavedSrep</span><span class="method-args">(filename)</span>
+          <a href="srep_toolbox_rb.src/M000004.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000004.html');return false;">
+          <span class="method-name">generate2DDiscreteSrep</span><span class="method-args">(atoms, spoke_length, spoke_direction, step_size, srep_index)</span>
           </a>
         </div>
       
@@ -285,7 +211,21 @@
         <div class="method-heading">
           <a href="srep_toolbox_rb.src/M000008.html" target="Code" class="method-signature"
             onclick="popupCode('srep_toolbox_rb.src/M000008.html');return false;">
-          <span class="method-name">rotateOneAtom</span><span class="method-args">(cX, cY, xx, yy, angle)</span>
+          <span class="method-name">interpolateKappa</span><span class="method-args">(rt, kt, step_size, index)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="srep_toolbox_rb.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000007.html');return false;">
+          <span class="method-name">interpolateRadius</span><span class="method-args">(xt,yt,rt,step_size,index)</span>
           </a>
         </div>
       
@@ -299,7 +239,35 @@
         <div class="method-heading">
           <a href="srep_toolbox_rb.src/M000006.html" target="Code" class="method-signature"
             onclick="popupCode('srep_toolbox_rb.src/M000006.html');return false;">
-          <span class="method-name">rotateSrep</span><span class="method-args">(srep, angle)</span>
+          <span class="method-name">interpolateSkeletalCurveGamma</span><span class="method-args">(xt,yt,step_size,index)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="srep_toolbox_rb.src/M000010.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000010.html');return false;">
+          <span class="method-name">interpolateSpokeAtPos</span><span class="method-args">(u1t, v1t, k1t, d1t, u2t, v2t, k2t, d2t)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="srep_toolbox_rb.src/M000014.html" target="Code" class="method-signature"
+            onclick="popupCode('srep_toolbox_rb.src/M000014.html');return false;">
+          <span class="method-name">linkLinkingStructurePoints</span><span class="method-args">(sreps, app, shift)</span>
           </a>
         </div>
       

@@ -55,8 +55,8 @@
         <tr class="top-aligned-row">
             <td><strong>In:</strong></td>
             <td>
-                <a href="../files/atom_rb.html">
-                atom.rb
+                <a href="../files/module/atom_rb.html">
+                module/atom.rb
                 </a>
         <br />
             </td>
@@ -78,6 +78,15 @@
 
   <div id="contextContent">
 
+    <div id="description">
+      <p>
+atom.rb This is a class that model the atom in an s-rep.
+</p>
+<p>
+Author: Chong Shao (cshao@cs.unc.edu)
+</p>
+<hr size="10"></hr>
+    </div>
 
 
    </div>
@@ -86,10 +95,10 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000055">dilate</a>&nbsp;&nbsp;
-      <a href="#M000056">getExpandRatio</a>&nbsp;&nbsp;
-      <a href="#M000053">new</a>&nbsp;&nbsp;
-      <a href="#M000054">to_s</a>&nbsp;&nbsp;
+      <a href="#M000035">dilate</a>&nbsp;&nbsp;
+      <a href="#M000036">getExpandRatio</a>&nbsp;&nbsp;
+      <a href="#M000033">new</a>&nbsp;&nbsp;
+      <a href="#M000034">to_s</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -110,44 +119,68 @@
       <div class="name-list">
         <table>
         <tr class="top-aligned-row context-row">
-          <td class="context-item-name">corresponding_color</td>
+          <td class="context-item-name">color</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">expand_spoke_length</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">linking_index</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">spoke_direction</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">spoke_length</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">type</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">x</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">y</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
-          <td class="context-item-desc"></td>
+          <td class="context-item-desc">
+instance variables
+
+</td>
         </tr>
         </table>
       </div>
@@ -159,61 +192,73 @@
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000053" class="method-detail">
-        <a name="M000053"></a>
+      <div id="method-M000033" class="method-detail">
+        <a name="M000033"></a>
 
         <div class="method-heading">
-          <a href="Atom.src/M000053.html" target="Code" class="method-signature"
-            onclick="popupCode('Atom.src/M000053.html');return false;">
+          <a href="Atom.src/M000033.html" target="Code" class="method-signature"
+            onclick="popupCode('Atom.src/M000033.html');return false;">
           <span class="method-name">new</span><span class="method-args">(spoke_length, spoke_direction, type, x, y, cc)</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+initializer
+</p>
         </div>
       </div>
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000055" class="method-detail">
-        <a name="M000055"></a>
+      <div id="method-M000035" class="method-detail">
+        <a name="M000035"></a>
 
         <div class="method-heading">
-          <a href="Atom.src/M000055.html" target="Code" class="method-signature"
-            onclick="popupCode('Atom.src/M000055.html');return false;">
+          <a href="Atom.src/M000035.html" target="Code" class="method-signature"
+            onclick="popupCode('Atom.src/M000035.html');return false;">
           <span class="method-name">dilate</span><span class="method-args">(ratio)</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+atom can <a href="Atom.html#M000035">dilate</a> its spokes
+</p>
         </div>
       </div>
 
-      <div id="method-M000056" class="method-detail">
-        <a name="M000056"></a>
+      <div id="method-M000036" class="method-detail">
+        <a name="M000036"></a>
 
         <div class="method-heading">
-          <a href="Atom.src/M000056.html" target="Code" class="method-signature"
-            onclick="popupCode('Atom.src/M000056.html');return false;">
+          <a href="Atom.src/M000036.html" target="Code" class="method-signature"
+            onclick="popupCode('Atom.src/M000036.html');return false;">
           <span class="method-name">getExpandRatio</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+get how much it dilated
+</p>
         </div>
       </div>
 
-      <div id="method-M000054" class="method-detail">
-        <a name="M000054"></a>
+      <div id="method-M000034" class="method-detail">
+        <a name="M000034"></a>
 
         <div class="method-heading">
-          <a href="Atom.src/M000054.html" target="Code" class="method-signature"
-            onclick="popupCode('Atom.src/M000054.html');return false;">
+          <a href="Atom.src/M000034.html" target="Code" class="method-signature"
+            onclick="popupCode('Atom.src/M000034.html');return false;">
           <span class="method-name">to_s</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
+          <p>
+atom to_string method
+</p>
         </div>
       </div>
 
